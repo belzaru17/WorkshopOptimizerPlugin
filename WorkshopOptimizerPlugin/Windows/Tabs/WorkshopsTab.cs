@@ -7,13 +7,14 @@ using WorkshopOptimizerPlugin.Windows.Utils;
 
 namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
-internal class WorkshopsTab : ITab
+internal class WorkshopsTab : ITab, IUIDataSourceListener
 {
     private readonly Configuration configuration;
     private readonly Icons icons;
     private readonly UIDataSource uiDataSource;
     private CommonInterfaceElements ifData;
     private readonly IItemSetsCache itemSetsCache;
+    private Optimizer.Optimizer?[] optimizers;
 
     public WorkshopsTab(Configuration configuration, Icons icons, UIDataSource uiDataSource, CommonInterfaceElements ifData, IItemSetsCache itemSetsCache)
     {
@@ -22,6 +23,22 @@ internal class WorkshopsTab : ITab
         this.uiDataSource = uiDataSource;
         this.ifData = ifData;
         this.itemSetsCache = itemSetsCache;
+        this.optimizers = new Optimizer.Optimizer?[Constants.MaxCycles];
+
+        uiDataSource.AddListener(this);
+    }
+
+    public void OnDataChange(int cycle)
+    {
+        for (int i = cycle; i < Constants.MaxCycles; i++)
+        {
+            this.optimizers[i] = null;
+        }
+    }
+
+    public void OnOptimizationParameterChange()
+    {
+        OnDataChange(0);
     }
 
     public void OnOpen() { }
@@ -56,7 +73,22 @@ internal class WorkshopsTab : ITab
         ImGui.Unindent(Constants.UIButtonIndent);
         ImGui.Spacing();
 
-        if (ImGui.BeginTable("Workshop Combinations", 6, ImGuiTableFlags.ScrollY))
+        var optimizer = optimizers[cycle];
+        if (optimizer == null)
+        {
+            var options = new OptimizerOptions(configuration, ifData.mStrictCycles? Strictness.AllowExactCycle : (Strictness.AllowExactCycle | Strictness.AllowRestCycle | Strictness.AllowEarlierCycle));
+            optimizers[cycle] = optimizer = new Optimizer.Optimizer(uiDataSource.ItemCache, cycle, startGroove, options);
+
+        }
+        var cWorkshopsItemSets = itemSetsCache.CachedWorkshopsItemSets[cycle];
+        if (cWorkshopsItemSets == null)
+        {
+            itemSetsCache.CachedWorkshopsItemSets[cycle] = cWorkshopsItemSets = optimizer.GenerateAllWorkshops();
+        }
+        if (cWorkshopsItemSets == null)
+        {
+            ImGui.Text("Calculating, please wait...");
+        } else if (ImGui.BeginTable("Workshop Combinations", 6, ImGuiTableFlags.ScrollY))
         {
             ImGui.TableSetupColumn("Items", ImGuiTableColumnFlags.WidthFixed, 400);
             ImGui.TableSetupColumn("Patterns", ImGuiTableColumnFlags.WidthFixed, 200);
@@ -66,13 +98,6 @@ internal class WorkshopsTab : ITab
             ImGui.TableSetupColumn("Set", ImGuiTableColumnFlags.WidthFixed, 200);
             ImGui.TableHeadersRow();
 
-            var options = new OptimizerOptions(configuration, ifData.mStrictCycles ? Strictness.AllowExactCycle : (Strictness.AllowExactCycle | Strictness.AllowRestCycle | Strictness.AllowEarlierCycle));
-            var cWorkshopsItemSets = itemSetsCache.CachedWorkshopsItemSets[cycle];
-            if (cWorkshopsItemSets == null)
-            {
-                cWorkshopsItemSets = new Optimizer.Optimizer(uiDataSource.ItemCache, cycle, options).GenerateAllWorkshops(startGroove);
-                itemSetsCache.CachedWorkshopsItemSets[cycle] = cWorkshopsItemSets;
-            }
             var top = UIUtils.FixValue(ref ifData.mTop, 1, 2000);
             foreach (var workshopsItemSets in cWorkshopsItemSets)
             {

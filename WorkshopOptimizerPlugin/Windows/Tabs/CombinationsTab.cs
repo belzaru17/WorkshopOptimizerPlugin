@@ -38,9 +38,12 @@ internal class CombinationsTab : ITab
         ImGui.SetNextItemWidth(100);
         ImGui.InputInt("Top-N", ref ifData.mTop, 5);
         ImGui.SameLine();
-        ImGui.Checkbox("Strict Cycles", ref ifData.mStrictCycles);
-            ImGui.SameLine();
-            ImGui.Indent(Constants.UIButtonIndent);
+        if (ImGui.Checkbox("Strict Cycles", ref ifData.mStrictCycles))
+        {
+            uiDataSource.OptimizationParameterChanged();
+        }
+        ImGui.SameLine();
+        ImGui.Indent(Constants.UIButtonIndent);
         if (UIUtils.ImageButton(icons.SaveData, "Save Data", uiDataSource.Dirty))
         {
             uiDataSource.Save();
@@ -64,12 +67,11 @@ internal class CombinationsTab : ITab
             ImGui.TableSetupColumn("Set", ImGuiTableColumnFlags.WidthFixed, 100);
             ImGui.TableHeadersRow();
 
-            var options = new OptimizerOptions(configuration, ifData.mStrictCycles? Strictness.AllowExactCycle : (Strictness.AllowExactCycle | Strictness.AllowRestCycle | Strictness.AllowEarlierCycle));
             var itemSets = itemSetsCache.CachedItemSets[cycle];
             if (itemSets == null)
             {
-                itemSets = new Optimizer.Optimizer(uiDataSource.ItemCache, cycle, options).GenerateCombinations();
-                itemSetsCache.CachedItemSets[cycle] = itemSets;
+                var options = new OptimizerOptions(configuration, ifData.mStrictCycles ? Strictness.AllowExactCycle : (Strictness.AllowExactCycle | Strictness.AllowRestCycle | Strictness.AllowEarlierCycle));
+                itemSetsCache.CachedItemSets[cycle] = itemSets = new Optimizer.Optimizer(uiDataSource.ItemCache, cycle, startGroove, options).GenerateCombinations();
             }
             var top = UIUtils.FixValue(ref ifData.mTop, 1, 2000);
             foreach (var itemset in itemSets)
