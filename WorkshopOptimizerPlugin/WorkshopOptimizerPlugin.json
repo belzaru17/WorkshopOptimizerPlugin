@@ -1,0 +1,13 @@
+{
+  "Author": "HappySprite",
+  "Name": "Workshop Optimizer Plugin",
+  "Punchline": "Optimize Island Sanctuary Workshop orders.",
+  "Description": "Use /wso after you visited your island.",
+  "InternalName": "workshopOptimizerPlugin",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "island",
+    "workshop",
+    "optimizer"
+  ]
+}
