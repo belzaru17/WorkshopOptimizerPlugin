@@ -35,10 +35,17 @@ internal class ProducedTab : ITab
         if (uiDataSource.Dirty)
         {
             ImGui.SameLine();
+            ImGui.Indent(Constants.UIButtonIndent);
             if (UIUtils.ImageButton(icons.SaveData, "Save Data"))
             {
                 uiDataSource.Save();
             }
+            ImGui.SameLine();
+            if (UIUtils.ImageButton(icons.ReloadData, "Reload Data"))
+            {
+                uiDataSource.Reload();
+            }
+            ImGui.Unindent(Constants.UIButtonIndent);
         }
         ImGui.Spacing();
         DrawProducedTable(cycle, startGroove);

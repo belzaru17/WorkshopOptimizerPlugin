@@ -13,4 +13,6 @@ internal static class Constants
     public const int MaxSteps = 6;
 
     public const int ResetUTCHour = 8;
+
+    public const int UIButtonIndent = 600;
 }

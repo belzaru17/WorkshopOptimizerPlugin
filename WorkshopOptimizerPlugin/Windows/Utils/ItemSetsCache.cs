@@ -21,13 +21,24 @@ internal class ItemSetsCache : IItemSetsCache, IUIDataSourceListener
         cachedWorkshopsItemSets = new List<WorkshopsItemSets>[Constants.MaxCycles];
     }
 
+    public void OnOptimizationParameterChange()
+    {
+        Reset(0);
+    }
+
     public void OnDataChange(int cycle)
+    {
+        Reset(cycle);
+    }
+
+    private void Reset(int cycle)
     {
         for (var c = cycle; c < Constants.MaxCycles; c++)
         {
             cachedItemSets[c] = null;
             cachedWorkshopsItemSets[c] = null;
         }
+
     }
 
     private List<ItemSet>?[] cachedItemSets;

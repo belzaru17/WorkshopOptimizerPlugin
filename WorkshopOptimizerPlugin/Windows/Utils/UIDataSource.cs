@@ -8,6 +8,7 @@ namespace WorkshopOptimizerPlugin.Windows.Utils;
 
 internal interface IUIDataSourceListener
 {
+    public void OnOptimizationParameterChange();
     public void OnDataChange(int cycle);
 }
 
@@ -27,6 +28,14 @@ internal class UIDataSource
     {
         var path = Environment.ExpandEnvironmentVariables(JsonFileBaseName);
         return new UIDataSource(DataSource.Load(path));
+    }
+
+    public void OptimizationParameterChanged()
+    {
+        foreach (var listener in listeners)
+        {
+            listener.OnOptimizationParameterChange();
+        }
     }
 
     public void DataChanged(int cycle = 0)

@@ -21,12 +21,12 @@ public class Icons
         this.pluginInterface = pluginInterface;
 
         Settings = LoadIcon("settings_FILL1_wght400_GRAD0_opsz48.png");
-        ResetToDefaults = LoadIcon("undo_FILL1_wght400_GRAD0_opsz48.png");
+        ResetToDefaults = LoadIcon("refresh_FILL1_wght400_GRAD0_opsz48.png");
         ExportData = LoadIcon("content_copy_FILL1_wght400_GRAD0_opsz48.png");
         PopulateData = LoadIcon("cloud_download_FILL1_wght400_GRAD0_opsz48.png");
         ResetData = LoadIcon("delete_forever_FILL1_wght400_GRAD0_opsz48.png");
         SaveData = LoadIcon("save_FILL1_wght400_GRAD0_opsz48.png");
-        ReloadData = LoadIcon("refresh_FILL1_wght400_GRAD0_opsz48.png");
+        ReloadData = LoadIcon("undo_FILL1_wght400_GRAD0_opsz48.png");
     }
 
     public void Dispose()

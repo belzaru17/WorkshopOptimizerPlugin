@@ -38,14 +38,24 @@ internal class WorkshopsTab : ITab
         ImGui.SetNextItemWidth(100);
         ImGui.InputInt("Top-N", ref ifData.mTop, 5);
         ImGui.SameLine();
-        ImGui.Checkbox("Strict Cycles", ref ifData.mStrictCycles);
+        if (ImGui.Checkbox("Strict Cycles", ref ifData.mStrictCycles))
+        {
+            uiDataSource.OptimizationParameterChanged();
+        }
         if (uiDataSource.Dirty)
         {
             ImGui.SameLine();
+            ImGui.Indent(Constants.UIButtonIndent);
             if (UIUtils.ImageButton(icons.SaveData, "Save Data"))
             {
                 uiDataSource.Save();
             }
+            ImGui.SameLine();
+            if (UIUtils.ImageButton(icons.ReloadData, "Reload Data"))
+            {
+                 uiDataSource.Reload();
+            }
+            ImGui.Unindent(Constants.UIButtonIndent);
         }
         ImGui.Spacing();
 

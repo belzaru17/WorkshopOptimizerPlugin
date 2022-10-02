@@ -63,12 +63,15 @@ public class MainWindow : Window, IDisposable
         int cycle = SeasonUtils.GetCycle();
         ImGui.Text($"Season: {uiDataSource.DataSource.SeasonStart:yyyy-MM-dd} - {uiDataSource.DataSource.SeasonStart.AddDays(Constants.MaxCycles):yyyy-MM-dd}. Cycle={cycle + 1}.");
         ImGui.SameLine();
+        showStatus();
+        ImGui.SameLine();
+        var indent = ImGui.GetWindowWidth() - 50;
+        ImGui.Indent(indent);
         if (UIUtils.ImageButton(plugin.Icons.Settings, "Settings"))
         {
             plugin.DrawConfigUI();
         }
-        ImGui.SameLine();
-        showStatus();
+        ImGui.Unindent(indent);
         ImGui.Spacing();
 
         if (ImGui.BeginTabBar("Tabs"))

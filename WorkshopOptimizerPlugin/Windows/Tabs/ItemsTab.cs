@@ -18,6 +18,7 @@ internal class ItemsTab : ITab
     private Icons icons;
 
     private int[] mWhenOveerides;
+    public bool hasWhenOverrides;
 
     public ItemsTab(Configuration configuration, Icons icons, UIDataSource uiDataSource, CommonInterfaceElements ifData)
     {
@@ -26,11 +27,12 @@ internal class ItemsTab : ITab
         this.ifData = ifData;
         this.icons = icons;
 
-        this.mWhenOveerides = new int[Constants.MaxItems];
+        mWhenOveerides = new int[Constants.MaxItems];
         for (var i = 0; i < Constants.MaxItems; i++)
         {
             mWhenOveerides[i] = (int)uiDataSource.WhenOverrides[(uint)i];
         }
+        hasWhenOverrides = false;
     }
 
     public void OnOpen() { }
@@ -43,15 +45,6 @@ internal class ItemsTab : ITab
         var cycle = UIUtils.FixValue(ref ifData.mCycle, 1, 7) - 1;
         ImGui.Text(string.Format("Groove: {0} -> {1}", (cycle == 0) ? 0 : uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle - 1], uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle])); ;
         ImGui.SameLine();
-        if (UIUtils.ImageButton(icons.ResetToDefaults, "Reset to defaults"))
-        {
-            uiDataSource.WhenOverrides.Reset();
-            for (uint i = 0; i < Constants.MaxItems; i++)
-            {
-                mWhenOveerides[i] = (int)uiDataSource.WhenOverrides[i];
-            }
-        }
-        ImGui.Spacing();
         DrawButtons();
         ImGui.Spacing();
 
@@ -94,7 +87,8 @@ internal class ItemsTab : ITab
                 if (ImGui.Combo($"###Item {i}", ref mWhenOveerides[i], WhenUtils.WhenAsStrings, WhenUtils.WhenAsStrings.Length))
                 {
                     uiDataSource.WhenOverrides[i] = (When)mWhenOveerides[i];
-                    uiDataSource.DataChanged();
+                    uiDataSource.OptimizationParameterChanged();
+                    hasWhenOverrides = true;
                 }
             }
             ImGui.EndTable();
@@ -103,6 +97,7 @@ internal class ItemsTab : ITab
 
     unsafe private void DrawButtons()
     {
+        ImGui.Indent(Constants.UIButtonIndent);
         if (IsSameSeason())
         {
             var cycle = SeasonUtils.GetCycle();
@@ -140,12 +135,30 @@ internal class ItemsTab : ITab
                 ImGui.EndPopup();
             }
         }
-        if (configuration.Debug || uiDataSource.Dirty) {
+        if (configuration.Debug) {
             ImGui.SameLine();
             if (UIUtils.ImageButton(icons.ReloadData, "Reload Data"))
             {
                 uiDataSource.Reload();
             }
+        }
+        ImGui.Unindent(Constants.UIButtonIndent);
+        if (hasWhenOverrides)
+        {
+            ImGui.SameLine();
+            var indent = ImGui.GetWindowWidth() - 80;
+            ImGui.Indent(indent);
+            if (UIUtils.ImageButton(icons.ResetToDefaults, "Reset to defaults"))
+            {
+                uiDataSource.WhenOverrides.Reset();
+                for (uint i = 0; i < Constants.MaxItems; i++)
+                {
+                    mWhenOveerides[i] = (int)uiDataSource.WhenOverrides[i];
+                }
+                uiDataSource.OptimizationParameterChanged();
+                hasWhenOverrides = false;
+            }
+            ImGui.Unindent(indent);
         }
     }
 
