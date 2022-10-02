@@ -4,8 +4,6 @@ using Dalamud.Plugin;
 using Dalamud.Interface.Windowing;
 using WorkshopOptimizerPlugin.Windows;
 using Dalamud.Game.Gui;
-using System.IO;
-using ImGuiScene;
 
 namespace WorkshopOptimizerPlugin;
 
