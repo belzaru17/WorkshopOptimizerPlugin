@@ -39,21 +39,18 @@ internal class CombinationsTab : ITab
         ImGui.InputInt("Top-N", ref ifData.mTop, 5);
         ImGui.SameLine();
         ImGui.Checkbox("Strict Cycles", ref ifData.mStrictCycles);
-        if (uiDataSource.Dirty)
-        {
             ImGui.SameLine();
             ImGui.Indent(Constants.UIButtonIndent);
-            if (UIUtils.ImageButton(icons.SaveData, "Save Data"))
-            {
-                uiDataSource.Save();
-            }
-            ImGui.SameLine();
-            if (UIUtils.ImageButton(icons.ReloadData, "Reload Data"))
-            {
-                uiDataSource.Reload();
-            }
-            ImGui.Unindent(Constants.UIButtonIndent);
+        if (UIUtils.ImageButton(icons.SaveData, "Save Data", uiDataSource.Dirty))
+        {
+            uiDataSource.Save();
         }
+        ImGui.SameLine();
+        if (UIUtils.ImageButton(icons.ReloadData, "Reload Data", uiDataSource.Dirty))
+        {
+            uiDataSource.Reload();
+        }
+        ImGui.Unindent(Constants.UIButtonIndent);
         ImGui.Spacing();
 
         if (ImGui.BeginTable("Combinations", 7, ImGuiTableFlags.ScrollY))

@@ -97,69 +97,56 @@ internal class ItemsTab : ITab
 
     unsafe private void DrawButtons()
     {
+        var cycle = SeasonUtils.GetCycle();
+
         ImGui.Indent(Constants.UIButtonIndent);
-        if (IsSameSeason())
+        var manager = ManagerProvider.GetManager();
+        var hasCycleData = uiDataSource.DataSource.DataCollectionTime[cycle] != null;
+        if (UIUtils.ImageButton(icons.PopulateData, "Populate Data", IsSameSeason() && !hasCycleData && manager != null))
         {
-            var cycle = SeasonUtils.GetCycle();
-            if (uiDataSource.DataSource.DataCollectionTime[cycle] == null)
-            {
-                MJIManager* manager = ManagerProvider.GetManager();
-                if (manager != null && UIUtils.ImageButton(icons.PopulateData, "Populate Data"))
-                {
-                    PopulateJsonData(manager);
-                }
-            } else if (UIUtils.ImageButton(icons.ExportData, "Export Data"))
-            {
-                ExportData();
-            }
+            PopulateJsonData(manager);
         }
-        else
+        ImGui.SameLine();
+        if (UIUtils.ImageButton(icons.ResetData, "Reset Data", !IsSameSeason()))
         {
-            if (UIUtils.ImageButton(icons.ResetData, "Reset Data"))
-            {
-                ImGui.OpenPopup("Confirm Reset");
-            }
-            if (ImGui.BeginPopup("Confirm Reset"))
-            {
-                ImGui.Text("Confirm reset data?");
-                if (ImGui.Button("Cancel"))
-                {
-                    ImGui.CloseCurrentPopup();
-                }
-                ImGui.SameLine();
-                if (ImGui.Button("Reset"))
-                {
-                    uiDataSource.Reset();
-                    ImGui.CloseCurrentPopup();
-                }
-                ImGui.EndPopup();
-            }
+            ImGui.OpenPopup("Confirm Reset");
         }
-        if (configuration.Debug) {
+        if (ImGui.BeginPopup("Confirm Reset"))
+        {
+            ImGui.Text("Confirm reset data?");
+            if (ImGui.Button("Cancel"))
+            {
+                ImGui.CloseCurrentPopup();
+            }
             ImGui.SameLine();
-            if (UIUtils.ImageButton(icons.ReloadData, "Reload Data"))
+            if (ImGui.Button("Reset"))
             {
-                uiDataSource.Reload();
+                uiDataSource.Reset();
+                ImGui.CloseCurrentPopup();
             }
+            ImGui.EndPopup();
+        }
+        ImGui.SameLine();
+        if (UIUtils.ImageButton(icons.ExportData, "Export Data", IsSameSeason() && hasCycleData))
+        {
+             ExportData();
         }
         ImGui.Unindent(Constants.UIButtonIndent);
-        if (hasWhenOverrides)
+
+        ImGui.SameLine();
+        var indent = ImGui.GetWindowWidth() - 80;
+        ImGui.Indent(indent);
+        if (UIUtils.ImageButton(icons.ResetToDefaults, "Reset to defaults", hasWhenOverrides))
         {
-            ImGui.SameLine();
-            var indent = ImGui.GetWindowWidth() - 80;
-            ImGui.Indent(indent);
-            if (UIUtils.ImageButton(icons.ResetToDefaults, "Reset to defaults"))
+            uiDataSource.WhenOverrides.Reset();
+            for (uint i = 0; i < Constants.MaxItems; i++)
             {
-                uiDataSource.WhenOverrides.Reset();
-                for (uint i = 0; i < Constants.MaxItems; i++)
-                {
-                    mWhenOveerides[i] = (int)uiDataSource.WhenOverrides[i];
-                }
-                uiDataSource.OptimizationParameterChanged();
-                hasWhenOverrides = false;
+                mWhenOveerides[i] = (int)uiDataSource.WhenOverrides[i];
             }
-            ImGui.Unindent(indent);
+            uiDataSource.OptimizationParameterChanged();
+            hasWhenOverrides = false;
         }
+        ImGui.Unindent(indent);
     }
 
     unsafe private void PopulateJsonData(MJIManager* manager)

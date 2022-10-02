@@ -64,13 +64,6 @@ public class ConfigWindow : Window, IDisposable
             saveConfig = true;
         }
 
-        var debug = configuration.Debug;
-        if (ImGui.Checkbox("Debug", ref debug))
-        {
-            configuration.Debug = debug;
-            saveConfig = true;
-        }
-
         if (saveConfig)
         {
             configuration.Save();

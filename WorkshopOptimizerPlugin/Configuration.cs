@@ -7,9 +7,7 @@ namespace WorkshopOptimizerPlugin;
 [Serializable]
 public class Configuration : IPluginConfiguration
 {
-    public int Version { get; set; } = 1;
-
-    public bool Debug = false;
+    public int Version { get; set; } = 2;
 
     public int DefaultRestCycle1 = 0;
     public int DefaultRestCycle2 = 4;

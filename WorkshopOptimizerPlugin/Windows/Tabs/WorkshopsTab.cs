@@ -42,21 +42,18 @@ internal class WorkshopsTab : ITab
         {
             uiDataSource.OptimizationParameterChanged();
         }
-        if (uiDataSource.Dirty)
+        ImGui.SameLine();
+        ImGui.Indent(Constants.UIButtonIndent);
+        if (UIUtils.ImageButton(icons.SaveData, "Save Data", uiDataSource.Dirty))
         {
-            ImGui.SameLine();
-            ImGui.Indent(Constants.UIButtonIndent);
-            if (UIUtils.ImageButton(icons.SaveData, "Save Data"))
-            {
-                uiDataSource.Save();
-            }
-            ImGui.SameLine();
-            if (UIUtils.ImageButton(icons.ReloadData, "Reload Data"))
-            {
-                 uiDataSource.Reload();
-            }
-            ImGui.Unindent(Constants.UIButtonIndent);
+            uiDataSource.Save();
         }
+        ImGui.SameLine();
+        if (UIUtils.ImageButton(icons.ReloadData, "Reload Data", uiDataSource.Dirty))
+        {
+                uiDataSource.Reload();
+        }
+        ImGui.Unindent(Constants.UIButtonIndent);
         ImGui.Spacing();
 
         if (ImGui.BeginTable("Workshop Combinations", 6, ImGuiTableFlags.ScrollY))

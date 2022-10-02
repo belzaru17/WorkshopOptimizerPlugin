@@ -32,21 +32,18 @@ internal class ProducedTab : ITab
         var cycle = UIUtils.FixValue(ref ifData.mCycle, 1, 7) - 1;
         var startGroove = (cycle == 0) ? new Groove() : uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle - 1];
         ImGui.Text(string.Format("Groove: {0} -> {1}", startGroove, uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle]));
-        if (uiDataSource.Dirty)
+        ImGui.SameLine();
+        ImGui.Indent(Constants.UIButtonIndent);
+        if (UIUtils.ImageButton(icons.SaveData, "Save Data", uiDataSource.Dirty))
         {
-            ImGui.SameLine();
-            ImGui.Indent(Constants.UIButtonIndent);
-            if (UIUtils.ImageButton(icons.SaveData, "Save Data"))
-            {
-                uiDataSource.Save();
-            }
-            ImGui.SameLine();
-            if (UIUtils.ImageButton(icons.ReloadData, "Reload Data"))
-            {
-                uiDataSource.Reload();
-            }
-            ImGui.Unindent(Constants.UIButtonIndent);
+            uiDataSource.Save();
         }
+        ImGui.SameLine();
+        if (UIUtils.ImageButton(icons.ReloadData, "Reload Data", uiDataSource.Dirty))
+        {
+            uiDataSource.Reload();
+        }
+        ImGui.Unindent(Constants.UIButtonIndent);
         ImGui.Spacing();
         DrawProducedTable(cycle, startGroove);
         ImGui.Spacing();

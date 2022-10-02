@@ -12,14 +12,22 @@ internal static class UIUtils
         return value;
     }
 
-    public static bool ImageButton(TextureWrap icon, string tooltip, int size = 17)
+    public static bool ImageButton(TextureWrap icon, string tooltip, bool enabled = true, int size = 17)
     {
+        if (!enabled)
+        {
+            ImGui.BeginDisabled();
+        }
         var pressed = ImGui.ImageButton(icon.ImGuiHandle, new Vector2(size, size));
         if (!pressed && ImGui.IsItemHovered())
         {
             ImGui.BeginTooltip();
             ImGui.Text(tooltip);
             ImGui.EndTooltip();
+        }
+        if (!enabled)
+        {
+            ImGui.EndDisabled();
         }
         return pressed;
     }
