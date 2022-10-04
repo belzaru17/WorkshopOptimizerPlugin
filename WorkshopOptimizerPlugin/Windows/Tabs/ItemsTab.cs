@@ -2,7 +2,6 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Optimizer;
 using WorkshopOptimizerPlugin.Utils;
@@ -17,6 +16,7 @@ internal class ItemsTab : ITab
     private CommonInterfaceElements ifData;
     private Icons icons;
 
+    private int mSetWhen;
     private int[] mWhenOveerides;
     public bool hasWhenOverrides;
 
@@ -45,22 +45,22 @@ internal class ItemsTab : ITab
         var cycle = UIUtils.FixValue(ref ifData.mCycle, 1, 7) - 1;
         ImGui.Text(string.Format("Groove: {0} -> {1}", (cycle == 0) ? 0 : uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle - 1], uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle])); ;
         ImGui.SameLine();
-        DrawButtons();
+        DrawActionsBar();
         ImGui.Spacing();
 
-        if (ImGui.BeginTable("Data", 8, ImGuiTableFlags.ScrollY))
+        if (ImGui.BeginTable("Data", 9, ImGuiTableFlags.ScrollY))
         {
-            ImGui.TableSetupColumn("Item");
-            ImGui.TableSetupColumn("Popularity");
-            ImGui.TableSetupColumn("Supply");
-            ImGui.TableSetupColumn("Demand");
-            ImGui.TableSetupColumn("Cycles");
-            ImGui.TableSetupColumn("Base Value");
-            ImGui.TableSetupColumn("Value");
-            ImGui.TableSetupColumn("When to Use");
+            ImGui.TableSetupColumn("Item", ImGuiTableColumnFlags.WidthFixed, 150);
+            ImGui.TableSetupColumn("Hours", ImGuiTableColumnFlags.WidthFixed, 50);
+            ImGui.TableSetupColumn("Popularity", ImGuiTableColumnFlags.WidthFixed, 100);
+            ImGui.TableSetupColumn("Supply", ImGuiTableColumnFlags.WidthFixed, 100);
+            ImGui.TableSetupColumn("Demand", ImGuiTableColumnFlags.WidthFixed, 100);
+            ImGui.TableSetupColumn("Cycles", ImGuiTableColumnFlags.WidthFixed, 350);
+            ImGui.TableSetupColumn("Base Value", ImGuiTableColumnFlags.WidthFixed, 80);
+            ImGui.TableSetupColumn("Value", ImGuiTableColumnFlags.WidthFixed, 80);
+            ImGui.TableSetupColumn("When to Use", ImGuiTableColumnFlags.WidthFixed, 100);
             ImGui.TableHeadersRow();
 
-            var items = new List<Item>();
             for (uint i = 0; i < Constants.MaxItems; i++)
             {
                 var staticData = ItemStaticData.Get(i);
@@ -70,6 +70,8 @@ internal class ItemsTab : ITab
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.Text(item.Name);
+                ImGui.TableNextColumn();
+                ImGui.Text($"{item.Hours}");
                 ImGui.TableNextColumn();
                 ImGui.Text($"{item.Popularity}");
                 ImGui.TableNextColumn();
@@ -95,7 +97,7 @@ internal class ItemsTab : ITab
         }
     }
 
-    unsafe private void DrawButtons()
+    unsafe private void DrawActionsBar()
     {
         var cycle = SeasonUtils.GetCycle();
 
@@ -134,8 +136,50 @@ internal class ItemsTab : ITab
         ImGui.Unindent(Constants.UIButtonIndent);
 
         ImGui.SameLine();
-        var indent = ImGui.GetWindowWidth() - 80;
+        var indent = 780;
         ImGui.Indent(indent);
+        ImGui.Text("Set ");
+        ImGui.SameLine();
+        ImGui.SetNextItemWidth(100);
+        ImGui.Combo("###SET_TYPE", ref mSetWhen, new string[]{"All", "Common", "Gatherables"}, 3);
+        Func<MaterialSource, bool>[] checkMaterials = {
+            s => true,
+            s => s == MaterialSource.Gatherable || s == MaterialSource.Crop || s == MaterialSource.Dropping,
+            s => s == MaterialSource.Gatherable,
+        };
+        ImGui.SameLine();
+        ImGui.Text(" to ");
+        ImGui.SameLine();
+        ImGui.SetNextItemWidth(100);
+        if (ImGui.BeginCombo("###SET_WHEN", ""))
+        {
+            foreach (When w in new When[] { When.Never, When.Weak, When.Strong, When.Either, When.Always })
+            {
+                if (ImGui.Selectable(w.ToString()))
+                {
+                    for (uint i = 0; i < Constants.MaxItems; i++)
+                    {
+                        var itemData = ItemStaticData.Get(i);
+                        if (!itemData.IsValid()) continue;
+
+                        bool matches = true;
+                        foreach (var materials in itemData.Materials)
+                        {
+                            matches &= checkMaterials[mSetWhen](materials.Material.Source);
+                        }
+                        if (matches)
+                        {
+                            uiDataSource.WhenOverrides[i] = w;
+                            mWhenOveerides[i] = (int)w;
+                        }
+                    }
+                    uiDataSource.OptimizationParameterChanged();
+                    hasWhenOverrides = true;
+                }
+            }
+            ImGui.EndCombo();
+        }
+        ImGui.SameLine();
         if (UIUtils.ImageButton(icons.ResetToDefaults, "Reset to defaults", hasWhenOverrides))
         {
             uiDataSource.WhenOverrides.Reset();
