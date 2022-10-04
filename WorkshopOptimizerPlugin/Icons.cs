@@ -33,6 +33,11 @@ public class Icons
     {
         Settings.Dispose();
         ResetToDefaults.Dispose();
+        ExportData.Dispose();
+        PopulateData.Dispose();
+        ResetData.Dispose();
+        SaveData.Dispose();
+        ReloadData.Dispose();
     }
 
     private TextureWrap LoadIcon(string basename)
