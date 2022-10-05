@@ -26,7 +26,7 @@ internal class UIDataSource
 
     public static UIDataSource Load()
     {
-        var path = Environment.ExpandEnvironmentVariables(JsonFileBaseName);
+        var path = Environment.ExpandEnvironmentVariables(JsonFileName);
         return new UIDataSource(DataSource.Load(path));
     }
 
@@ -60,14 +60,14 @@ internal class UIDataSource
 
     public void Reload()
     {
-        var path = Environment.ExpandEnvironmentVariables(JsonFileBaseName);
+        var path = Environment.ExpandEnvironmentVariables(JsonFileName);
         reset(DataSource.Load(path));
     }
 
     public bool Save()
     {
         Dirty = false;
-        var path = Environment.ExpandEnvironmentVariables(JsonFileBaseName);
+        var path = Environment.ExpandEnvironmentVariables(JsonFileName);
         return DataSource.Save(path);
     }
 
@@ -87,7 +87,7 @@ internal class UIDataSource
         Dirty = false;
     }
 
-    private const string JsonFileBaseName = @"%AppData%\\WorkshopOptimizerPlugin";
+    private const string JsonFileName = @"%AppData%\\WorkshopOptimizerPlugin\\WorkshopOptimizerPlugin.json";
 
     private DataSource dataSource;
     private WhenOverrides whenOverrides;

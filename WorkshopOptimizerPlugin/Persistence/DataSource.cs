@@ -20,11 +20,24 @@ internal class DataSource
 
     public ProducedItemsAdaptor ProducedItems { get; init; }
 
-    public bool Save(string basename)
+    public bool Save(string filename)
     {
         try
         {
-            File.Copy(basename + JsonExtension, basename + BackupExtension, true);
+            var dirname = Path.GetDirectoryName(filename);
+            if (dirname != null)
+            {
+                Directory.CreateDirectory(dirname);
+            }
+        }
+        catch { }
+        try
+        {
+            var bakname = Path.ChangeExtension(filename, "bak");
+            if (bakname != null)
+            {
+                File.Copy(filename, bakname, true);
+            }
         }
         catch { }
         try
@@ -36,7 +49,7 @@ internal class DataSource
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                 },
             });
-            File.WriteAllText(basename + JsonExtension, json);
+            File.WriteAllText(filename, json);
         }
         catch
         {
@@ -45,11 +58,11 @@ internal class DataSource
         return true;
     }
 
-    public static DataSource Load(string basename)
+    public static DataSource Load(string filename)
     {
         try
         {
-            var json = File.ReadAllText(basename + JsonExtension);
+            var json = File.ReadAllText(filename);
             var data = JsonSerializer.Deserialize<PersistentData>(json, new JsonSerializerOptions()
             {
                 Converters = {
@@ -73,7 +86,4 @@ internal class DataSource
     }
 
     private PersistentData data;
-
-    static private readonly string JsonExtension = ".json";
-    static private readonly string BackupExtension = ".bak";
 }
