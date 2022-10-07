@@ -32,7 +32,7 @@ internal class PatternsTab : ITab
         ImGui.Text(string.Format("Groove: {0} -> {1}", startGroove, uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle])); ;
         ImGui.Spacing();
 
-        if (ImGui.BeginTable("Patterns", 6, ImGuiTableFlags.ScrollY))
+        if (ImGui.BeginTable("Patterns", 6, ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg))
         {
             ImGui.TableSetupColumn("Item", ImGuiTableColumnFlags.WidthFixed, 200);
             ImGui.TableSetupColumn("Cycle", ImGuiTableColumnFlags.WidthFixed, 80);

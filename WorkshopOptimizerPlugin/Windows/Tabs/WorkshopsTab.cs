@@ -1,5 +1,6 @@
 using ImGuiNET;
 using System.Linq;
+using System.Numerics;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Optimizer;
 using WorkshopOptimizerPlugin.Utils;
@@ -88,7 +89,7 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
         if (cWorkshopsItemSets == null)
         {
             ImGui.Text("Calculating, please wait...");
-        } else if (ImGui.BeginTable("Workshop Combinations", 6, ImGuiTableFlags.ScrollY))
+        } else if (ImGui.BeginTable("Workshop Combinations", 6, ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg))
         {
             ImGui.TableSetupColumn("Items", ImGuiTableColumnFlags.WidthFixed, 400);
             ImGui.TableSetupColumn("Patterns", ImGuiTableColumnFlags.WidthFixed, 200);

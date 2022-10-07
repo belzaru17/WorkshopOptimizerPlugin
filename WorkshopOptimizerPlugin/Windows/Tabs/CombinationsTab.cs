@@ -56,7 +56,7 @@ internal class CombinationsTab : ITab
         ImGui.Unindent(Constants.UIButtonIndent);
         ImGui.Spacing();
 
-        if (ImGui.BeginTable("Combinations", 7, ImGuiTableFlags.ScrollY))
+        if (ImGui.BeginTable("Combinations", 7, ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg))
         {
             ImGui.TableSetupColumn("Items", ImGuiTableColumnFlags.WidthFixed, 400);
             ImGui.TableSetupColumn("Patterns", ImGuiTableColumnFlags.WidthFixed, 150);

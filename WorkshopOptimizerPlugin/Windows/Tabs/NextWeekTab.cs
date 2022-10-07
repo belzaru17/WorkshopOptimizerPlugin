@@ -22,7 +22,7 @@ internal class NextWeekTab : ITab
     public void Draw()
     {
         ImGui.Spacing();
-        if (ImGui.BeginTable("Next Week's Items", 4))
+        if (ImGui.BeginTable("Next Week's Items", 4, ImGuiTableFlags.RowBg))
         {
             ImGui.TableSetupColumn("Item");
             ImGui.TableSetupColumn("Next Week Popularity");

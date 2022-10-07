@@ -55,9 +55,9 @@ internal class ProducedTab : ITab
         if (!ImGui.BeginTable("Produced", 4)) { return; }
 
         ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthFixed, 200);
-        ImGui.TableSetupColumn("Workshop 1", ImGuiTableColumnFlags.WidthFixed, 200);
-        ImGui.TableSetupColumn("Workshop 2", ImGuiTableColumnFlags.WidthFixed, 200);
-        ImGui.TableSetupColumn("Workshop 3", ImGuiTableColumnFlags.WidthFixed, 200);
+        ImGui.TableSetupColumn("Workshop 1", ImGuiTableColumnFlags.WidthFixed, 250);
+        ImGui.TableSetupColumn("Workshop 2", ImGuiTableColumnFlags.WidthFixed, 250);
+        ImGui.TableSetupColumn("Workshop 3", ImGuiTableColumnFlags.WidthFixed, 250);
         ImGui.TableHeadersRow();
 
         var hours = new int[Constants.MaxWorkshops];
@@ -84,7 +84,7 @@ internal class ProducedTab : ITab
                 ImGui.TableSetColumnIndex(w + 1);
                 ImGui.SetNextItemWidth(200);
 
-                if (ImGui.BeginCombo($"{w} {step}", thisItem?.Name ?? ""))
+                if (ImGui.BeginCombo($"###{w} {step}", thisItem?.Name ?? ""))
                 {
                     if (ImGui.Selectable(""))
                     {
@@ -136,8 +136,11 @@ internal class ProducedTab : ITab
                 {
                     hours[w] += thisItem.Hours;
                     values[w] += thisItem.EffectiveValue(cycle) * ItemSet.ItemsPerStep(step);
-                }
 
+                    var pattern = thisItem.FindPattern(cycle);
+                    ImGui.SameLine();
+                    ImGui.Text(pattern?.Name ?? " * ");
+                }
             }
         }
 

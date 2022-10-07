@@ -48,7 +48,7 @@ internal class ItemsTab : ITab
         DrawActionsBar();
         ImGui.Spacing();
 
-        if (ImGui.BeginTable("Data", 9, ImGuiTableFlags.ScrollY))
+        if (ImGui.BeginTable("Data", 9, ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg))
         {
             ImGui.TableSetupColumn("Item", ImGuiTableColumnFlags.WidthFixed, 150);
             ImGui.TableSetupColumn("Hours", ImGuiTableColumnFlags.WidthFixed, 50);
