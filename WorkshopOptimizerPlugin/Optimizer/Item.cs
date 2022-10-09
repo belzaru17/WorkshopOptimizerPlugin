@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Persistence;
@@ -73,22 +74,41 @@ internal class Item
     {
         var produced = AccumulatedProduced(cycle) + add;
         var patterns = FindPatterns(cycle);
-        if (patterns.Count == 0) { return 0.0; }
 
         var sup_mult = 0.0;
         var n = 0;
-        foreach (var pattern in patterns)
-        {
+        Action<Supply> UpdateFn = s => {
             if (produced == 0)
             {
-                sup_mult += SupplyUtils.Multiplier(pattern.SupplyPattern[cycle]);
+                sup_mult += SupplyUtils.Multiplier(s);
                 n++;
-            } else
+            }
+            else
             {
-                var adjusted = SupplyUtils.Adjust(pattern.SupplyPattern[cycle], produced);
+                var adjusted = SupplyUtils.Adjust(s, produced);
                 sup_mult += SupplyUtils.Multiplier(adjusted.Item1);
                 sup_mult += SupplyUtils.Multiplier(adjusted.Item2);
                 n += 2;
+            }
+        };
+
+        if (patterns.Count == 0)
+        {
+            if (Supply[cycle] == Data.Supply.Unknown)
+            {
+                UpdateFn(Data.Supply.Sufficient);
+            }
+            else
+            {
+                UpdateFn(Supply[cycle]);
+            }
+        }
+        else
+        {
+
+            foreach (var pattern in patterns)
+            {
+                UpdateFn(pattern.SupplyPattern[cycle]);
             }
         }
 

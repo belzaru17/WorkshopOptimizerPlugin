@@ -9,7 +9,7 @@ internal class SupplyDemandPattern
     public readonly Supply[] SupplyPattern;
     public readonly Demand[] DemandPattern;
 
-    SupplyDemandPattern(int cycle, bool strong, Supply[] supplyPattern, Demand[] demandPattern)
+    public SupplyDemandPattern(int cycle, bool strong, Supply[] supplyPattern, Demand[] demandPattern)
     {
         Cycle = cycle;
         Strong = strong;
@@ -17,13 +17,7 @@ internal class SupplyDemandPattern
         DemandPattern = demandPattern;
     }
 
-    public string Name
-    {
-        get
-        {
-            return "C" + (Cycle + 1) + (Strong ? "S" : "W");
-        }
-    }
+    public string Name => "C" + (Cycle + 1) + (Strong ? "S" : "W");
 
     public static readonly SupplyDemandPattern[] PatternsTable = {
         new SupplyDemandPattern(1, false,
