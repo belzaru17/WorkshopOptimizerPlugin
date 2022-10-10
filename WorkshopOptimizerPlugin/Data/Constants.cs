@@ -14,7 +14,5 @@ internal static class Constants
 
     public const int ResetUTCHour = 8;
 
-    public const int UIButtonIndent = 600;
-
     public const int MaxComputeItems = 100;
 }

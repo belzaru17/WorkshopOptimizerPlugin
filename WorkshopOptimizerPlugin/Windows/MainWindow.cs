@@ -1,4 +1,5 @@
 using Dalamud.Interface.Windowing;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ public class MainWindow : Window, IDisposable
             new Tuple<string, ITab>("Patterns", new PatternsTab(uiDataSource, commonInterfaceElements)),
             new Tuple<string, ITab>("Combinations", new CombinationsTab(plugin.Configuration, plugin.Icons, uiDataSource, commonInterfaceElements, itemSetsCache)),
             new Tuple<string, ITab>("Workshops", new WorkshopsTab(plugin.Configuration, plugin.Icons, uiDataSource, commonInterfaceElements, itemSetsCache)),
-            new Tuple<string, ITab>("Produced", new ProducedTab(plugin.Icons, uiDataSource, commonInterfaceElements)),
+            new Tuple<string, ITab>("Produced", new ProducedTab(uiDataSource, commonInterfaceElements)),
             new Tuple<string, ITab>("Next Week", new NextWeekTab(uiDataSource)),
         };
     }
@@ -63,15 +64,9 @@ public class MainWindow : Window, IDisposable
         int cycle = SeasonUtils.GetCycle();
         ImGui.Text($"Season: {uiDataSource.DataSource.SeasonStart:yyyy-MM-dd} - {uiDataSource.DataSource.SeasonStart.AddDays(Constants.MaxCycles):yyyy-MM-dd}. Cycle={cycle + 1}.");
         ImGui.SameLine();
-        showStatus();
+        ShowStatus();
         ImGui.SameLine();
-        var indent = ImGui.GetWindowWidth() - 50;
-        ImGui.Indent(indent);
-        if (UIUtils.ImageButton(plugin.Icons.Settings, "Settings"))
-        {
-            plugin.DrawConfigUI();
-        }
-        ImGui.Unindent(indent);
+        DrawButtons();
         ImGui.Spacing();
 
         if (ImGui.BeginTabBar("Tabs"))
@@ -88,7 +83,85 @@ public class MainWindow : Window, IDisposable
         }
     }
 
-    unsafe private void showStatus()
+    private unsafe void DrawButtons()
+    {
+        var manager = ManagerProvider.GetManager();
+        var cycle = SeasonUtils.GetCycle();
+        var hasCycleData = IsSameSeason() && (uiDataSource.DataSource.DataCollectionTime[cycle] != null);
+        var isPreviousSeason = SeasonUtils.IsPreviousSeason(uiDataSource.DataSource.SeasonStart);
+
+        var indent = ImGui.GetWindowWidth() - 175;
+        ImGui.Indent(indent);
+        if (UIUtils.ImageButton((IsSameSeason() || isPreviousSeason) ? plugin.Icons.PopulateData : plugin.Icons.ResetData, "Populate Data", !hasCycleData && manager != null))
+        {
+            if (!IsSameSeason())
+            {
+                if (isPreviousSeason)
+                {
+                    uiDataSource.NextWeek();
+                }
+                else
+                {
+                    uiDataSource.Reset();
+                }
+            }
+            PopulateJsonData(manager);
+        }
+        ImGui.SameLine();
+        if (UIUtils.ImageButton(plugin.Icons.SaveData, "Save Data", uiDataSource.Dirty))
+        {
+            uiDataSource.Save();
+        }
+        ImGui.SameLine();
+#if DEBUG
+        var enable_reload = true;
+#else
+        var enable_reload = uiDataSource.Dirty;
+#endif
+        if (UIUtils.ImageButton(plugin.Icons.ReloadData, "Reload Data", enable_reload))
+        {
+            uiDataSource.Reload();
+        }
+        ImGui.SameLine();
+        if (UIUtils.ImageButton(plugin.Icons.ExportData, "Export Data", hasCycleData))
+        {
+            ExportData();
+        }
+        ImGui.SameLine();
+        if (UIUtils.ImageButton(plugin.Icons.Settings, "Settings"))
+        {
+            plugin.DrawConfigUI();
+        }
+        ImGui.Unindent(indent);
+
+#if DEBUG
+        ImGui.SameLine();
+        indent = ImGui.GetWindowWidth() - 210;
+        ImGui.Indent(indent);
+        if (UIUtils.ImageButton(plugin.Icons.ResetData, "Reset Data"))
+        {
+            ImGui.OpenPopup("Confirm Reset");
+        }
+        if (ImGui.BeginPopup("Confirm Reset"))
+        {
+            ImGui.Text("Confirm reset data?");
+            if (ImGui.Button("Cancel"))
+            {
+                ImGui.CloseCurrentPopup();
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Reset"))
+            {
+                uiDataSource.Reset();
+                ImGui.CloseCurrentPopup();
+            }
+            ImGui.EndPopup();
+        }
+        ImGui.Unindent(indent);
+#endif
+    }
+
+    unsafe private void ShowStatus()
     {
         if (ManagerProvider.GetManager() == null)
         {
@@ -101,4 +174,52 @@ public class MainWindow : Window, IDisposable
             ImGui.Text("");
         }
     }
+
+    unsafe private void PopulateJsonData(MJIManager* manager)
+    {
+        byte popIndex = manager->CurrentPopularity;
+        byte nextPopIndex = manager->NextPopularity;
+        var cycle = SeasonUtils.GetCycle();
+        for (uint i = 0; i < Constants.MaxItems; i++)
+        {
+            var pop = PopularityTable.GetItemPopularity(popIndex, i);
+            if (pop == Popularity.Unknown) continue;
+
+            var item = uiDataSource.DataSource.DynamicData[(int)i];
+            item.Popularity = pop;
+            item.NextPopularity = PopularityTable.GetItemPopularity(nextPopIndex, i);
+            item.Supply[cycle] = SupplyUtils.FromFFXIV(manager->GetSupplyForCraftwork(i));
+            item.Demand[cycle] = DemandUtils.FromFFXIV(manager->GetDemandShiftForCraftwork(i));
+        }
+        uiDataSource.DataSource.DataCollectionTime[cycle] = DateTime.UtcNow;
+        uiDataSource.DataChanged(cycle);
+        uiDataSource.Save();
+    }
+
+    unsafe private void ExportData()
+    {
+        var s = "# item,popularity,supply1,demand1,supply2,demand2,supply3,demand3,supply4,demand4,supply4,demand4,supply6,demand6,supply7,demand7\n";
+        for (uint i = 0; i < Constants.MaxItems; i++)
+        {
+            var staticData = ItemStaticData.Get(i);
+            if (!staticData.IsValid()) continue;
+
+            var item = uiDataSource.ItemCache[staticData];
+            if (item.Popularity == Popularity.Unknown) continue;
+
+            s += $"{item.Name},{item.Popularity}";
+            for (int c = 0; c < Constants.MaxCycles; c++)
+            {
+                s += $",{item.Supply[c]},{item.Demand[c]}";
+            }
+            s += "\n";
+        }
+        Clipboard.CopyTextToClipboard(s);
+    }
+
+    private bool IsSameSeason()
+    {
+        return SeasonUtils.IsSameSeason(uiDataSource.DataSource.SeasonStart);
+    }
+
 }

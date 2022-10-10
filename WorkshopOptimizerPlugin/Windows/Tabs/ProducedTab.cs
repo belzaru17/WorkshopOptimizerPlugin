@@ -1,6 +1,5 @@
 using ImGuiNET;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Optimizer;
@@ -11,13 +10,11 @@ namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
 internal class ProducedTab : ITab
 {
-    private readonly Icons icons;
     private readonly UIDataSource uiDataSource;
     private CommonInterfaceElements ifData;
 
-    public ProducedTab(Icons icons, UIDataSource uiDataSource, CommonInterfaceElements ifData)
+    public ProducedTab(UIDataSource uiDataSource, CommonInterfaceElements ifData)
     {
-        this.icons = icons;
         this.uiDataSource = uiDataSource;
         this.ifData = ifData;
     }
@@ -32,18 +29,6 @@ internal class ProducedTab : ITab
         var cycle = UIUtils.FixValue(ref ifData.mCycle, 1, 7) - 1;
         var startGroove = (cycle == 0) ? new Groove() : uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle - 1];
         ImGui.Text(string.Format("Groove: {0} -> {1}", startGroove, uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle]));
-        ImGui.SameLine();
-        ImGui.Indent(Constants.UIButtonIndent);
-        if (UIUtils.ImageButton(icons.SaveData, "Save Data", uiDataSource.Dirty))
-        {
-            uiDataSource.Save();
-        }
-        ImGui.SameLine();
-        if (UIUtils.ImageButton(icons.ReloadData, "Reload Data", uiDataSource.Dirty))
-        {
-            uiDataSource.Reload();
-        }
-        ImGui.Unindent(Constants.UIButtonIndent);
         ImGui.Spacing();
         DrawProducedTable(cycle, startGroove);
         ImGui.Spacing();

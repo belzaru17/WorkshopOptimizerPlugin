@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 
 namespace WorkshopOptimizerPlugin.Data;
 
@@ -36,4 +37,39 @@ internal static class SeasonUtils
         return DateTime.UtcNow < seasonStart.AddDays(Constants.MaxCycles);
     }
 
+    public static bool IsPreviousSeason(DateTime previousSeasonStart)
+    {
+        return SeasonStart().Subtract(previousSeasonStart).Days <= Constants.MaxCycles;
+    }
+
+    public static DateTime SeasonStart()
+    {
+        var cycleStart = DateTime.UtcNow;
+
+        if (cycleStart.Hour >= Constants.ResetUTCHour)
+        {
+            cycleStart = new DateTime(cycleStart.Year, cycleStart.Month, cycleStart.Day).AddHours(Constants.ResetUTCHour);
+        }
+        else
+        {
+            cycleStart = new DateTime(cycleStart.Year, cycleStart.Month, cycleStart.Day - 1).AddHours(Constants.ResetUTCHour);
+        }
+
+        switch (cycleStart.DayOfWeek)
+        {
+            case DayOfWeek.Wednesday:
+                return cycleStart.AddDays(-1);
+            case DayOfWeek.Thursday:
+                return cycleStart.AddDays(-2);
+            case DayOfWeek.Friday:
+                return cycleStart.AddDays(-3);
+            case DayOfWeek.Saturday:
+                return cycleStart.AddDays(-4);
+            case DayOfWeek.Sunday:
+                return cycleStart.AddDays(-5);
+            case DayOfWeek.Monday:
+                return cycleStart.AddDays(-6);
+        }
+        return cycleStart;
+    }
 }

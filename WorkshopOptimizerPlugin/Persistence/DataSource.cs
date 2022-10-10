@@ -12,13 +12,19 @@ internal class DataSource
 
     public uint Version => data.Version;
 
-    public DateTime SeasonStart => data.SeasonStart;
+    public DateTime SeasonStart => data.CurrentSeason.SeasonStart;
 
-    public DateTime?[] DataCollectionTime => data.DataCollectionTime;
+    public DateTime?[] DataCollectionTime => data.CurrentSeason.DataCollectionTime;
 
     public DynamicDataAdaptor DynamicData { get; init; }
 
     public ProducedItemsAdaptor ProducedItems { get; init; }
+
+    public void NextWeek()
+    {
+        data.PreviousSeason = data.CurrentSeason;
+        data.CurrentSeason = new();
+    }
 
     public bool Save(string filename)
     {
@@ -81,8 +87,8 @@ internal class DataSource
     private DataSource(PersistentData data)
     {
         this.data = data;
-        DynamicData = new DynamicDataAdaptor(data);
-        ProducedItems = new ProducedItemsAdaptor(data);
+        DynamicData = new DynamicDataAdaptor(data.CurrentSeason);
+        ProducedItems = new ProducedItemsAdaptor(data.CurrentSeason);
     }
 
     private PersistentData data;

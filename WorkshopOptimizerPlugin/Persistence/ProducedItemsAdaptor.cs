@@ -5,7 +5,7 @@ namespace WorkshopOptimizerPlugin.Persistence;
 
 internal class ProducedItemsAdaptor
 {
-    public ProducedItemsAdaptor(PersistentData data)
+    public ProducedItemsAdaptor(PersistentSeasonData data)
     {
         this.data = data;
 
@@ -79,6 +79,6 @@ internal class ProducedItemsAdaptor
         }
     }
 
-    private PersistentData data;
+    private PersistentSeasonData data;
     private int[,] itemsByCycle;
 }

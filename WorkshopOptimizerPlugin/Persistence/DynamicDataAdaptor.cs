@@ -5,7 +5,7 @@ namespace WorkshopOptimizerPlugin.Persistence;
 
 internal class DynamicDataAdaptor
 {
-    public DynamicDataAdaptor(PersistentData data)
+    public DynamicDataAdaptor(PersistentSeasonData data)
     {
         this.itemData = new ItemDynamicData[Constants.MaxItems];
         foreach (var i in data.ItemData)

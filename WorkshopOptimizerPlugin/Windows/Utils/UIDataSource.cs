@@ -58,6 +58,12 @@ internal class UIDataSource
         reset(new DataSource());
     }
 
+    public void NextWeek()
+    {
+        dataSource.NextWeek();
+        reset(dataSource);
+    }
+
     public void Reload()
     {
         var path = Environment.ExpandEnvironmentVariables(JsonFileName);

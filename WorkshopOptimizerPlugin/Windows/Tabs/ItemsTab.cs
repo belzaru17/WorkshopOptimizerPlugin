@@ -1,9 +1,6 @@
-using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
 using System;
-using System.Collections.Generic;
 using WorkshopOptimizerPlugin.Data;
-using WorkshopOptimizerPlugin.Optimizer;
 using WorkshopOptimizerPlugin.Utils;
 using WorkshopOptimizerPlugin.Windows.Utils;
 
@@ -97,45 +94,8 @@ internal class ItemsTab : ITab
         }
     }
 
-    unsafe private void DrawActionsBar()
+    private void DrawActionsBar()
     {
-        var cycle = SeasonUtils.GetCycle();
-
-        ImGui.Indent(Constants.UIButtonIndent);
-        var manager = ManagerProvider.GetManager();
-        var hasCycleData = uiDataSource.DataSource.DataCollectionTime[cycle] != null;
-        if (UIUtils.ImageButton(icons.PopulateData, "Populate Data", IsSameSeason() && !hasCycleData && manager != null))
-        {
-            PopulateJsonData(manager);
-        }
-        ImGui.SameLine();
-        if (UIUtils.ImageButton(icons.ResetData, "Reset Data", !IsSameSeason()))
-        {
-            ImGui.OpenPopup("Confirm Reset");
-        }
-        if (ImGui.BeginPopup("Confirm Reset"))
-        {
-            ImGui.Text("Confirm reset data?");
-            if (ImGui.Button("Cancel"))
-            {
-                ImGui.CloseCurrentPopup();
-            }
-            ImGui.SameLine();
-            if (ImGui.Button("Reset"))
-            {
-                uiDataSource.Reset();
-                ImGui.CloseCurrentPopup();
-            }
-            ImGui.EndPopup();
-        }
-        ImGui.SameLine();
-        if (UIUtils.ImageButton(icons.ExportData, "Export Data", IsSameSeason() && hasCycleData))
-        {
-             ExportData();
-        }
-        ImGui.Unindent(Constants.UIButtonIndent);
-
-        ImGui.SameLine();
         var indent = 780;
         ImGui.Indent(indent);
         ImGui.Text("Set ");
@@ -191,52 +151,5 @@ internal class ItemsTab : ITab
             hasWhenOverrides = false;
         }
         ImGui.Unindent(indent);
-    }
-
-    unsafe private void PopulateJsonData(MJIManager* manager)
-    {
-        byte popIndex = manager->CurrentPopularity;
-        byte nextPopIndex = manager->NextPopularity;
-        var cycle = SeasonUtils.GetCycle();
-        for (uint i = 0; i < Constants.MaxItems; i++)
-        {
-            var pop = PopularityTable.GetItemPopularity(popIndex, i);
-            if (pop == Popularity.Unknown) continue;
-
-            var item = uiDataSource.DataSource.DynamicData[(int)i];
-            item.Popularity = pop;
-            item.NextPopularity = PopularityTable.GetItemPopularity(nextPopIndex, i);
-            item.Supply[cycle] = SupplyUtils.FromFFXIV(manager->GetSupplyForCraftwork(i));
-            item.Demand[cycle] = DemandUtils.FromFFXIV(manager->GetDemandShiftForCraftwork(i));
-        }
-        uiDataSource.DataSource.DataCollectionTime[cycle] = DateTime.UtcNow;
-        uiDataSource.DataChanged(cycle);
-        uiDataSource.Save();
-    }
-
-    unsafe private void ExportData()
-    {
-        var s = "# item,popularity,supply1,demand1,supply2,demand2,supply3,demand3,supply4,demand4,supply4,demand4,supply6,demand6,supply7,demand7\n";
-        for (uint i = 0; i < Constants.MaxItems; i++)
-        {
-            var staticData = ItemStaticData.Get(i);
-            if (!staticData.IsValid()) continue;
-
-            var item = uiDataSource.ItemCache[staticData];
-            if (item.Popularity == Popularity.Unknown) continue;
-
-            s += $"{item.Name},{item.Popularity}";
-            for (int c = 0; c < Constants.MaxCycles; c++)
-            {
-                s += $",{item.Supply[c]},{item.Demand[c]}";
-            }
-            s += "\n";
-        }
-        Clipboard.CopyTextToClipboard(s);
-    }
-
-    private bool IsSameSeason()
-    {
-        return SeasonUtils.IsSameSeason(uiDataSource.DataSource.SeasonStart);
     }
 }

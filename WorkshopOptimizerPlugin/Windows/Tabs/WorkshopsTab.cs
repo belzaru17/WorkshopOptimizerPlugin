@@ -60,18 +60,6 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
         {
             uiDataSource.OptimizationParameterChanged();
         }
-        ImGui.SameLine();
-        ImGui.Indent(Constants.UIButtonIndent);
-        if (UIUtils.ImageButton(icons.SaveData, "Save Data", uiDataSource.Dirty))
-        {
-            uiDataSource.Save();
-        }
-        ImGui.SameLine();
-        if (UIUtils.ImageButton(icons.ReloadData, "Reload Data", uiDataSource.Dirty))
-        {
-                uiDataSource.Reload();
-        }
-        ImGui.Unindent(Constants.UIButtonIndent);
         ImGui.Spacing();
 
         var optimizer = optimizers[cycle];
