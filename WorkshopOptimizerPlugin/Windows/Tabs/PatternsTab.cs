@@ -24,12 +24,9 @@ internal class PatternsTab : ITab
 
     public void Draw()
     {
-        ImGui.SetNextItemWidth(100);
-        ImGui.InputInt("Cycle", ref ifData.mCycle);
-        ImGui.SameLine();
-        var cycle = UIUtils.FixValue(ref ifData.mCycle, 1, 7) - 1;
-        var startGroove = (cycle == 0) ? new Groove() : uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle - 1];
-        ImGui.Text(string.Format("Groove: {0} -> {1}", startGroove, uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle])); ;
+        ifData.DrawBasicControls(uiDataSource);
+        var cycle = ifData.Cycle;
+        var startGroove = ifData.GetStartGroove(uiDataSource, cycle);
         ImGui.Spacing();
 
         if (ImGui.BeginTable("Patterns", 6, ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg))

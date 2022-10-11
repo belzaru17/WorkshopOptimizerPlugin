@@ -46,26 +46,17 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
 
     public void Draw()
     {
-        ImGui.SetNextItemWidth(100);
-        ImGui.InputInt("Cycle", ref ifData.mCycle);
+        ifData.DrawBasicControls(uiDataSource);
+        var cycle = ifData.Cycle;
+        var startGroove = ifData.GetStartGroove(uiDataSource, cycle);
         ImGui.SameLine();
-        var cycle = UIUtils.FixValue(ref ifData.mCycle, 1, 7) - 1;
-        var startGroove = (cycle == 0) ? new Groove() : uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle - 1];
-        ImGui.Text(string.Format("Groove: {0} -> {1}", startGroove, uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle])); ;
-        ImGui.SameLine();
-        ImGui.SetNextItemWidth(100);
-        ImGui.InputInt("Top-N", ref ifData.mTop, 5);
-        ImGui.SameLine();
-        if (ImGui.Checkbox("Strict Cycles", ref ifData.mStrictCycles))
-        {
-            uiDataSource.OptimizationParameterChanged();
-        }
+        ifData.DrawFilteringControls(uiDataSource);
         ImGui.Spacing();
 
         var optimizer = optimizers[cycle];
         if (optimizer == null)
         {
-            var options = new OptimizerOptions(configuration, ifData.mStrictCycles? Strictness.AllowExactCycle : (Strictness.AllowExactCycle | Strictness.AllowRestCycle | Strictness.AllowEarlierCycle));
+            var options = new OptimizerOptions(configuration, ifData.StrictCycles? Strictness.AllowExactCycle : (Strictness.AllowExactCycle | Strictness.AllowRestCycle | Strictness.AllowEarlierCycle));
             optimizers[cycle] = optimizer = new Optimizer.Optimizer(uiDataSource.ItemCache, cycle, startGroove, options);
 
         }
@@ -87,7 +78,7 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
             ImGui.TableSetupColumn("Set", ImGuiTableColumnFlags.WidthFixed, 200);
             ImGui.TableHeadersRow();
 
-            var top = UIUtils.FixValue(ref ifData.mTop, 1, 2000);
+            var top = ifData.Top;
             foreach (var workshopsItemSets in cWorkshopsItemSets)
             {
                 if (top-- == 0) { break; }

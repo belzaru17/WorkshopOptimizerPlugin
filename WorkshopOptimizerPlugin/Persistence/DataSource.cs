@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -16,14 +17,15 @@ internal class DataSource
 
     public DateTime?[] DataCollectionTime => data.CurrentSeason.DataCollectionTime;
 
-    public DynamicDataAdaptor DynamicData { get; init; }
+    public DynamicDataAdaptor DynamicData { get; private set; }
 
-    public ProducedItemsAdaptor ProducedItems { get; init; }
+    public ProducedItemsAdaptor ProducedItems { get; private set; }
 
     public void NextWeek()
     {
         data.PreviousSeason = data.CurrentSeason;
         data.CurrentSeason = new();
+        Reset();
     }
 
     public bool Save(string filename)
@@ -87,6 +89,12 @@ internal class DataSource
     private DataSource(PersistentData data)
     {
         this.data = data;
+        Reset();
+    }
+
+    [MemberNotNull(nameof(DynamicData), nameof(ProducedItems))]
+    private void Reset()
+    {
         DynamicData = new DynamicDataAdaptor(data.CurrentSeason);
         ProducedItems = new ProducedItemsAdaptor(data.CurrentSeason);
     }

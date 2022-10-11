@@ -39,7 +39,7 @@ public class MainWindow : Window, IDisposable
 
         tabs = new()
         {
-            new Tuple<string, ITab>("Items", new ItemsTab(plugin.Configuration, plugin.Icons, uiDataSource, commonInterfaceElements)),
+            new Tuple<string, ITab>("Items", new ItemsTab(plugin.Icons, uiDataSource, commonInterfaceElements)),
             new Tuple<string, ITab>("Patterns", new PatternsTab(uiDataSource, commonInterfaceElements)),
             new Tuple<string, ITab>("Combinations", new CombinationsTab(plugin.Configuration, plugin.Icons, uiDataSource, commonInterfaceElements, itemSetsCache)),
             new Tuple<string, ITab>("Workshops", new WorkshopsTab(plugin.Configuration, plugin.Icons, uiDataSource, commonInterfaceElements, itemSetsCache)),
@@ -56,6 +56,15 @@ public class MainWindow : Window, IDisposable
         foreach (var tab in tabs)
         {
             tab.Item2.OnOpen();
+        }
+    }
+
+    public override void OnClose()
+    {
+        base.OnClose();
+        if (uiDataSource.Dirty)
+        {
+            uiDataSource.Save();
         }
     }
 

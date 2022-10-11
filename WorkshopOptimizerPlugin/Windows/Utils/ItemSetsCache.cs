@@ -38,7 +38,6 @@ internal class ItemSetsCache : IItemSetsCache, IUIDataSourceListener
             cachedItemSets[c] = null;
             cachedWorkshopsItemSets[c] = null;
         }
-
     }
 
     private List<ItemSet>?[] cachedItemSets;

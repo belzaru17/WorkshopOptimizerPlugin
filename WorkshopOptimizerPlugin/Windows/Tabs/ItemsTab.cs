@@ -8,7 +8,6 @@ namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
 internal class ItemsTab : ITab
 {
-    private Configuration configuration;
     private UIDataSource uiDataSource;
     private CommonInterfaceElements ifData;
     private Icons icons;
@@ -17,9 +16,8 @@ internal class ItemsTab : ITab
     private int[] mWhenOveerides;
     public bool hasWhenOverrides;
 
-    public ItemsTab(Configuration configuration, Icons icons, UIDataSource uiDataSource, CommonInterfaceElements ifData)
+    public ItemsTab(Icons icons, UIDataSource uiDataSource, CommonInterfaceElements ifData)
     {
-        this.configuration = configuration;
         this.uiDataSource = uiDataSource;
         this.ifData = ifData;
         this.icons = icons;
@@ -36,11 +34,8 @@ internal class ItemsTab : ITab
 
     public void Draw()
     {
-        ImGui.SetNextItemWidth(100);
-        ImGui.InputInt("Cycle", ref ifData.mCycle);
-        ImGui.SameLine();
-        var cycle = UIUtils.FixValue(ref ifData.mCycle, 1, 7) - 1;
-        ImGui.Text(string.Format("Groove: {0} -> {1}", (cycle == 0) ? 0 : uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle - 1], uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle])); ;
+        ifData.DrawBasicControls(uiDataSource);
+        var cycle = ifData.Cycle;
         ImGui.SameLine();
         DrawActionsBar();
         ImGui.Spacing();
