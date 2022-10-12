@@ -26,7 +26,7 @@ internal class PatternsTab : ITab
     {
         ifData.DrawBasicControls(uiDataSource);
         var cycle = ifData.Cycle;
-        var startGroove = ifData.GetStartGroove(uiDataSource, cycle);
+        var startGroove = ifData.GetStartGroove(uiDataSource);
         ImGui.Spacing();
 
         if (ImGui.BeginTable("Patterns", 6, ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg))
@@ -39,13 +39,14 @@ internal class PatternsTab : ITab
             ImGui.TableSetupColumn("Grooved Value", ImGuiTableColumnFlags.WidthFixed, 150);
             ImGui.TableHeadersRow();
 
+            var itemCache = ifData.IsCurrentSeason()? uiDataSource.CurrentItemCache : uiDataSource.PreviousItemCache;
             var items = new List<Item>();
             for (int i = 0; i < Constants.MaxItems; i++)
             {
                 var staticData = ItemStaticData.Get(i);
                 if (!staticData.IsValid()) { continue; }
 
-                var item = uiDataSource.ItemCache[staticData];
+                var item = itemCache[staticData];
                 var pattern = item.FindPattern(cycle);
 
                 if (pattern != null)

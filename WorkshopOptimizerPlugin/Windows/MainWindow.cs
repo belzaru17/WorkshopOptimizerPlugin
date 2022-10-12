@@ -15,7 +15,7 @@ public class MainWindow : Window, IDisposable
 {
     private Plugin plugin;
 
-    private readonly ItemSetsCache itemSetsCache;
+    private readonly ItemSetsCache[] itemSetsCaches;
     private readonly UIDataSource uiDataSource;
     private CommonInterfaceElements commonInterfaceElements;
 
@@ -32,17 +32,20 @@ public class MainWindow : Window, IDisposable
 
         this.plugin = plugin;
 
-        itemSetsCache = new ItemSetsCache();
+        itemSetsCaches = new ItemSetsCache[Constants.MaxSeasons] { new ItemSetsCache(), new ItemSetsCache() };
         uiDataSource = UIDataSource.Load();
-        uiDataSource.AddListener(itemSetsCache);
+        for (int i = 0; i < Constants.MaxSeasons; i++)
+        {
+            uiDataSource.AddListener(itemSetsCaches[i]);
+        }
         commonInterfaceElements = new CommonInterfaceElements(plugin.Configuration);
 
         tabs = new()
         {
             new Tuple<string, ITab>("Items", new ItemsTab(plugin.Icons, uiDataSource, commonInterfaceElements)),
             new Tuple<string, ITab>("Patterns", new PatternsTab(uiDataSource, commonInterfaceElements)),
-            new Tuple<string, ITab>("Combinations", new CombinationsTab(plugin.Configuration, plugin.Icons, uiDataSource, commonInterfaceElements, itemSetsCache)),
-            new Tuple<string, ITab>("Workshops", new WorkshopsTab(plugin.Configuration, plugin.Icons, uiDataSource, commonInterfaceElements, itemSetsCache)),
+            new Tuple<string, ITab>("Combinations", new CombinationsTab(plugin.Configuration, uiDataSource, commonInterfaceElements, itemSetsCaches)),
+            new Tuple<string, ITab>("Workshops", new WorkshopsTab(plugin.Configuration, uiDataSource, commonInterfaceElements, itemSetsCaches)),
             new Tuple<string, ITab>("Produced", new ProducedTab(uiDataSource, commonInterfaceElements)),
             new Tuple<string, ITab>("Next Week", new NextWeekTab(uiDataSource)),
         };
@@ -70,6 +73,18 @@ public class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
+        if (!IsSameSeason())
+        {
+            if (SeasonUtils.IsPreviousSeason(uiDataSource.DataSource.SeasonStart))
+            {
+                uiDataSource.NextWeek();
+            }
+            else
+            {
+                uiDataSource.Reset();
+            }
+        }
+
         int cycle = SeasonUtils.GetCycle();
         ImGui.Text($"Season: {uiDataSource.DataSource.SeasonStart:yyyy-MM-dd} - {uiDataSource.DataSource.SeasonStart.AddDays(Constants.MaxCycles):yyyy-MM-dd}. Cycle={cycle + 1}.");
         ImGui.SameLine();
@@ -97,23 +112,11 @@ public class MainWindow : Window, IDisposable
         var manager = ManagerProvider.GetManager();
         var cycle = SeasonUtils.GetCycle();
         var hasCycleData = IsSameSeason() && (uiDataSource.DataSource.DataCollectionTime[cycle] != null);
-        var isPreviousSeason = SeasonUtils.IsPreviousSeason(uiDataSource.DataSource.SeasonStart);
 
         var indent = ImGui.GetWindowWidth() - 175;
         ImGui.Indent(indent);
-        if (UIUtils.ImageButton((IsSameSeason() || isPreviousSeason) ? plugin.Icons.PopulateData : plugin.Icons.ResetData, "Populate Data", !hasCycleData && manager != null))
+        if (UIUtils.ImageButton(plugin.Icons.PopulateData, "Populate Data", !hasCycleData && manager != null))
         {
-            if (!IsSameSeason())
-            {
-                if (isPreviousSeason)
-                {
-                    uiDataSource.NextWeek();
-                }
-                else
-                {
-                    uiDataSource.Reset();
-                }
-            }
             PopulateJsonData(manager);
         }
         ImGui.SameLine();
@@ -194,7 +197,7 @@ public class MainWindow : Window, IDisposable
             var pop = PopularityTable.GetItemPopularity(popIndex, i);
             if (pop == Popularity.Unknown) continue;
 
-            var item = uiDataSource.DataSource.DynamicData[(int)i];
+            var item = uiDataSource.DataSource.CurrentDynamicData[(int)i];
             item.Popularity = pop;
             item.NextPopularity = PopularityTable.GetItemPopularity(nextPopIndex, i);
             item.Supply[cycle] = SupplyUtils.FromFFXIV(manager->GetSupplyForCraftwork(i));
@@ -202,7 +205,6 @@ public class MainWindow : Window, IDisposable
         }
         uiDataSource.DataSource.DataCollectionTime[cycle] = DateTime.UtcNow;
         uiDataSource.DataChanged(cycle);
-        uiDataSource.Save();
     }
 
     unsafe private void ExportData()
@@ -213,7 +215,7 @@ public class MainWindow : Window, IDisposable
             var staticData = ItemStaticData.Get(i);
             if (!staticData.IsValid()) continue;
 
-            var item = uiDataSource.ItemCache[staticData];
+            var item = uiDataSource.CurrentItemCache[staticData];
             if (item.Popularity == Popularity.Unknown) continue;
 
             s += $"{item.Name},{item.Popularity}";

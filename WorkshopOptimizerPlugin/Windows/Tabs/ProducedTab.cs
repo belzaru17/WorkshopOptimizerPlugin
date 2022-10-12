@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Optimizer;
-using WorkshopOptimizerPlugin.Utils;
 using WorkshopOptimizerPlugin.Windows.Utils;
 
 namespace WorkshopOptimizerPlugin.Windows.Tabs;
@@ -25,7 +24,7 @@ internal class ProducedTab : ITab
     {
         ifData.DrawBasicControls(uiDataSource);
         var cycle = ifData.Cycle;
-        var startGroove = ifData.GetStartGroove(uiDataSource, cycle);
+        var startGroove = ifData.GetStartGroove(uiDataSource);
         ImGui.Spacing();
         DrawProducedTable(cycle, startGroove);
         ImGui.Spacing();
@@ -42,6 +41,9 @@ internal class ProducedTab : ITab
         ImGui.TableSetupColumn("Workshop 3", ImGuiTableColumnFlags.WidthFixed, 250);
         ImGui.TableHeadersRow();
 
+        var itemCache = ifData.IsCurrentSeason() ? uiDataSource.CurrentItemCache : uiDataSource.PreviousItemCache;
+        var producedItems = ifData.IsCurrentSeason() ? uiDataSource.DataSource.CurrentProducedItems : uiDataSource.DataSource.PreviousProducedItems;
+        var disabled = ifData.IsPreviousSeason();
         var hours = new int[Constants.MaxWorkshops];
         var values = new double[Constants.MaxWorkshops];
         for (int step = 0; step < Constants.MaxSteps; step++)
@@ -54,23 +56,24 @@ internal class ProducedTab : ITab
                 var lastId = -1;
                 if (step > 0)
                 {
-                    lastId = uiDataSource.DataSource.ProducedItems[cycle, w, step - 1];
+                    lastId = producedItems[cycle, w, step - 1];
                     if (lastId < 0) { continue; }
                 }
 
                 if (hours[w] >= Constants.MaxHours) { continue; }
 
-                var thisId = uiDataSource.DataSource.ProducedItems[cycle, w, step];
-                Item? thisItem = (thisId >= 0) ? uiDataSource.ItemCache[ItemStaticData.Get(thisId)] : null;
+                var thisId = producedItems[cycle, w, step];
+                Item? thisItem = (thisId >= 0) ? itemCache[ItemStaticData.Get(thisId)] : null;
 
                 ImGui.TableSetColumnIndex(w + 1);
                 ImGui.SetNextItemWidth(200);
 
+                if (disabled) { ImGui.BeginDisabled(); }
                 if (ImGui.BeginCombo($"###{w} {step}", thisItem?.Name ?? ""))
                 {
                     if (ImGui.Selectable(""))
                     {
-                        uiDataSource.DataSource.ProducedItems[cycle, w, step] = -1;
+                        producedItems[cycle, w, step] = -1;
                         uiDataSource.DataChanged(cycle);
                     }
 
@@ -83,10 +86,10 @@ internal class ProducedTab : ITab
 
                             if (ImGui.Selectable(item.Name))
                             {
-                                uiDataSource.DataSource.ProducedItems[cycle, w, step] = (int)item.Id;
+                                producedItems[cycle, w, step] = (int)item.Id;
                                 for (int s = step + 1; s < Constants.MaxSteps; s++)
                                 {
-                                    uiDataSource.DataSource.ProducedItems[cycle, w, s] = -1;
+                                    producedItems[cycle, w, s] = -1;
                                 }
                                 uiDataSource.DataChanged(cycle);
                             }
@@ -94,7 +97,7 @@ internal class ProducedTab : ITab
                     }
                     else
                     {
-                        foreach (var item in CategoryMap.GetEfficientItems(ItemStaticData.Get((uint)uiDataSource.DataSource.ProducedItems[cycle, w, step - 1]).Categories))
+                        foreach (var item in CategoryMap.GetEfficientItems(ItemStaticData.Get((uint)producedItems[cycle, w, step - 1]).Categories))
                         {
                             if ((hours[w] + item.Hours) > Constants.MaxHours)
                             {
@@ -102,10 +105,10 @@ internal class ProducedTab : ITab
                             }
                             if (ImGui.Selectable(item.Name))
                             {
-                                uiDataSource.DataSource.ProducedItems[cycle, w, step] = (int)item.Id;
+                                producedItems[cycle, w, step] = (int)item.Id;
                                 for (int s = step + 1; s < Constants.MaxSteps; s++)
                                 {
-                                    uiDataSource.DataSource.ProducedItems[cycle, w, s] = -1;
+                                    producedItems[cycle, w, s] = -1;
                                 }
                                 uiDataSource.DataChanged(cycle);
                             }
@@ -113,6 +116,7 @@ internal class ProducedTab : ITab
                     }
                     ImGui.EndCombo();
                 }
+                if (disabled) { ImGui.EndDisabled(); }
 
                 if (thisItem != null)
                 {
@@ -184,16 +188,18 @@ internal class ProducedTab : ITab
         ImGui.TableSetupColumn("Amount", ImGuiTableColumnFlags.WidthFixed, 100);
         ImGui.TableHeadersRow();
 
+        var itemCache = ifData.IsCurrentSeason() ? uiDataSource.CurrentItemCache : uiDataSource.PreviousItemCache;
+        var producedItems = ifData.IsCurrentSeason() ? uiDataSource.DataSource.CurrentProducedItems : uiDataSource.DataSource.PreviousProducedItems;
         var gatherableMaterials = new Dictionary<Material, int>();
         var rareMaterials = new Dictionary<Material, int>();
         for (int step = 0; step < Constants.MaxSteps; step++)
         {
             for (int w = 0; w < Constants.MaxWorkshops; w++)
             {
-                var id = uiDataSource.DataSource.ProducedItems[cycle, w, step];
+                var id = producedItems[cycle, w, step];
                 if (id < 0) { continue; }
 
-                var item = uiDataSource.ItemCache[ItemStaticData.Get(id)];
+                var item = itemCache[ItemStaticData.Get(id)];
                 foreach (var m in item.Materials)
                 {
                     var mats = (m.Material.Source == MaterialSource.Gatherable) ? gatherableMaterials : rareMaterials;

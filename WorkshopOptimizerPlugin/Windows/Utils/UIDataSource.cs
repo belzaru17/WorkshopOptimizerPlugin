@@ -16,7 +16,8 @@ internal class UIDataSource
 {
     public DataSource DataSource => dataSource;
     public WhenOverrides WhenOverrides => whenOverrides;
-    public ItemCache ItemCache => itemCache;
+    public ItemCache CurrentItemCache => currentItemCache;
+    public ItemCache PreviousItemCache => previousItemCache;
     public bool Dirty { get; private set; } = false;
 
     public UIDataSource()
@@ -52,7 +53,7 @@ internal class UIDataSource
         listeners.Add(listener);
     }
 
-    [MemberNotNull(nameof(dataSource), nameof(whenOverrides), nameof(itemCache))]
+    [MemberNotNull(nameof(dataSource), nameof(whenOverrides), nameof(currentItemCache), nameof(previousItemCache))]
     public void Reset()
     {
         reset(new DataSource());
@@ -82,12 +83,13 @@ internal class UIDataSource
         reset(dataSource);
     }
 
-    [MemberNotNull(nameof(dataSource), nameof(whenOverrides), nameof(itemCache))]
+    [MemberNotNull(nameof(dataSource), nameof(whenOverrides), nameof(currentItemCache), nameof(previousItemCache))]
     private void reset(DataSource dataSource)
     {
         this.dataSource = dataSource;
         whenOverrides = new WhenOverrides();
-        itemCache = new ItemCache(dataSource, whenOverrides);
+        currentItemCache = new ItemCache(dataSource.CurrentDynamicData, dataSource.CurrentProducedItems, whenOverrides);
+        previousItemCache = new ItemCache(dataSource.PreviousDynamicData, dataSource.PreviousProducedItems, whenOverrides);
 
         DataChanged();
         Dirty = false;
@@ -97,6 +99,7 @@ internal class UIDataSource
 
     private DataSource dataSource;
     private WhenOverrides whenOverrides;
-    private ItemCache itemCache;
+    private ItemCache currentItemCache;
+    private ItemCache previousItemCache;
     private List<IUIDataSourceListener> listeners = new();
 }

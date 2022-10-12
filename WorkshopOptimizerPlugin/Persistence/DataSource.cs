@@ -17,9 +17,13 @@ internal class DataSource
 
     public DateTime?[] DataCollectionTime => data.CurrentSeason.DataCollectionTime;
 
-    public DynamicDataAdaptor DynamicData { get; private set; }
+    public DynamicDataAdaptor CurrentDynamicData { get; private set; }
 
-    public ProducedItemsAdaptor ProducedItems { get; private set; }
+    public ProducedItemsAdaptor CurrentProducedItems { get; private set; }
+
+    public DynamicDataAdaptor PreviousDynamicData { get; private set; }
+
+    public ProducedItemsAdaptor PreviousProducedItems { get; private set; }
 
     public void NextWeek()
     {
@@ -92,11 +96,13 @@ internal class DataSource
         Reset();
     }
 
-    [MemberNotNull(nameof(DynamicData), nameof(ProducedItems))]
+    [MemberNotNull(nameof(CurrentDynamicData), nameof(CurrentProducedItems), nameof(PreviousDynamicData), nameof(PreviousProducedItems))]
     private void Reset()
     {
-        DynamicData = new DynamicDataAdaptor(data.CurrentSeason);
-        ProducedItems = new ProducedItemsAdaptor(data.CurrentSeason);
+        CurrentDynamicData = new DynamicDataAdaptor(data.CurrentSeason);
+        CurrentProducedItems = new ProducedItemsAdaptor(data.CurrentSeason);
+        PreviousDynamicData = new DynamicDataAdaptor(data.PreviousSeason);
+        PreviousProducedItems = new ProducedItemsAdaptor(data.PreviousSeason);
     }
 
     private PersistentData data;

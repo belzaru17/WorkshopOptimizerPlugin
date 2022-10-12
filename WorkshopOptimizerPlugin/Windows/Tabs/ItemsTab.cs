@@ -53,12 +53,14 @@ internal class ItemsTab : ITab
             ImGui.TableSetupColumn("When to Use", ImGuiTableColumnFlags.WidthFixed, 100);
             ImGui.TableHeadersRow();
 
+            var itemCache = ifData.IsCurrentSeason() ? uiDataSource.CurrentItemCache : uiDataSource.PreviousItemCache;
+            var disabled = ifData.IsPreviousSeason();
             for (uint i = 0; i < Constants.MaxItems; i++)
             {
                 var staticData = ItemStaticData.Get(i);
                 if (!staticData.IsValid()) { continue; }
 
-                var item = uiDataSource.ItemCache[staticData];
+                var item = itemCache[staticData];
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.Text(item.Name);
@@ -78,12 +80,14 @@ internal class ItemsTab : ITab
                 ImGui.TableNextColumn();
                 ImGui.Text($"{item.EffectiveValue(cycle):F2}");
                 ImGui.TableNextColumn();
+                if (disabled) { ImGui.BeginDisabled(); }
                 if (ImGui.Combo($"###Item {i}", ref mWhenOveerides[i], WhenUtils.WhenAsStrings, WhenUtils.WhenAsStrings.Length))
                 {
                     uiDataSource.WhenOverrides[i] = (When)mWhenOveerides[i];
                     uiDataSource.OptimizationParameterChanged();
                     hasWhenOverrides = true;
                 }
+                if (disabled) { ImGui.EndDisabled(); }
             }
             ImGui.EndTable();
         }

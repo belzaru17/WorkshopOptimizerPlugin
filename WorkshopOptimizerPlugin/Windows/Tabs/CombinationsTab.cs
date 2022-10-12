@@ -2,7 +2,6 @@ using ImGuiNET;
 using System.Linq;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Optimizer;
-using WorkshopOptimizerPlugin.Utils;
 using WorkshopOptimizerPlugin.Windows.Utils;
 
 namespace WorkshopOptimizerPlugin.Windows.Tabs;
@@ -10,18 +9,16 @@ namespace WorkshopOptimizerPlugin.Windows.Tabs;
 internal class CombinationsTab : ITab
 {
     private readonly Configuration configuration;
-    private readonly Icons icons;
     private readonly UIDataSource uiDataSource;
     private CommonInterfaceElements ifData;
-    private readonly IItemSetsCache itemSetsCache;
+    private readonly IItemSetsCache[] itemSetsCaches;
 
-    public CombinationsTab(Configuration configuration, Icons icons, UIDataSource uiDataSource, CommonInterfaceElements ifData, IItemSetsCache itemSetsCache)
+    public CombinationsTab(Configuration configuration, UIDataSource uiDataSource, CommonInterfaceElements ifData, IItemSetsCache[] itemSetsCaches)
     {
         this.configuration = configuration;
-        this.icons = icons;
         this.uiDataSource = uiDataSource;
         this.ifData = ifData;
-        this.itemSetsCache = itemSetsCache;
+        this.itemSetsCaches = itemSetsCaches;
     }
 
     public void OnOpen() { }
@@ -30,7 +27,7 @@ internal class CombinationsTab : ITab
     {
         ifData.DrawBasicControls(uiDataSource);
         var cycle = ifData.Cycle;
-        var startGroove = ifData.GetStartGroove(uiDataSource, cycle);
+        var startGroove = ifData.GetStartGroove(uiDataSource);
         ImGui.SameLine();
         ifData.DrawFilteringControls(uiDataSource);
         ImGui.Spacing();
@@ -46,11 +43,14 @@ internal class CombinationsTab : ITab
             ImGui.TableSetupColumn("Set", ImGuiTableColumnFlags.WidthFixed, 100);
             ImGui.TableHeadersRow();
 
-            var itemSets = itemSetsCache.CachedItemSets[cycle];
+            var itemCache = ifData.IsCurrentSeason() ? uiDataSource.CurrentItemCache : uiDataSource.PreviousItemCache;
+            var producedItems = ifData.IsCurrentSeason() ? uiDataSource.DataSource.CurrentProducedItems : uiDataSource.DataSource.PreviousProducedItems;
+            var disabled = ifData.IsPreviousSeason();
+            var itemSets = itemSetsCaches[ifData.Season].CachedItemSets[cycle];
             if (itemSets == null)
             {
                 var options = new OptimizerOptions(configuration, ifData.StrictCycles ? Strictness.AllowExactCycle : (Strictness.AllowExactCycle | Strictness.AllowRestCycle | Strictness.AllowEarlierCycle));
-                itemSetsCache.CachedItemSets[cycle] = itemSets = new Optimizer.Optimizer(uiDataSource.ItemCache, cycle, startGroove, options).GenerateCombinations();
+                itemSetsCaches[ifData.Season].CachedItemSets[cycle] = itemSets = new Optimizer.Optimizer(itemCache, cycle, startGroove, options).GenerateCombinations();
             }
             var top = ifData.Top;
             foreach (var itemset in itemSets)
@@ -72,13 +72,14 @@ internal class CombinationsTab : ITab
                 ImGui.TableNextColumn();
                 ImGui.Text(string.Format("{0:F2}", effValue * startGroove.Multiplier()));
                 ImGui.TableNextColumn();
+                if (disabled) { ImGui.BeginDisabled(); }
                 for (int w = 0; w < Constants.MaxWorkshops; w++)
                 {
                     if (ImGui.Button($"{w + 1}###C-{w}-{top}"))
                     {
                         for (int s = 0; s < Constants.MaxSteps; s++)
                         {
-                            uiDataSource.DataSource.ProducedItems[cycle, w, s] = (s < itemset.Items.Length) ? (int)itemset.Items[s].Id : -1;
+                            producedItems[cycle, w, s] = (s < itemset.Items.Length) ? (int)itemset.Items[s].Id : -1;
                         }
                         uiDataSource.DataChanged(cycle);
                     }
@@ -90,11 +91,12 @@ internal class CombinationsTab : ITab
                     {
                         for (int s = 0; s < Constants.MaxSteps; s++)
                         {
-                            uiDataSource.DataSource.ProducedItems[cycle, w, s] = (s < itemset.Items.Length) ? (int)itemset.Items[s].Id : -1;
+                            producedItems[cycle, w, s] = (s < itemset.Items.Length) ? (int)itemset.Items[s].Id : -1;
                         }
                     }
                     uiDataSource.DataChanged(cycle);
                 }
+                if (disabled) { ImGui.EndDisabled(); }
             }
             ImGui.EndTable();
         }

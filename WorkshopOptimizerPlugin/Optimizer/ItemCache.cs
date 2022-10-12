@@ -5,9 +5,10 @@ namespace WorkshopOptimizerPlugin.Optimizer;
 
 internal class ItemCache
 {
-    public ItemCache(DataSource dataSource, WhenOverrides whenOverrides)
+    public ItemCache(DynamicDataAdaptor dynamicData, ProducedItemsAdaptor producedItems, WhenOverrides whenOverrides)
     {
-        this.dataSource = dataSource;
+        this.dynamicData = dynamicData;
+        this.producedItems = producedItems;
         this.whenOverrides = whenOverrides;
         this.items = new Item[Constants.MaxItems];
     }
@@ -18,13 +19,14 @@ internal class ItemCache
         {
             if (items[staticData.Id] == null)
             {
-                items[staticData.Id] = new Item(staticData, dataSource.DynamicData[(int)staticData.Id], dataSource.ProducedItems, whenOverrides);
+                items[staticData.Id] = new Item(staticData, dynamicData[(int)staticData.Id], producedItems, whenOverrides);
             }
             return items[staticData.Id];
         }
     }
 
-    private readonly DataSource dataSource;
+    private readonly DynamicDataAdaptor dynamicData;
+    private readonly ProducedItemsAdaptor producedItems;
     private readonly WhenOverrides whenOverrides;
     private Item[] items;
 }

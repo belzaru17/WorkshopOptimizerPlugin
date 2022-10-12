@@ -22,16 +22,28 @@ internal class CommonInterfaceElements
         mCycle = SeasonUtils.GetCycle() + 1;
     }
 
-    public Groove GetStartGroove(UIDataSource uiDataSource, int cycle)
+    public bool IsCurrentSeason()
     {
-        if (cycle == 0) return new Groove();
-
-        return uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle - 1];
+        return Season == Constants.CurrentSeason;
     }
 
-    public Groove GetEndGroove(UIDataSource uiDataSource, int cycle)
+    public bool IsPreviousSeason()
     {
-        return uiDataSource.DataSource.ProducedItems.GrooveAtEndOfCycle[cycle];
+        return Season == Constants.PreviousSeason;
+    }
+
+    public Groove GetStartGroove(UIDataSource uiDataSource)
+    {
+        if (Cycle == 0) return new Groove();
+
+        var producedItems = IsCurrentSeason() ? uiDataSource.DataSource.CurrentProducedItems : uiDataSource.DataSource.PreviousProducedItems;
+        return producedItems.GrooveAtEndOfCycle[Cycle - 1];
+    }
+
+    public Groove GetEndGroove(UIDataSource uiDataSource)
+    {
+        var producedItems = IsCurrentSeason() ? uiDataSource.DataSource.CurrentProducedItems : uiDataSource.DataSource.PreviousProducedItems;
+        return producedItems.GrooveAtEndOfCycle[Cycle];
     }
 
     public void DrawBasicControls(UIDataSource uiDataSource)
@@ -42,9 +54,7 @@ internal class CommonInterfaceElements
         ImGui.SetNextItemWidth(100);
         ImGui.InputInt("Cycle", ref mCycle);
         ImGui.SameLine();
-        var cycle = Cycle;
-        var startGroove = GetStartGroove(uiDataSource, cycle);
-        ImGui.Text(string.Format("Groove: {0} -> {1}", startGroove, GetEndGroove(uiDataSource, cycle))); ;
+        ImGui.Text(string.Format("Groove: {0} -> {1}", GetStartGroove(uiDataSource), GetEndGroove(uiDataSource))); ;
     }
 
     public void DrawFilteringControls(UIDataSource uiDataSource)

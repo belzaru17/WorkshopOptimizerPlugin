@@ -33,7 +33,7 @@ internal class NextWeekTab : ITab
             var gItems = new List<Tuple<GranaryItemData, Item>>();
             foreach (var gItem in GranaryItemData.Items)
             {
-                gItems.Add(new Tuple<GranaryItemData, Item>(gItem, data.ItemCache[ItemStaticData.Get(gItem.Id)]));
+                gItems.Add(new Tuple<GranaryItemData, Item>(gItem, data.CurrentItemCache[ItemStaticData.Get(gItem.Id)]));
             }
 
             foreach (var i in gItems.OrderBy(o => o.Item2.NextPopularity))
