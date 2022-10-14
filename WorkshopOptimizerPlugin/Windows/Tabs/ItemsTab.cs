@@ -1,3 +1,4 @@
+using Dalamud.Plugin.Ipc.Exceptions;
 using ImGuiNET;
 using System;
 using WorkshopOptimizerPlugin.Data;
@@ -61,6 +62,7 @@ internal class ItemsTab : ITab
                 if (!staticData.IsValid()) { continue; }
 
                 var item = itemCache[staticData];
+                var patterns = item.FindPatterns(cycle);
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
                 ImGui.Text(item.Name);
@@ -69,12 +71,25 @@ internal class ItemsTab : ITab
                 ImGui.TableNextColumn();
                 ImGui.Text($"{item.Popularity}");
                 ImGui.TableNextColumn();
-                ImGui.Text($"{item.Supply[cycle]}");
+                if (item.Supply[cycle] != Supply.Unknown || patterns.Count != 1)
+                {
+                    ImGui.Text($"{item.Supply[cycle]}");
+                }
+                else
+                {
+                    ImGui.Text($"{patterns[0].SupplyPattern[cycle]}*");
+                }
                 ImGui.TableNextColumn();
-                ImGui.Text($"{item.Demand[cycle]}");
-                var patterns = string.Join("/", item.FindPatterns(cycle).ConvertAll(p => p.Name));
+                if (item.Demand[cycle] != Demand.Unknown || patterns.Count != 1)
+                {
+                    ImGui.Text($"{item.Demand[cycle]}");
+                } else
+                {
+                    ImGui.Text($"{patterns[0].DemandPattern[cycle]}*");
+                }
                 ImGui.TableNextColumn();
-                ImGui.Text(patterns);
+                var spatterns = string.Join("/", patterns.ConvertAll(p => p.Name));
+                ImGui.Text(spatterns);
                 ImGui.TableNextColumn();
                 ImGui.Text(item.Value.ToString());
                 ImGui.TableNextColumn();

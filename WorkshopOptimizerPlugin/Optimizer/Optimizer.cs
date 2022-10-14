@@ -69,14 +69,13 @@ internal class Optimizer
                 for (; remain > 0 && ci[2] < cutoff; ci[2]++, remain--)
                 {
                     ItemSet[] newItemSets = new ItemSet[Constants.MaxWorkshops]{ combinations[ci[0]], combinations[ci[1]], combinations[ci[2]] };
-                    var (value, endGroove) = recalculateItemSetValue(newItemSets, groove);
-                    cachedResult.Add(new WorkshopsItemSets(newItemSets, value, endGroove));
+                    cachedResult.Add(new WorkshopsItemSets(newItemSets, cycle, groove));
                 }
             }
         }
         if (remain > 0)
         {
-            cachedResult.Sort((x, y) => y.Value.CompareTo(x.Value));
+            cachedResult.Sort((x, y) => y.EffectiveValue.CompareTo(x.EffectiveValue));
             cachedDone = true;
             return cachedResult;
         }
@@ -115,32 +114,5 @@ internal class Optimizer
     private bool checkItem(Item item)
     {
         return item.CheckCycles(cycle, options.RestCycles, options.Strictness);
-    }
-
-    private (double, Groove) recalculateItemSetValue(ItemSet[] itemSets, Groove groove)
-    {
-        var total_value = 0.0;
-        var producedItems = new int[Constants.MaxItems];
-        var start = new int[Constants.MaxWorkshops];
-        var steps = new int[Constants.MaxWorkshops];
-        for (int h = 0; h <= Constants.MaxHours; h++)
-        {
-            for (int w = 0; w < Constants.MaxWorkshops; w++)
-            {
-                if (steps[w] >= itemSets[w].Items.Length) { continue;  }
-                var item = itemSets[w].Items[steps[w]];
-
-                if (h < start[w] + item.Hours) { continue; }
-
-                var q = ItemSet.ItemsPerStep(steps[w]);
-                total_value += item.EffectiveValue(cycle, producedItems[item.Id]) * q * groove.Multiplier();
-
-                producedItems[item.Id] += q;
-                groove = groove.Inc(steps[w]);
-                steps[w]++;
-                start[w] = h;
-            }
-        }
-        return (total_value, groove);
     }
 }

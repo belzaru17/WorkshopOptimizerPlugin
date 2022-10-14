@@ -60,13 +60,35 @@ internal struct ItemSet
 internal struct WorkshopsItemSets
 {
     public readonly ItemSet[] ItemSets;
-    public readonly double Value;
+    public readonly double EffectiveValue;
     public readonly Groove EndGroove;
 
-    public WorkshopsItemSets(ItemSet[] itemSets, double value, Groove endGroove)
+    public WorkshopsItemSets(ItemSet[] itemSets, int cycle, Groove groove)
     {
-        this.ItemSets = itemSets;
-        this.Value = value;
-        this.EndGroove = endGroove;
+        ItemSets = itemSets;
+
+        EffectiveValue = 0.0;
+        var producedItems = new int[Constants.MaxItems];
+        var start = new int[Constants.MaxWorkshops];
+        var steps = new int[Constants.MaxWorkshops];
+        for (int h = 0; h <= Constants.MaxHours; h++)
+        {
+            for (int w = 0; w < Constants.MaxWorkshops; w++)
+            {
+                if (steps[w] >= ItemSets[w].Items.Length) { continue; }
+                var item = ItemSets[w].Items[steps[w]];
+
+                if (h < start[w] + item.Hours) { continue; }
+
+                var q = ItemSet.ItemsPerStep(steps[w]);
+                EffectiveValue += item.EffectiveValue(cycle, producedItems[item.Id]) * q * groove.Multiplier();
+
+                producedItems[item.Id] += q;
+                groove = groove.Inc(steps[w]);
+                steps[w]++;
+                start[w] = h;
+            }
+        }
+        this.EndGroove = groove;
     }
 }

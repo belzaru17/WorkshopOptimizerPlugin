@@ -104,7 +104,7 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
                 }
                 ImGui.TableNextColumn();
                 ImGui.Text("");
-                ImGui.Text(string.Format("{0:F2}", workshopsItemSets.Value));
+                ImGui.Text(string.Format("{0:F2}", workshopsItemSets.EffectiveValue));
                 ImGui.TableNextColumn();
                 ImGui.Text("");
                 ImGui.Text(string.Format("Groove: {0} -> {1}", startGroove, workshopsItemSets.EndGroove));
@@ -121,7 +121,7 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
                             producedItems[cycle, w, s] = (s < itemSet.Items.Length) ? (int)itemSet.Items[s].Id : -1;
                         }
                     }
-                    uiDataSource.DataChanged(cycle);
+                    uiDataSource.DataChanged(cycle + 1);
                 }
                 if (disabled) { ImGui.EndDisabled(); }
             }

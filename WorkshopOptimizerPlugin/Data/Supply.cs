@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.Gauge;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 
 namespace WorkshopOptimizerPlugin.Data;
@@ -17,9 +18,14 @@ internal enum Supply
 
 internal static class SupplyUtils
 {
-    public static double Multiplier(Supply s)
+    public static double Multiplier(Supply s, int produced = 0)
     {
-        return Multipliers[(int)s];
+        for (; produced >= SupplyAdjustmentBucket; produced -= SupplyAdjustmentBucket)
+        {
+            s = NextSupply[(int)s];
+        }
+        var ns = NextSupply[(int)s];
+        return (Multipliers[(int)s] * (SupplyAdjustmentBucket - produced) + Multipliers[(int)ns] * produced) / SupplyAdjustmentBucket;
     }
 
     public static Supply FromFFXIV(CraftworkSupply s)
@@ -38,18 +44,6 @@ internal static class SupplyUtils
                 return Supply.Overflowing;
         }
         return Supply.Unknown;
-    }
-
-    public static Tuple<Supply, Supply> Adjust(Supply s, int produced)
-    {
-        for (; produced >= SupplyAdjustmentBucket; produced -= SupplyAdjustmentBucket) {
-            s = NextSupply[(int)s];
-    
-        }
-        if (produced == 0) {
-            return new Tuple<Supply, Supply>(s, s);
-        }
-        return new Tuple<Supply, Supply>(s, NextSupply[(int)s]);
     }
 
     public static bool Within(Supply s, Supply min, Supply max)

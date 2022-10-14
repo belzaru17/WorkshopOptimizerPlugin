@@ -45,7 +45,11 @@ internal class ProducedTab : ITab
         var producedItems = ifData.IsCurrentSeason() ? uiDataSource.DataSource.CurrentProducedItems : uiDataSource.DataSource.PreviousProducedItems;
         var disabled = ifData.IsPreviousSeason();
         var hours = new int[Constants.MaxWorkshops];
-        var values = new double[Constants.MaxWorkshops];
+        var items = new List<Item>[Constants.MaxWorkshops];
+        for (int w = 0; w < Constants.MaxWorkshops; w++)
+        {
+            items[w] = new List<Item>();
+        }
         for (int step = 0; step < Constants.MaxSteps; step++)
         {
             ImGui.TableNextRow(ImGuiTableRowFlags.None, 27);
@@ -120,8 +124,7 @@ internal class ProducedTab : ITab
 
                 if (thisItem != null)
                 {
-                    hours[w] += thisItem.Hours;
-                    values[w] += thisItem.EffectiveValue(cycle) * ItemSet.ItemsPerStep(step);
+                    items[w].Add(thisItem);
 
                     var pattern = thisItem.FindPattern(cycle);
                     ImGui.SameLine();
@@ -129,6 +132,7 @@ internal class ProducedTab : ITab
                 }
             }
         }
+
 
         ImGui.TableNextRow(ImGuiTableRowFlags.Headers, 27);
         ImGui.TableSetColumnIndex(0);
@@ -141,37 +145,18 @@ internal class ProducedTab : ITab
             ImGui.Text($"{hours[w]}hs");
         }
 
-        ImGui.TableNextRow(ImGuiTableRowFlags.Headers, 27);
-        ImGui.TableSetColumnIndex(0);
-        ImGui.SetNextItemWidth(200);
-        ImGui.Text("Value");
+        var itemSets = new ItemSet[Constants.MaxWorkshops];
         for (int w = 0; w < Constants.MaxWorkshops; w++)
         {
-            ImGui.TableSetColumnIndex(w + 1);
-            ImGui.SetNextItemWidth(200);
-            ImGui.Text($"{values[w]:F2}");
+            itemSets[w] = new ItemSet(items[w].ToArray());
         }
-
-        var totalValue = 0.0;
-        ImGui.TableNextRow(ImGuiTableRowFlags.Headers, 27);
-        ImGui.TableSetColumnIndex(0);
-        ImGui.SetNextItemWidth(200);
-        ImGui.Text("Grooved Value");
-        for (int w = 0; w < Constants.MaxWorkshops; w++)
-        {
-            ImGui.TableSetColumnIndex(w + 1);
-            ImGui.SetNextItemWidth(200);
-            var gValue = values[w] * startGroove.Multiplier();
-            ImGui.Text($"{gValue:F2}");
-            totalValue += gValue;
-        }
-
+        var workshopItemSets = new WorkshopsItemSets(itemSets, cycle, startGroove);
         ImGui.TableNextRow(ImGuiTableRowFlags.Headers, 27);
         ImGui.TableSetColumnIndex(0);
         ImGui.SetNextItemWidth(200);
         ImGui.Text("Total Value");
         ImGui.TableNextColumn();
-        ImGui.Text($"{totalValue:F2}");
+        ImGui.Text($"{workshopItemSets.EffectiveValue:F2}");
 
         ImGui.EndTable();
     }

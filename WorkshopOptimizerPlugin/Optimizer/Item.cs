@@ -73,42 +73,30 @@ internal class Item
     public double EffectiveValue(int cycle, int add = 0)
     {
         var produced = AccumulatedProduced(cycle) + add;
-        var patterns = FindPatterns(cycle);
 
         var sup_mult = 0.0;
         var n = 0;
-        Action<Supply> UpdateFn = s => {
-            if (produced == 0)
+        if (Supply[cycle] != Data.Supply.Unknown)
+        {
+            sup_mult += SupplyUtils.Multiplier(Supply[cycle], produced);
+            n++;
+        }
+        else
+        {
+            var patterns = FindPatterns(cycle);
+            if (patterns.Count == 0)
             {
-                sup_mult += SupplyUtils.Multiplier(s);
+                sup_mult += SupplyUtils.Multiplier(Data.Supply.Sufficient, produced);
                 n++;
             }
             else
             {
-                var adjusted = SupplyUtils.Adjust(s, produced);
-                sup_mult += SupplyUtils.Multiplier(adjusted.Item1);
-                sup_mult += SupplyUtils.Multiplier(adjusted.Item2);
-                n += 2;
-            }
-        };
 
-        if (patterns.Count == 0)
-        {
-            if (Supply[cycle] == Data.Supply.Unknown)
-            {
-                UpdateFn(Data.Supply.Sufficient);
-            }
-            else
-            {
-                UpdateFn(Supply[cycle]);
-            }
-        }
-        else
-        {
-
-            foreach (var pattern in patterns)
-            {
-                UpdateFn(pattern.SupplyPattern[cycle]);
+                foreach (var pattern in patterns)
+                {
+                    sup_mult += SupplyUtils.Multiplier(pattern.SupplyPattern[cycle], produced);
+                    n++;
+                }
             }
         }
 
