@@ -125,6 +125,7 @@ internal class ProducedTab : ITab
                 if (thisItem != null)
                 {
                     items[w].Add(thisItem);
+                    hours[w] += thisItem.Hours;
 
                     var pattern = thisItem.FindPattern(cycle);
                     ImGui.SameLine();
