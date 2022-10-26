@@ -1,4 +1,5 @@
 using ImGuiNET;
+using System;
 using System.Linq;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Optimizer;
@@ -64,13 +65,16 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
 
         }
         var cWorkshopsItemSets = itemSetsCaches[ifData.Season].CachedWorkshopsItemSets[cycle];
+        var progress = 0.0;
         if (cWorkshopsItemSets == null)
         {
-            itemSetsCaches[ifData.Season].CachedWorkshopsItemSets[cycle] = cWorkshopsItemSets = optimizer.GenerateAllWorkshops();
+            (cWorkshopsItemSets, progress) = optimizer.GenerateAllWorkshops();
+            itemSetsCaches[ifData.Season].CachedWorkshopsItemSets[cycle] = cWorkshopsItemSets;
         }
         if (cWorkshopsItemSets == null)
         {
-            ImGui.Text("Calculating, please wait...");
+            var adjProgress = Math.Floor(progress * 20) * 5;
+            ImGui.Text($"Calculating, please wait... {adjProgress:F0}%%");
         } else if (ImGui.BeginTable("Workshop Combinations", 6, ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg))
         {
             ImGui.TableSetupColumn("Items", ImGuiTableColumnFlags.WidthFixed, 400);

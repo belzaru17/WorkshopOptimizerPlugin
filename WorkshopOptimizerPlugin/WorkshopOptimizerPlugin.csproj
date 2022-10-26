@@ -3,7 +3,7 @@
     <PropertyGroup>
         <Authors>HappySprite</Authors>
         <Company></Company>
-        <Version>0.1.9.0</Version>
+        <Version>0.2.1.0</Version>
         <Description>FFXIV Island Sanctuary Workshop Optimizer Plugin.</Description>
         <Copyright>Copyright © HappySprite 2022</Copyright>
         <PackageProjectUrl>https://github.com/belzaru17/WorkshopOptimizerPlugin</PackageProjectUrl>

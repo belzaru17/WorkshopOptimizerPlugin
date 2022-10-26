@@ -1,4 +1,7 @@
+using ImGuiNET;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using WorkshopOptimizerPlugin.Data;
 
 namespace WorkshopOptimizerPlugin.Optimizer;
@@ -26,60 +29,67 @@ internal class Optimizer
         cachedResult = new();
     }
 
+    [MemberNotNull(nameof(combinations))]
     public List<ItemSet> GenerateCombinations()
     {
-        var result = new List<ItemSet>();
-        for (uint i = 0; i < Constants.MaxItems; i++)
+        if (combinations == null)
         {
-            var staticItem = ItemStaticData.Get(i);
-            if (!staticItem.IsValid()) { continue; }
-
-            var item = itemCache[staticItem];
-            if (!checkItem(item)) { continue; }
-
-            foreach (var itemset in generateCombinationsRecursive(new List<Item> { item }, item.Hours))
+            var result = new List<ItemSet>();
+            for (uint i = 0; i < Constants.MaxItems; i++)
             {
-                result.Add(itemset);
+                var staticItem = ItemStaticData.Get(i);
+                if (!staticItem.IsValid()) { continue; }
+
+                var item = itemCache[staticItem];
+                if (!checkItem(item)) { continue; }
+
+                foreach (var itemset in generateCombinationsRecursive(new List<Item> { item }, item.Hours))
+                {
+                    result.Add(itemset);
+                }
             }
+            result.Sort((x, y) => y.EffectiveValue(cycle).CompareTo(x.EffectiveValue(cycle)));
+            combinations = result;
         }
-        result.Sort((x,y) => y.EffectiveValue(cycle).CompareTo(x.EffectiveValue(cycle)));
-        return result;
+        return combinations;
     }
 
-    public List<WorkshopsItemSets>? GenerateAllWorkshops()
+    public (List<WorkshopsItemSets>?, double) GenerateAllWorkshops()
     {
         if (cachedDone)
         {
-            return cachedResult;
+            return (cachedResult, 1.0);
         }
 
         if (combinations == null)
         {
-            combinations = GenerateCombinations();
+            GenerateCombinations();
         }
 
         var cutoff = options.ItemGenerationCutoff;
         if (cutoff > combinations.Count) { cutoff = combinations.Count; }
 
-        int remain = Constants.MaxComputeItems;
-        for (; remain > 0 && ci[0] < cutoff; ci[0]++, ci[1]=0)
-        {
-            for (; remain > 0 && ci[1] < cutoff; ci[1]++, ci[2]=0)
+        bool done = false;
+        for (int remain = Constants.MaxComputeItems; !done && remain > 0; remain--) {
+            ItemSet[] newItemSets = new ItemSet[Constants.MaxWorkshops] { combinations[ci[0]], combinations[ci[1]], combinations[ci[2]] };
+            cachedResult.Add(new WorkshopsItemSets(newItemSets, cycle, groove));
+            for (int i = ci.Length-1; i >= 0 && ++ci[i] >= cutoff; i--)
             {
-                for (; remain > 0 && ci[2] < cutoff; ci[2]++, remain--)
+                ci[i] = 0;
+                if (i == 0)
                 {
-                    ItemSet[] newItemSets = new ItemSet[Constants.MaxWorkshops]{ combinations[ci[0]], combinations[ci[1]], combinations[ci[2]] };
-                    cachedResult.Add(new WorkshopsItemSets(newItemSets, cycle, groove));
+                    done = true;
+                    break;
                 }
             }
         }
-        if (remain > 0)
+        if (done)
         {
             cachedResult.Sort((x, y) => y.EffectiveValue.CompareTo(x.EffectiveValue));
             cachedDone = true;
-            return cachedResult;
+            return (cachedResult, 1.0);
         }
-        return null;
+        return (null, (((ci[0] * cutoff + ci[1]) * cutoff) + ci[2]) / Math.Pow(cutoff, 3));
     }
 
     private List<ItemSet> generateCombinationsRecursive(List<Item> items, int hours)

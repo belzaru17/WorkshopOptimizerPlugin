@@ -13,7 +13,7 @@ public class Configuration : IPluginConfiguration
     public int DefaultRestCycle2 = 4;
     public int DefaultTopValues { get; set; } = 10;
 
-    public int ItemGenerationCutoff { get; set; } = 50;
+    public int ItemGenerationCutoff { get; set; } = 20;
 
     // the below exist just to make saving less cumbersome
     [NonSerialized]
