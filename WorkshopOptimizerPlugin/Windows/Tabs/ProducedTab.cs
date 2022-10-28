@@ -36,9 +36,9 @@ internal class ProducedTab : ITab
         if (!ImGui.BeginTable("Produced", 4)) { return; }
 
         ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthFixed, 200);
-        ImGui.TableSetupColumn("Workshop 1", ImGuiTableColumnFlags.WidthFixed, 250);
-        ImGui.TableSetupColumn("Workshop 2", ImGuiTableColumnFlags.WidthFixed, 250);
-        ImGui.TableSetupColumn("Workshop 3", ImGuiTableColumnFlags.WidthFixed, 250);
+        ImGui.TableSetupColumn("Workshop 1", ImGuiTableColumnFlags.WidthFixed, 280);
+        ImGui.TableSetupColumn("Workshop 2", ImGuiTableColumnFlags.WidthFixed, 280);
+        ImGui.TableSetupColumn("Workshop 3", ImGuiTableColumnFlags.WidthFixed, 280);
         ImGui.TableHeadersRow();
 
         var itemCache = ifData.IsCurrentSeason() ? uiDataSource.CurrentItemCache : uiDataSource.PreviousItemCache;
@@ -78,6 +78,10 @@ internal class ProducedTab : ITab
                     if (ImGui.Selectable(""))
                     {
                         producedItems[cycle, w, step] = -1;
+                        for (int s = step + 1; s < Constants.MaxSteps; s++)
+                        {
+                            producedItems[cycle, w, s] = -1;
+                        }
                         uiDataSource.DataChanged(cycle);
                     }
 
@@ -126,6 +130,9 @@ internal class ProducedTab : ITab
                 {
                     items[w].Add(thisItem);
                     hours[w] += thisItem.Hours;
+
+                    ImGui.SameLine();
+                    ImGui.Text($"{thisItem.Hours}hs ");
 
                     var pattern = thisItem.FindPattern(cycle);
                     ImGui.SameLine();
