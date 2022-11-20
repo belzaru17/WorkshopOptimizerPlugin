@@ -42,12 +42,12 @@ public class MainWindow : Window, IDisposable
 
         tabs = new()
         {
-            new Tuple<string, ITab>("Items", new ItemsTab(plugin.Icons, uiDataSource, commonInterfaceElements)),
-            new Tuple<string, ITab>("Patterns", new PatternsTab(uiDataSource, commonInterfaceElements)),
-            new Tuple<string, ITab>("Combinations", new CombinationsTab(plugin.Configuration, uiDataSource, commonInterfaceElements, itemSetsCaches)),
             new Tuple<string, ITab>("Workshops", new WorkshopsTab(plugin.Configuration, uiDataSource, commonInterfaceElements, itemSetsCaches)),
             new Tuple<string, ITab>("Produced", new ProducedTab(uiDataSource, commonInterfaceElements)),
             new Tuple<string, ITab>("Next Week", new NextWeekTab(uiDataSource)),
+            new Tuple<string, ITab>("Items", new ItemsTab(plugin.Icons, uiDataSource, commonInterfaceElements)),
+            new Tuple<string, ITab>("Patterns", new PatternsTab(uiDataSource, commonInterfaceElements)),
+            new Tuple<string, ITab>("Combinations", new CombinationsTab(plugin.Configuration, uiDataSource, commonInterfaceElements, itemSetsCaches)),
         };
     }
 
@@ -88,9 +88,15 @@ public class MainWindow : Window, IDisposable
         int cycle = SeasonUtils.GetCycle();
         ImGui.Text($"Season: {uiDataSource.DataSource.SeasonStart:yyyy-MM-dd} - {uiDataSource.DataSource.SeasonStart.AddDays(Constants.MaxCycles):yyyy-MM-dd}. Cycle={cycle + 1}.");
         ImGui.SameLine();
-        ShowStatus();
+        PopulateDataIfPossible();
         ImGui.SameLine();
-        DrawButtons();
+        var indent = ImGui.GetWindowWidth() - 45;
+        ImGui.Indent(indent);
+        if (UIUtils.ImageButton(plugin.Icons.Settings, "Settings"))
+        {
+            plugin.DrawConfigUI();
+        }
+        ImGui.Unindent(indent);
         ImGui.Spacing();
 
         if (ImGui.BeginTabBar("Tabs"))
@@ -107,84 +113,20 @@ public class MainWindow : Window, IDisposable
         }
     }
 
-    private unsafe void DrawButtons()
+    unsafe private void PopulateDataIfPossible()
     {
         var manager = ManagerProvider.GetManager();
-        var cycle = SeasonUtils.GetCycle();
-        var hasCycleData = IsSameSeason() && (uiDataSource.DataSource.DataCollectionTime[cycle] != null);
+        if (manager == null)
+        {
+            ImGui.TextColored(new Vector4(0.75f, 0, 0, 1), "Need to visit your island and open Demand & Supply!");
+            return;
+        }
 
-        var indent = ImGui.GetWindowWidth() - 175;
-        ImGui.Indent(indent);
-        if (UIUtils.ImageButton(plugin.Icons.PopulateData, "Populate Data", !hasCycleData && manager != null))
+        if (uiDataSource.DataSource.DataCollectionTime[SeasonUtils.GetCycle()] == null)
         {
             PopulateJsonData(manager);
         }
-        ImGui.SameLine();
-        if (UIUtils.ImageButton(plugin.Icons.SaveData, "Save Data", uiDataSource.Dirty))
-        {
-            uiDataSource.Save();
-        }
-        ImGui.SameLine();
-#if DEBUG
-        var enable_reload = true;
-#else
-        var enable_reload = uiDataSource.Dirty;
-#endif
-        if (UIUtils.ImageButton(plugin.Icons.ReloadData, "Reload Data", enable_reload))
-        {
-            uiDataSource.Reload();
-        }
-        ImGui.SameLine();
-        if (UIUtils.ImageButton(plugin.Icons.ExportData, "Export Data", hasCycleData))
-        {
-            ExportData();
-        }
-        ImGui.SameLine();
-        if (UIUtils.ImageButton(plugin.Icons.Settings, "Settings"))
-        {
-            plugin.DrawConfigUI();
-        }
-        ImGui.Unindent(indent);
-
-#if DEBUG
-        ImGui.SameLine();
-        indent = ImGui.GetWindowWidth() - 210;
-        ImGui.Indent(indent);
-        if (UIUtils.ImageButton(plugin.Icons.ResetData, "Reset Data"))
-        {
-            ImGui.OpenPopup("Confirm Reset");
-        }
-        if (ImGui.BeginPopup("Confirm Reset"))
-        {
-            ImGui.Text("Confirm reset data?");
-            if (ImGui.Button("Cancel"))
-            {
-                ImGui.CloseCurrentPopup();
-            }
-            ImGui.SameLine();
-            if (ImGui.Button("Reset"))
-            {
-                uiDataSource.Reset();
-                ImGui.CloseCurrentPopup();
-            }
-            ImGui.EndPopup();
-        }
-        ImGui.Unindent(indent);
-#endif
-    }
-
-    unsafe private void ShowStatus()
-    {
-        if (ManagerProvider.GetManager() == null)
-        {
-            ImGui.TextColored(new Vector4(0.75f, 0, 0, 1), "Need to visit your island and open Demand & Supply!");
-        } else if (uiDataSource.DataSource.DataCollectionTime[SeasonUtils.GetCycle()] == null)
-        {
-            ImGui.TextColored(new Vector4(0.75f, 0.5f, 0, 1), "Data not collected for this cycle!");
-        } else
-        {
-            ImGui.Text("");
-        }
+        ImGui.Text("");
     }
 
     unsafe private void PopulateJsonData(MJIManager* manager)
@@ -205,27 +147,6 @@ public class MainWindow : Window, IDisposable
         }
         uiDataSource.DataSource.DataCollectionTime[cycle] = DateTime.UtcNow;
         uiDataSource.DataChanged(cycle);
-    }
-
-    unsafe private void ExportData()
-    {
-        var s = "# item,popularity,supply1,demand1,supply2,demand2,supply3,demand3,supply4,demand4,supply4,demand4,supply6,demand6,supply7,demand7\n";
-        for (uint i = 0; i < Constants.MaxItems; i++)
-        {
-            var staticData = ItemStaticData.Get(i);
-            if (!staticData.IsValid()) continue;
-
-            var item = uiDataSource.CurrentItemCache[staticData];
-            if (item.Popularity == Popularity.Unknown) continue;
-
-            s += $"{item.Name},{item.Popularity}";
-            for (int c = 0; c < Constants.MaxCycles; c++)
-            {
-                s += $",{item.Supply[c]},{item.Demand[c]}";
-            }
-            s += "\n";
-        }
-        Clipboard.CopyTextToClipboard(s);
     }
 
     private bool IsSameSeason()
