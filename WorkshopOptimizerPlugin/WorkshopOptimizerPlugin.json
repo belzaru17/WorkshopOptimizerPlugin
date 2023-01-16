@@ -17,5 +17,6 @@
         "island",
         "workshop",
         "optimizer"
-    ]
+    ],
+    "DalamudApiLevel":  8
 }

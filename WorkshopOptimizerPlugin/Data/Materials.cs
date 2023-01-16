@@ -57,6 +57,11 @@ internal class Material
     public static readonly Material Islefish = new Material("Islefish", MaterialSource.Gatherable);
     public static readonly Material Squid = new Material("Squid", MaterialSource.Gatherable);
     public static readonly Material Jellyfish = new Material("Jellyfish", MaterialSource.Gatherable);
+    public static readonly Material MulticoloredIslebloooms = new Material("Multicolored Isleblooms", MaterialSource.Gatherable);
+    public static readonly Material Resin = new Material("Resin", MaterialSource.Gatherable);
+    public static readonly Material Coconut = new Material("Coconut", MaterialSource.Gatherable);
+    public static readonly Material BeehiveChip = new Material("Beenhive Chip", MaterialSource.Gatherable);
+    public static readonly Material WoodOpal = new Material("Wood Opal", MaterialSource.Gatherable);
 
     // Granary
     public static readonly Material Alyssum = new Material("Alyssum", MaterialSource.Granary);

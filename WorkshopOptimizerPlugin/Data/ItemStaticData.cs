@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace WorkshopOptimizerPlugin.Data;
@@ -90,16 +91,16 @@ internal class ItemStaticData
         new ItemStaticData(48, "Bed",                 8, 144, When.Either, new Categories[]{Data.Categories.Furnishings, Data.Categories.Textiles},            new Materials[]{Material.Fur[4], Material.CottonBoll[2], Material.Log[2]}),
         new ItemStaticData(49, "Scale Fingers",       8, 144, When.Either, new Categories[]{Data.Categories.Attire, Data.Categories.CreatureCreations},        new Materials[]{Material.Carapace[4], Material.IronOre[2], Material.CottonBoll[2]}),
         new ItemStaticData(50, "Crook",               8, 144, When.Either, new Categories[]{Data.Categories.Arms, Data.Categories.Woodworks},                  new Materials[]{Material.Fang[4], Material.Quartz[2], Material.Log[2]}),
-        new ItemStaticData(51, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
-        new ItemStaticData(52, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
-        new ItemStaticData(53, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
-        new ItemStaticData(54, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
-        new ItemStaticData(55, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
-        new ItemStaticData(56, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
-        new ItemStaticData(57, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
-        new ItemStaticData(58, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
-        new ItemStaticData(59, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
-        new ItemStaticData(60, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
+        new ItemStaticData(51, "Coral Sword",         8,  86, When.Never,  new Categories[]{Data.Categories.Arms, Data.Categories.MarineMerchandise},          new Materials[]{Material.Coral[3], Material.Resin[3], Material.PalmLog[2]}),
+        new ItemStaticData(52, "Coconut Juice",       4,  43, When.Never,  new Categories[]{Data.Categories.Confections, Data.Categories.Concoctions},         new Materials[]{Material.Coconut[2], Material.Sugarcane[2]}),
+        new ItemStaticData(53, "Honey",               4,  43, When.Never,  new Categories[]{Data.Categories.Confections, Data.Categories.Ingredients},         new Materials[]{Material.BeehiveChip[2], Material.Sap[2]}),
+        new ItemStaticData(54, "Seashine Opal",       8,  96, When.Never,  new Categories[]{Data.Categories.UnburiedTreasures},                                new Materials[]{Material.WoodOpal[4], Material.Sand[4]}),
+        new ItemStaticData(55, "Dried Flower",        6,  64, When.Never,  new Categories[]{Data.Categories.Sundries, Data.Categories.Furnishings},            new Materials[]{Material.MulticoloredIslebloooms[1], Material.Coconut[2], Material.Sap[1]}),
+        new ItemStaticData(56, "*Paprika Powder",     0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
+        new ItemStaticData(57, "*Kaulkenin",          0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
+        new ItemStaticData(58, "*Unmanned Bread",     0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
+        new ItemStaticData(59, "*Popoto Salad",       0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
+        new ItemStaticData(60, "*Dressing",           0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
         new ItemStaticData(61, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
     };
 }
