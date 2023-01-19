@@ -82,6 +82,8 @@ internal class Material
     public static readonly Material Wheat = new Material("Wheat", MaterialSource.RareCrop);
     public static readonly Material Corn = new Material("Corn", MaterialSource.RareCrop);
     public static readonly Material Radish = new Material("Radish", MaterialSource.RareCrop);
+    public static readonly Material Paprika = new Material("Paprika", MaterialSource.RareCrop);
+    public static readonly Material Leek = new Material("Leek", MaterialSource.RareCrop);
 
     // Dropping
     public static readonly Material Fleece = new Material("Fleece", MaterialSource.Dropping);
