@@ -100,7 +100,7 @@ internal class ItemStaticData
         new ItemStaticData(57, "Cawl Cennin",         6, 108, When.Either, new Categories[]{Data.Categories.Concoctions, Data.Categories.CreatureCreations},   new Materials[]{Material.Leek[3], Material.Milk[1], Material.Laver[3]}),
         new ItemStaticData(58, "Isloaf",              4,  62, When.Either, new Categories[]{Data.Categories.Foodstuffs, Data.Categories.Concoctions},          new Materials[]{Material.Wheat[2], Material.Islefish[1], Material.RockSalt[1]}),
         new ItemStaticData(59, "Popoto Salad",        4,  62, When.Either, new Categories[]{Data.Categories.Foodstuffs},                                       new Materials[]{Material.Popoto[2], Material.Apple[1], Material.Islewort[1]}),
-        new ItemStaticData(60, "Dressing",            4,  62, When.Either, new Categories[]{},                                                                 new Materials[]{Material.Onion[2], Material.Sap[1], Material.Laver[1]}),
+        new ItemStaticData(60, "Dressing",            4,  62, When.Either, new Categories[]{Data.Categories.Ingredients},                                      new Materials[]{Material.Onion[2], Material.Sap[1], Material.Laver[1]}),
         new ItemStaticData(61, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
     };
 }

@@ -113,10 +113,10 @@ public class MainWindow : Window, IDisposable
         }
     }
 
-    unsafe private void PopulateDataIfPossible()
+    private void PopulateDataIfPossible()
     {
         var manager = ManagerProvider.GetManager();
-        if (manager == null)
+        if (!manager.IsValid)
         {
             ImGui.TextColored(new Vector4(0.75f, 0, 0, 1), "Need to visit your island and open Demand & Supply!");
             return;
@@ -129,10 +129,10 @@ public class MainWindow : Window, IDisposable
         ImGui.Text("");
     }
 
-    unsafe private void PopulateJsonData(MJIManager* manager)
+    private void PopulateJsonData(Manager manager)
     {
-        byte popIndex = manager->CurrentPopularity;
-        byte nextPopIndex = manager->NextPopularity;
+        int popIndex = manager.CurrentPopularityIndex;
+        int nextPopIndex = manager.NextPopularityIndex;
         var cycle = SeasonUtils.GetCycle();
         for (uint i = 0; i < Constants.MaxItems; i++)
         {
@@ -142,8 +142,8 @@ public class MainWindow : Window, IDisposable
             var item = uiDataSource.DataSource.CurrentDynamicData[(int)i];
             item.Popularity = pop;
             item.NextPopularity = PopularityTable.GetItemPopularity(nextPopIndex, i);
-            item.Supply[cycle] = SupplyUtils.FromFFXIV(manager->GetSupplyForCraftwork(i));
-            item.Demand[cycle] = DemandUtils.FromFFXIV(manager->GetDemandShiftForCraftwork(i));
+            item.Supply[cycle] = manager.GetSupplyForCraftwork(i);
+            item.Demand[cycle] = manager.GetDemandShiftForCraftwork(i);
         }
         uiDataSource.DataSource.DataCollectionTime[cycle] = DateTime.UtcNow;
         uiDataSource.DataChanged(cycle);

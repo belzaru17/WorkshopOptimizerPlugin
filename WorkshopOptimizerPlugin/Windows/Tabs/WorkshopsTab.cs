@@ -77,7 +77,7 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
             ImGui.Text($"Calculating, please wait... {adjProgress:F0}%%");
         } else if (ImGui.BeginTable("Workshop Combinations", 6, ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg))
         {
-            ImGui.TableSetupColumn("Items", ImGuiTableColumnFlags.WidthFixed, 400);
+            ImGui.TableSetupColumn("Items", ImGuiTableColumnFlags.WidthFixed, 600);
             ImGui.TableSetupColumn("Patterns", ImGuiTableColumnFlags.WidthFixed, 200);
             ImGui.TableSetupColumn("Hours", ImGuiTableColumnFlags.WidthFixed, 100);
             ImGui.TableSetupColumn("Total", ImGuiTableColumnFlags.WidthFixed, 100);
