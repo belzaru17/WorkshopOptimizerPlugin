@@ -1,6 +1,5 @@
 using Dalamud.Utility.Signatures;
-using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.FFXIV.Client.Game.MJI;
 using System;
 using WorkshopOptimizerPlugin.Data;
 

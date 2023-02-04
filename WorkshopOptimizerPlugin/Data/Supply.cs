@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Game.Gauge;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using FFXIVClientStructs.FFXIV.Client.Game.MJI;
 
 namespace WorkshopOptimizerPlugin.Data;
 

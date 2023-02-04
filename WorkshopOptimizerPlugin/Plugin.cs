@@ -21,6 +21,9 @@ public sealed class Plugin : IDalamudPlugin
     private DalamudPluginInterface PluginInterface { get; init; }
     private CommandManager CommandManager { get; init; }
 
+    private ConfigWindow ConfigWindow { get; init; }
+    private MainWindow MainWindow { get; init; }
+
     public Plugin(
         [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
         [RequiredVersion("1.0")] CommandManager commandManager,
@@ -35,8 +38,11 @@ public sealed class Plugin : IDalamudPlugin
 
         Icons = new Icons(PluginInterface);
 
-        WindowSystem.AddWindow(new ConfigWindow(this));
-        WindowSystem.AddWindow(new MainWindow(this));
+        this.ConfigWindow = new ConfigWindow(this);
+        this.MainWindow = new MainWindow(this);
+
+        WindowSystem.AddWindow(ConfigWindow);
+        WindowSystem.AddWindow(MainWindow);
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
@@ -51,16 +57,14 @@ public sealed class Plugin : IDalamudPlugin
     {
         WindowSystem.RemoveAllWindows();
         CommandManager.RemoveHandler(CommandName);
+        ConfigWindow.Dispose();
+        MainWindow.Dispose();
         Icons.Dispose();
     }
 
     private void OnCommand(string command, string args)
     {
-        var win = WindowSystem.GetWindow("Workshop Optimizer");
-        if (win != null)
-        {
-            win.IsOpen = true;
-        }
+        MainWindow.IsOpen = true;
     }
 
     private void DrawUI()
@@ -70,10 +74,6 @@ public sealed class Plugin : IDalamudPlugin
 
     public void DrawConfigUI()
     {
-        var win = WindowSystem.GetWindow("Workshop Optimizer Configuration");
-        if (win != null)
-        {
-            win.IsOpen = true;
-        }
+        ConfigWindow.IsOpen = true;
     }
 }
