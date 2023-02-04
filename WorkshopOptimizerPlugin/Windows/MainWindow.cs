@@ -115,15 +115,15 @@ public class MainWindow : Window, IDisposable
 
     private void PopulateDataIfPossible()
     {
-        var manager = ManagerProvider.GetManager();
-        if (!manager.IsValid)
-        {
-            ImGui.TextColored(new Vector4(0.75f, 0, 0, 1), "Need to visit your island and open Demand & Supply!");
-            return;
-        }
-
         if (uiDataSource.DataSource.DataCollectionTime[SeasonUtils.GetCycle()] == null)
         {
+            var manager = ManagerProvider.GetManager();
+            if (!manager.IsValid)
+            {
+                ImGui.TextColored(new Vector4(0.75f, 0, 0, 1), "Need to visit your island and open Demand & Supply!");
+                return;
+            }
+
             PopulateJsonData(manager);
         }
         ImGui.Text("");

@@ -72,25 +72,25 @@ internal class SupplyDemandPattern
             new Supply[7]{
                  Supply.Sufficient, Supply.Insufficient, Supply.Sufficient, Supply.Sufficient, Supply.Insufficient, Supply.Insufficient, Supply.Sufficient,
             }, new Demand[7]{
-                 Demand.Any, Demand.None, Demand.Decreasing, Demand.Increasing, Demand.Increasing, Demand.Increasing, Demand.Plummeting,
+                 Demand.Any, Demand.Increasing, Demand.Decreasing, Demand.Increasing, Demand.Increasing, Demand.Increasing, Demand.Plummeting,
             }),
         new SupplyDemandPattern(5, true,
             new Supply[7]{
                  Supply.Sufficient, Supply.Insufficient, Supply.Sufficient, Supply.Sufficient, Supply.Insufficient, Supply.Nonexistent, Supply.Sufficient,
             }, new Demand[7]{
-                 Demand.Any, Demand.None, Demand.Plummeting, Demand.Skyrocketing, Demand.Skyrocketing, Demand.Skyrocketing, Demand.Plummeting,
+                 Demand.Any, Demand.Increasing, Demand.Plummeting, Demand.Skyrocketing, Demand.Skyrocketing, Demand.Skyrocketing, Demand.Plummeting,
             }),
         new SupplyDemandPattern(6, false,
             new Supply[7]{
                  Supply.Sufficient, Supply.Insufficient, Supply.Sufficient, Supply.Sufficient, Supply.Sufficient, Supply.Insufficient, Supply.Insufficient,
             }, new Demand[7]{
-                 Demand.Any, Demand.None, Demand.Plummeting, Demand.Increasing, Demand.Increasing, Demand.Increasing, Demand.Increasing,
+                 Demand.Any, Demand.Increasing, Demand.Plummeting, Demand.Increasing, Demand.Increasing, Demand.Increasing, Demand.Increasing,
             }),
         new SupplyDemandPattern(6, true,
             new Supply[7]{
                  Supply.Sufficient, Supply.Insufficient, Supply.Sufficient, Supply.Sufficient, Supply.Sufficient, Supply.Insufficient, Supply.Nonexistent,
             }, new Demand[7]{
-                 Demand.Any, Demand.None, Demand.Plummeting, Demand.None, Demand.Skyrocketing, Demand.Skyrocketing, Demand.Skyrocketing,
+                 Demand.Any, Demand.Increasing, Demand.Plummeting, Demand.None, Demand.Skyrocketing, Demand.Skyrocketing, Demand.Skyrocketing,
             }),
     };
 }
