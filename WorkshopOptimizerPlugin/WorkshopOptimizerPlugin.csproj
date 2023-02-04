@@ -8,6 +8,7 @@
         <Copyright>Copyright © HappySprite 2022-2023</Copyright>
         <PackageProjectUrl>https://github.com/belzaru17/WorkshopOptimizerPlugin</PackageProjectUrl>
         <RepositoryUrl>https://github.com/belzaru17/WorkshopOptimizerPlugin</RepositoryUrl>
+        <OutputPath>bin\$(Configuration)\</OutputPath>
     </PropertyGroup>
 
     <PropertyGroup>
