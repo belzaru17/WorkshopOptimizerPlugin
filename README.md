@@ -1,14 +1,6 @@
 # WorkshopOptimizerPlugin
 FFXIV Island Sanctuary Workshop Optimizer Plugin
 
-# Installation
-
-1. /xlsettings -> Experimental tab
-2. Add https://raw.githubusercontent.com/belzaru17/WorkshopOptimizerPlugin/main/repo.json to the Custom Plugin Repositories
-3. Click on the + button
-4. Click on the "Save and Close" button
-5. /xlplugins -> Enable WorkshopOptimizerPlugin
-
 # Usage
 
 1. Go to your island
