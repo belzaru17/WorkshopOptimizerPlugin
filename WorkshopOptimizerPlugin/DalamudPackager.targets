@@ -6,6 +6,6 @@
             OutputPath="$(OutputPath)"
             AssemblyName="$(AssemblyName)"
 			Exclude="latest.zip;previous.zip;loc.log;$(ProjectName).pdb;$(ProjectName).deps.json;$(ProjectName)_Localizable.json"
-			MakeZip="false"/>
+			MakeZip="true"/>
 		</Target>
 </Project>
