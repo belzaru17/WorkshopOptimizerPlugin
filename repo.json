@@ -14,8 +14,8 @@
   ],
   "DalamudApiLevel": 8,
   "LoadPriority": 0,
-  "IconUrl": "https://raw.githubusercontent.com/belzaru17/WorkshopOptimizerPlugin/master/Images/icon.png",
-  "DownloadCount": 0,
+  "IconUrl": "https://raw.githubusercontent.com/belzaru17/WorkshopOptimizerPlugin/main/Images/icon.jpg",
+  "DownloadCount": 1,
   "DownloadLinkInstall": "https://github.com/belzaru17/WorkshopOptimizerPlugin/releases/download/0.2.4.5/WorkshopOptimizerPlugin.zip",
   "DownloadLinkTesting": "https://github.com/belzaru17/WorkshopOptimizerPlugin/releases/download/0.2.4.5/WorkshopOptimizerPlugin.zip",
   "DownloadLinkUpdate": "https://github.com/belzaru17/WorkshopOptimizerPlugin/releases/download/0.2.4.5/WorkshopOptimizerPlugin.zip"
