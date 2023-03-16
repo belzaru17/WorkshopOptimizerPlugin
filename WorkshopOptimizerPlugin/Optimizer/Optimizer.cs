@@ -55,6 +55,11 @@ internal class Optimizer
 
         if (ci < Constants.MaxItems)
         {
+            cachedCombinations.Sort((x, y) => y.EffectiveValue(cycle).CompareTo(x.EffectiveValue(cycle)));
+            if (cachedCombinations.Count > Constants.MaxComputeItems)
+            {
+                cachedCombinations.RemoveRange(Constants.MaxComputeItems, cachedCombinations.Count - Constants.MaxComputeItems);
+            }
             return (null, (double)ci / Constants.MaxItems);
         }
 
@@ -73,7 +78,7 @@ internal class Optimizer
         var (combinations, progress) = GenerateCombinations();
         if (combinations == null)
         {
-            return (null, progress);
+            return (null, progress/2);
         }
 
         var cutoff = options.ItemGenerationCutoff;
@@ -99,7 +104,7 @@ internal class Optimizer
             workshopCombinationsDone = true;
             return (cachedWorkshopCombinations, 1.0);
         }
-        return (null, (((wci[0] * cutoff + wci[1]) * cutoff) + wci[2]) / Math.Pow(cutoff, 3));
+        return (null, 0.5 + ((((wci[0] * cutoff + wci[1]) * cutoff) + wci[2]) / Math.Pow(cutoff, 3)) / 2);
     }
 
     private List<ItemSet> generateCombinationsRecursive(List<Item> items, int hours)

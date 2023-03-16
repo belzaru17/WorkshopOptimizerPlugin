@@ -16,6 +16,7 @@ internal static class Constants
     public const int ResetUTCHour = 8;
 
     public const int MaxComputeItems = 100;
+    public const int MaxTopItems = 100;
 
     public const int CurrentSeason = 0;
     public const int PreviousSeason = 1;

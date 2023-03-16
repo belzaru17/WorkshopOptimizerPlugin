@@ -15,7 +15,7 @@ internal class CommonInterfaceElements
     public int Season => mSeason;
     public int Cycle => UIUtils.FixValue(ref mCycle, 1, 7) - 1;
     public bool StrictCycles => mStrictCycles;
-    public int Top => UIUtils.FixValue(ref mTop, 1, 2000);
+    public int Top => UIUtils.FixValue(ref mTop, 1, Constants.MaxTopItems);
     public bool[] RestCycles => mRestCycles;
 
     public CommonInterfaceElements(Configuration configuration)
