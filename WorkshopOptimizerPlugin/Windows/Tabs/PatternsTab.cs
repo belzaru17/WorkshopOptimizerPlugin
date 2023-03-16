@@ -47,7 +47,7 @@ internal class PatternsTab : ITab
                 if (!staticData.IsValid()) { continue; }
 
                 var item = itemCache[staticData];
-                var pattern = item.FindPattern(cycle);
+                var (pattern, _) = item.FindPattern(cycle);
 
                 if (pattern != null)
                 {
@@ -57,7 +57,7 @@ internal class PatternsTab : ITab
 
             foreach (var item in items.OrderByDescending(o => o.EffectiveValue(cycle)).ToList())
             {
-                var pattern = item.FindPattern(cycle);
+                var (pattern, _) = item.FindPattern(cycle);
                 if (pattern == null) { continue; }
 
                 ImGui.TableNextRow();

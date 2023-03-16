@@ -60,14 +60,15 @@ internal class Item
         return ret;
     }
 
-    public SupplyDemandPattern? FindPattern(int cycle)
+    public (SupplyDemandPattern?, bool) FindPattern(int cycle)
     {
         List<SupplyDemandPattern> patterns = FindPatterns(cycle);
         if (patterns.Count != 1 || patterns[0].Cycle != cycle)
         {
-            return null;
+            return (null, patterns.Count > 0);
         }
-        return patterns[0];
+        
+        return (patterns[0], true);
     }
 
     public double EffectiveValue(int cycle, int add = 0)
@@ -110,22 +111,26 @@ internal class Item
         if ((strictness & Strictness.AllowAnyCycle) != 0) { return true; }
 
         var patterns = FindPatterns(cycle);
-        var result = patterns.Count > 0;
+        if (patterns.Count == 0)
+        {
+            return (strictness & Strictness.AllowUnknownCycle) != 0;
+        }
+        if (patterns.Count > 1 && (strictness & Strictness.AllowMultiCycle) != 0) { return false; }
+
         foreach (var pattern in patterns)
         {
-            if ((strictness & Strictness.AllowExactCycle) != 0 && (pattern.Cycle == cycle))
+            if (pattern.Cycle == cycle)
             {
-                result &= (When & (pattern.Strong? Data.When.Strong : Data.When.Weak)) != 0;
-                continue;
+                if ((When & (pattern.Strong? Data.When.Strong : Data.When.Weak)) != 0) {
+                    return true;
+                }
             }
 
-            if ((strictness & Strictness.AllowRestCycle) != 0 && restCycles[pattern.Cycle]) { continue; }
-            if ((strictness & Strictness.AllowEarlierCycle) != 0 && pattern.Cycle <= cycle) { continue; }
-
-            return false;
+            if ((strictness & Strictness.AllowRestCycle) != 0 && restCycles[pattern.Cycle]) { return true; }
+            if ((strictness & Strictness.AllowEarlierCycle) != 0 && pattern.Cycle < cycle) { return true; }
         }
 
-        return result;
+        return false;
     }
 
     private readonly ItemStaticData staticData;

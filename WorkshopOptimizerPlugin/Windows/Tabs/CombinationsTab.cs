@@ -1,5 +1,7 @@
 using ImGuiNET;
+using System;
 using System.Linq;
+using System.Xml.Linq;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Optimizer;
 using WorkshopOptimizerPlugin.Windows.Utils;
@@ -28,6 +30,11 @@ internal class CombinationsTab : ITab
         ifData.DrawBasicControls(uiDataSource);
         var cycle = ifData.Cycle;
         var startGroove = ifData.GetStartGroove(uiDataSource);
+        Func<Item, string> formatPattern = i => {
+            var (pattern, some) = i.FindPattern(cycle);
+            return some ? pattern?.Name ?? "*" : "?";
+        };
+
         ImGui.SameLine();
         ifData.DrawFilteringControls(uiDataSource);
         ImGui.Spacing();
@@ -49,7 +56,7 @@ internal class CombinationsTab : ITab
             var itemSets = itemSetsCaches[ifData.Season].CachedItemSets[cycle];
             if (itemSets == null)
             {
-                var options = new OptimizerOptions(configuration, ifData.StrictCycles ? Strictness.AllowExactCycle : (Strictness.AllowExactCycle | Strictness.AllowRestCycle | Strictness.AllowEarlierCycle));
+                var options = new OptimizerOptions(configuration, ifData.StrictCycles ? Strictness.StrictDefaults : Strictness.RelaxedDefaults, ifData.RestCycles);
                 itemSetsCaches[ifData.Season].CachedItemSets[cycle] = itemSets = new Optimizer.Optimizer(itemCache, cycle, startGroove, options).GenerateCombinations();
             }
             var top = ifData.Top;
@@ -61,7 +68,7 @@ internal class CombinationsTab : ITab
                 ImGui.TableSetColumnIndex(0);
                 ImGui.Text(string.Join("/", itemset.Items.Select(i => i.Name)));
                 ImGui.TableNextColumn();
-                ImGui.Text(string.Join("/", itemset.Items.Select(i => (i.FindPattern(cycle))?.Name ?? "*")));
+                ImGui.Text(string.Join("/", itemset.Items.Select(i => formatPattern(i))));
                 ImGui.TableNextColumn();
                 ImGui.Text(string.Join("/", itemset.Items.Select(i => i.Hours)));
                 ImGui.TableNextColumn();

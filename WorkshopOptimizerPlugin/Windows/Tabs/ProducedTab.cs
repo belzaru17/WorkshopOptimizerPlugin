@@ -25,6 +25,8 @@ internal class ProducedTab : ITab
         ifData.DrawBasicControls(uiDataSource);
         var cycle = ifData.Cycle;
         var startGroove = ifData.GetStartGroove(uiDataSource);
+        ImGui.SameLine();
+        ifData.DrawRestCycleCheckbox(uiDataSource, cycle);
         ImGui.Spacing();
         DrawProducedTable(cycle, startGroove);
         ImGui.Spacing();
@@ -43,7 +45,7 @@ internal class ProducedTab : ITab
 
         var itemCache = ifData.IsCurrentSeason() ? uiDataSource.CurrentItemCache : uiDataSource.PreviousItemCache;
         var producedItems = ifData.IsCurrentSeason() ? uiDataSource.DataSource.CurrentProducedItems : uiDataSource.DataSource.PreviousProducedItems;
-        var disabled = ifData.IsPreviousSeason();
+        var disabled = ifData.IsPreviousSeason() || ifData.RestCycles[cycle];
         var hours = new int[Constants.MaxWorkshops];
         var items = new List<Item>[Constants.MaxWorkshops];
         for (int w = 0; w < Constants.MaxWorkshops; w++)
@@ -134,9 +136,9 @@ internal class ProducedTab : ITab
                     ImGui.SameLine();
                     ImGui.Text($"{thisItem.Hours}hs ");
 
-                    var pattern = thisItem.FindPattern(cycle);
+                    var (pattern, some) = thisItem.FindPattern(cycle);
                     ImGui.SameLine();
-                    ImGui.Text(pattern?.Name ?? " * ");
+                    ImGui.Text(some ? pattern?.Name ?? " * " : " ? ");
                 }
             }
         }

@@ -2,25 +2,28 @@ namespace WorkshopOptimizerPlugin.Optimizer;
 
 internal enum Strictness
 {
-    AllowExactCycle   = 1 << 0,
-    AllowRestCycle    = 1 << 1,
-    AllowEarlierCycle = 1 << 2,
-    AllowAnyCycle     = 1 << 3,
+    AllowAnyCycle     = 1 << 0,
+    AllowExactCycle   = 1 << 1,
+    AllowRestCycle    = 1 << 2,
+    AllowEarlierCycle = 1 << 3,
+    AllowMultiCycle   = 1 << 4,
+    AllowUnknownCycle = 1 << 5,
+
+    StrictDefaults    = AllowExactCycle,
+    RelaxedDefaults   = AllowExactCycle | AllowRestCycle | AllowEarlierCycle | AllowMultiCycle | AllowUnknownCycle,
 }
 
 
 internal class OptimizerOptions
 {
     public Strictness Strictness;
-    public bool[] RestCycles;
+    public readonly bool[] RestCycles;
     public int ItemGenerationCutoff;
 
-    public OptimizerOptions(Configuration configuration, Strictness strictness = Strictness.AllowExactCycle)
+    public OptimizerOptions(Configuration configuration, Strictness strictness, bool[] restCycles)
     {
         Strictness = strictness;
-        RestCycles = new bool[7];
-        RestCycles[configuration.DefaultRestCycle1] = true;
-        RestCycles[configuration.DefaultRestCycle2] = true;
+        RestCycles = restCycles;
         ItemGenerationCutoff = configuration.ItemGenerationCutoff;
     }
 }

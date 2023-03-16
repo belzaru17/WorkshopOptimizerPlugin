@@ -50,6 +50,11 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
         ifData.DrawBasicControls(uiDataSource);
         var cycle = ifData.Cycle;
         var startGroove = ifData.GetStartGroove(uiDataSource);
+        Func<Item, string> formatPattern = i => {
+            var (pattern, some) = i.FindPattern(cycle);
+            return some ? pattern?.Name ?? "*" : "?";
+        };
+
         ImGui.SameLine();
         ifData.DrawFilteringControls(uiDataSource);
         ImGui.Spacing();
@@ -60,7 +65,7 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
         var optimizer = optimizers[ifData.Season, cycle];
         if (optimizer == null)
         {
-            var options = new OptimizerOptions(configuration, ifData.StrictCycles? Strictness.AllowExactCycle : (Strictness.AllowExactCycle | Strictness.AllowRestCycle | Strictness.AllowEarlierCycle));
+            var options = new OptimizerOptions(configuration, ifData.StrictCycles ? Strictness.StrictDefaults : Strictness.RelaxedDefaults, ifData.RestCycles);
             optimizers[ifData.Season, cycle] = optimizer = new Optimizer.Optimizer(itemCache, cycle, startGroove, options);
 
         }
@@ -99,7 +104,7 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
                 ImGui.TableNextColumn();
                 for (int w = 0; w < Constants.MaxWorkshops; w++)
                 {
-                    ImGui.Text(string.Join("/", workshopsItemSets.ItemSets[w].Items.Select(i => (i.FindPattern(cycle))?.Name ?? "*")));
+                    ImGui.Text(string.Join("/", workshopsItemSets.ItemSets[w].Items.Select(i => formatPattern(i))));
                 }
                 ImGui.TableNextColumn();
                 for (int w = 0; w < Constants.MaxWorkshops; w++)
