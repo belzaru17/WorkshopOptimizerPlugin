@@ -1,19 +1,19 @@
 using ImGuiNET;
 using System;
+using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Optimizer;
 using WorkshopOptimizerPlugin.Windows.Utils;
-
 namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
-internal class CombinationsTab : ITab
+internal class CombinationsTab : ITab, IUIDataSourceListener
 {
     private readonly Configuration configuration;
     private readonly UIDataSource uiDataSource;
     private CommonInterfaceElements ifData;
     private readonly IItemSetsCache[] itemSetsCaches;
+    private Optimizer.Optimizer?[,] optimizers;
 
     public CombinationsTab(Configuration configuration, UIDataSource uiDataSource, CommonInterfaceElements ifData, IItemSetsCache[] itemSetsCaches)
     {
@@ -21,6 +21,26 @@ internal class CombinationsTab : ITab
         this.uiDataSource = uiDataSource;
         this.ifData = ifData;
         this.itemSetsCaches = itemSetsCaches;
+        this.optimizers = new Optimizer.Optimizer?[Constants.MaxSeasons, Constants.MaxCycles];
+
+        uiDataSource.AddListener(this);
+    }
+
+    public void OnDataChange(int cycle)
+    {
+        for (int i = cycle; i < Constants.MaxCycles; i++)
+        {
+            this.optimizers[Constants.CurrentSeason, i] = null;
+        }
+    }
+
+    public void OnOptimizationParameterChange()
+    {
+        OnDataChange(0);
+        for (int i = 0; i < Constants.MaxCycles; i++)
+        {
+            this.optimizers[Constants.PreviousSeason, i] = null;
+        }
     }
 
     public void OnOpen() { }
@@ -39,7 +59,30 @@ internal class CombinationsTab : ITab
         ifData.DrawFilteringControls(uiDataSource);
         ImGui.Spacing();
 
-        if (ImGui.BeginTable("Combinations", 7, ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg))
+        var itemCache = ifData.IsCurrentSeason() ? uiDataSource.CurrentItemCache : uiDataSource.PreviousItemCache;
+        var itemSets = itemSetsCaches[ifData.Season].CachedItemSets[cycle];
+        var progress = 0.0;
+        if (itemSets == null)
+        {
+            var optimizer = optimizers[ifData.Season, cycle];
+            if (optimizer == null)
+            {
+                var options = new OptimizerOptions(configuration, ifData.StrictCycles ? Strictness.StrictDefaults() : Strictness.RelaxedDefaults(), ifData.RestCycles);
+                optimizers[ifData.Season, cycle] = optimizer = new Optimizer.Optimizer(itemCache, cycle, startGroove, options);
+            }
+            (itemSets, progress) = optimizer.GenerateCombinations();
+
+            if (itemSets != null)
+            {
+                itemSetsCaches[ifData.Season].CachedItemSets[cycle] = itemSets;
+            }
+        }
+
+        if (itemSets == null)
+        {
+            var adjProgress = Math.Floor(progress * 20) * 5;
+            ImGui.Text($"Calculating, please wait... {adjProgress:F0}%%");
+        } else if (ImGui.BeginTable("Combinations", 7, ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg))
         {
             ImGui.TableSetupColumn("Items", ImGuiTableColumnFlags.WidthFixed, 400);
             ImGui.TableSetupColumn("Patterns", ImGuiTableColumnFlags.WidthFixed, 150);
@@ -50,15 +93,8 @@ internal class CombinationsTab : ITab
             ImGui.TableSetupColumn("Set", ImGuiTableColumnFlags.WidthFixed, 100);
             ImGui.TableHeadersRow();
 
-            var itemCache = ifData.IsCurrentSeason() ? uiDataSource.CurrentItemCache : uiDataSource.PreviousItemCache;
             var producedItems = ifData.IsCurrentSeason() ? uiDataSource.DataSource.CurrentProducedItems : uiDataSource.DataSource.PreviousProducedItems;
             var disabled = ifData.IsPreviousSeason();
-            var itemSets = itemSetsCaches[ifData.Season].CachedItemSets[cycle];
-            if (itemSets == null)
-            {
-                var options = new OptimizerOptions(configuration, ifData.StrictCycles ? Strictness.StrictDefaults : Strictness.RelaxedDefaults, ifData.RestCycles);
-                itemSetsCaches[ifData.Season].CachedItemSets[cycle] = itemSets = new Optimizer.Optimizer(itemCache, cycle, startGroove, options).GenerateCombinations();
-            }
             var top = ifData.Top;
             foreach (var itemset in itemSets)
             {

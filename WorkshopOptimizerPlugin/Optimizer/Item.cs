@@ -108,26 +108,22 @@ internal class Item
     {
         if (When == Data.When.Never) { return false; }
         if (When == Data.When.Always) { return true; }
-        if ((strictness & Strictness.AllowAnyCycle) != 0) { return true; }
+        if (strictness.AllowAnyCycle) { return true; }
 
         var patterns = FindPatterns(cycle);
-        if (patterns.Count == 0)
-        {
-            return (strictness & Strictness.AllowUnknownCycle) != 0;
-        }
-        if (patterns.Count > 1 && (strictness & Strictness.AllowMultiCycle) != 0) { return false; }
+        if (patterns.Count == 0) { return strictness.AllowUnknownCycle; }
+        if (patterns.Count > 1 && !strictness.AllowMultiCycle) { return false; }
 
         foreach (var pattern in patterns)
         {
-            if (pattern.Cycle == cycle)
+            if ((strictness.AllowSameCycle && (pattern.Cycle == cycle)) ||
+                (strictness.AllowRestCycle && restCycles[pattern.Cycle]) ||
+                (strictness.AllowEarlierCycle && (pattern.Cycle < cycle))) 
             {
                 if ((When & (pattern.Strong? Data.When.Strong : Data.When.Weak)) != 0) {
                     return true;
                 }
             }
-
-            if ((strictness & Strictness.AllowRestCycle) != 0 && restCycles[pattern.Cycle]) { return true; }
-            if ((strictness & Strictness.AllowEarlierCycle) != 0 && pattern.Cycle < cycle) { return true; }
         }
 
         return false;
