@@ -1,25 +1,29 @@
 using ImGuiNET;
 using WorkshopOptimizerPlugin.Data;
+using WorkshopOptimizerPlugin.Optimizer;
 using WorkshopOptimizerPlugin.Utils;
 
 namespace WorkshopOptimizerPlugin.Windows.Utils;
 
 internal class CommonInterfaceElements
 {
+    private readonly Icons icons;
     private int mSeason = 0;
     private int mCycle;
     private int mTop;
-    private bool mStrictCycles = false;
+    private int mNewStrictness;
+    private Strictness mStrictness = Strictness.RelaxedDefaults;
     private readonly bool[] mRestCycles = new bool[Constants.MaxCycles];
 
     public int Season => mSeason;
     public int Cycle => UIUtils.FixValue(ref mCycle, 1, 7) - 1;
-    public bool StrictCycles => mStrictCycles;
+    public Strictness Strictness => mStrictness;
     public int Top => UIUtils.FixValue(ref mTop, 1, Constants.MaxTopItems);
     public bool[] RestCycles => mRestCycles;
 
-    public CommonInterfaceElements(Configuration configuration)
+    public CommonInterfaceElements(Icons icons, Configuration configuration)
     {
+        this.icons = icons;
         mTop = configuration.DefaultTopValues;
         mCycle = SeasonUtils.GetCycle() + 1;
         mRestCycles[configuration.DefaultRestCycle1] = true;
@@ -66,9 +70,45 @@ internal class CommonInterfaceElements
         ImGui.SetNextItemWidth(100);
         ImGui.InputInt("Top-N", ref mTop, 5);
         ImGui.SameLine();
-        if (ImGui.Checkbox("Strict Cycles", ref mStrictCycles))
+        if (ImGui.BeginPopupModal("Optimizer Settings"))
         {
-            uiDataSource.OptimizationParameterChanged();
+            ImGui.CheckboxFlags("Allow items on any cycle", ref mNewStrictness, (int)Strictness.AllowAnyCycle);
+            ImGui.CheckboxFlags("Allow items that peak on this cycle", ref mNewStrictness, (int)Strictness.AllowSameCycle);
+            ImGui.CheckboxFlags("Allow items that peak on rest cycles", ref mNewStrictness, (int)Strictness.AllowRestCycles);
+            ImGui.CheckboxFlags("Allow items that peaked on earlier cycles", ref mNewStrictness, (int)Strictness.AllowEarlierCycles);
+            ImGui.CheckboxFlags("Allow items that may peak on other cycles", ref mNewStrictness, (int)Strictness.AllowMultiCycle);
+            ImGui.CheckboxFlags("Allow items that we don't know their peak cycle", ref mNewStrictness, (int)Strictness.AllowUnknownCycle);
+            ImGui.Spacing();
+            if (ImGui.Button("Cancel"))
+            {
+                ImGui.CloseCurrentPopup();
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Defaults"))
+            {
+                if (mStrictness != Strictness.RelaxedDefaults)
+                {
+                    mStrictness = Strictness.RelaxedDefaults;
+                    uiDataSource.OptimizationParameterChanged();
+                }
+                ImGui.CloseCurrentPopup();
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Apply"))
+            {
+                if (mStrictness != (Strictness)mNewStrictness)
+                {
+                    mStrictness = (Strictness)mNewStrictness;
+                    uiDataSource.OptimizationParameterChanged();
+                }
+                ImGui.CloseCurrentPopup();
+            }
+            ImGui.EndPopup();
+        }
+        if (UIUtils.ImageButton(icons.OptimizerSettings, "Optimizer Settings"))
+        {
+            mNewStrictness = (int)Strictness;
+            ImGui.OpenPopup("Optimizer Settings");
         }
     }
 

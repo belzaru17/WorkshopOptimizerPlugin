@@ -37,7 +37,7 @@ public class MainWindow : Window, IDisposable
         {
             uiDataSource.AddListener(itemSetsCaches[i]);
         }
-        commonInterfaceElements = new CommonInterfaceElements(plugin.Configuration);
+        commonInterfaceElements = new CommonInterfaceElements(plugin.Icons, plugin.Configuration);
 
         tabs = new()
         {

@@ -4,13 +4,13 @@ public enum Strictness
 {
     AllowAnyCycle     = 1 << 0,
     AllowSameCycle    = 1 << 1,
-    AllowRestCycle    = 1 << 2,
-    AllowEarlierCycle = 1 << 3,
+    AllowRestCycles    = 1 << 2,
+    AllowEarlierCycles = 1 << 3,
     AllowMultiCycle   = 1 << 4,
     AllowUnknownCycle = 1 << 5,
 
     StrictDefaults  = AllowSameCycle,
-    RelaxedDefaults = AllowSameCycle | AllowRestCycle | AllowEarlierCycle | AllowMultiCycle | AllowUnknownCycle,
+    RelaxedDefaults = AllowSameCycle | AllowRestCycles | AllowEarlierCycles | AllowMultiCycle | AllowUnknownCycle,
 }
 
 internal class OptimizerOptions
