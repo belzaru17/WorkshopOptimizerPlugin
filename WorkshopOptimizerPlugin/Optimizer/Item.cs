@@ -106,19 +106,21 @@ internal class Item
 
     public bool CheckCycles(int cycle, bool[] restCycles, Strictness strictness)
     {
+        Func<Strictness, Strictness, bool> IsSet = (a, b) => (a & b) != 0;
+
         if (When == Data.When.Never) { return false; }
         if (When == Data.When.Always) { return true; }
-        if (strictness.AllowAnyCycle) { return true; }
+        if (IsSet(strictness, Strictness.AllowAnyCycle)) { return true; }
 
         var patterns = FindPatterns(cycle);
-        if (patterns.Count == 0) { return strictness.AllowUnknownCycle; }
-        if (patterns.Count > 1 && !strictness.AllowMultiCycle) { return false; }
+        if (patterns.Count == 0) { return IsSet(strictness, Strictness.AllowUnknownCycle); }
+        if (patterns.Count > 1 && !IsSet(strictness, Strictness.AllowMultiCycle)) { return false; }
 
         foreach (var pattern in patterns)
         {
-            if ((strictness.AllowSameCycle && (pattern.Cycle == cycle)) ||
-                (strictness.AllowRestCycle && restCycles[pattern.Cycle]) ||
-                (strictness.AllowEarlierCycle && (pattern.Cycle < cycle))) 
+            if ((IsSet(strictness, Strictness.AllowSameCycle) && (pattern.Cycle == cycle)) ||
+                (IsSet(strictness, Strictness.AllowRestCycle) && restCycles[pattern.Cycle]) ||
+                (IsSet(strictness, Strictness.AllowEarlierCycle) && (pattern.Cycle < cycle))) 
             {
                 if ((When & (pattern.Strong? Data.When.Strong : Data.When.Weak)) != 0) {
                     return true;

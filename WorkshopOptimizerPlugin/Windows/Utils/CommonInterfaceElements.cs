@@ -9,7 +9,7 @@ internal class CommonInterfaceElements
     private int mSeason = 0;
     private int mCycle;
     private int mTop;
-    private bool mStrictCycles = true;
+    private bool mStrictCycles = false;
     private bool[] mRestCycles = new bool[Constants.MaxCycles];
 
     public int Season => mSeason;

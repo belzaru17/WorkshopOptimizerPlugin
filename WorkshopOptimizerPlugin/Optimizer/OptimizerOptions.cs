@@ -1,29 +1,16 @@
-using Lumina.Excel.GeneratedSheets;
-
 namespace WorkshopOptimizerPlugin.Optimizer;
 
-internal struct Strictness
+public enum Strictness
 {
-    public bool AllowAnyCycle;
-    public bool AllowSameCycle;
-    public bool AllowRestCycle;
-    public bool AllowEarlierCycle;
-    public bool AllowMultiCycle;
-    public bool AllowUnknownCycle;
+    AllowAnyCycle     = 1 << 0,
+    AllowSameCycle    = 1 << 1,
+    AllowRestCycle    = 1 << 2,
+    AllowEarlierCycle = 1 << 3,
+    AllowMultiCycle   = 1 << 4,
+    AllowUnknownCycle = 1 << 5,
 
-    public static Strictness StrictDefaults()
-    {
-        var ret = new Strictness();
-        ret.AllowSameCycle = true;
-        return ret;
-    }
-
-    public static Strictness RelaxedDefaults()
-    {
-        var ret = new Strictness();
-        ret.AllowSameCycle = ret.AllowRestCycle = ret.AllowEarlierCycle = ret.AllowMultiCycle = ret.AllowUnknownCycle = true;
-        return ret;
-    }
+    StrictDefaults  = AllowSameCycle,
+    RelaxedDefaults = AllowSameCycle | AllowRestCycle | AllowEarlierCycle | AllowMultiCycle | AllowUnknownCycle,
 }
 
 internal class OptimizerOptions

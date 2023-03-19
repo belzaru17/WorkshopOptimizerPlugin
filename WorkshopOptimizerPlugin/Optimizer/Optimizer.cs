@@ -1,7 +1,5 @@
-using ImGuiNET;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using WorkshopOptimizerPlugin.Data;
 
 namespace WorkshopOptimizerPlugin.Optimizer;
@@ -15,6 +13,7 @@ internal class Optimizer
 
     private int ci;
     private List<ItemSet> cachedCombinations;
+    private double cachedCombinationsMinValue;
     private bool combinationsDone;
 
     private int[] wci;
@@ -48,22 +47,26 @@ internal class Optimizer
             {
                 foreach (var itemset in generateCombinationsRecursive(new List<Item> { item }, item.Hours))
                 {
-                    cachedCombinations.Add(itemset);
+                    if (itemset.EffectiveValue(cycle) > cachedCombinationsMinValue)
+                    {
+                        cachedCombinations.Add(itemset);
+                    }
                 }
             }
         }
 
+        cachedCombinations.Sort((x, y) => y.EffectiveValue(cycle).CompareTo(x.EffectiveValue(cycle)));
+        if (cachedCombinations.Count > Constants.MaxComputeItems)
+        {
+            cachedCombinations.RemoveRange(Constants.MaxComputeItems, cachedCombinations.Count - Constants.MaxComputeItems);
+            cachedCombinationsMinValue = cachedCombinations[cachedCombinations.Count - 1].EffectiveValue(cycle);
+        }
+
         if (ci < Constants.MaxItems)
         {
-            cachedCombinations.Sort((x, y) => y.EffectiveValue(cycle).CompareTo(x.EffectiveValue(cycle)));
-            if (cachedCombinations.Count > Constants.MaxComputeItems)
-            {
-                cachedCombinations.RemoveRange(Constants.MaxComputeItems, cachedCombinations.Count - Constants.MaxComputeItems);
-            }
             return (null, (double)ci / Constants.MaxItems);
         }
 
-        cachedCombinations.Sort((x, y) => y.EffectiveValue(cycle).CompareTo(x.EffectiveValue(cycle)));
         combinationsDone = true;
         return (cachedCombinations, 1.0);
     }

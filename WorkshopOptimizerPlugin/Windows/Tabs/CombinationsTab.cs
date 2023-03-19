@@ -1,6 +1,5 @@
 using ImGuiNET;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Optimizer;
@@ -67,7 +66,7 @@ internal class CombinationsTab : ITab, IUIDataSourceListener
             var optimizer = optimizers[ifData.Season, cycle];
             if (optimizer == null)
             {
-                var options = new OptimizerOptions(configuration, ifData.StrictCycles ? Strictness.StrictDefaults() : Strictness.RelaxedDefaults(), ifData.RestCycles);
+                var options = new OptimizerOptions(configuration, ifData.StrictCycles ? Strictness.StrictDefaults : Strictness.RelaxedDefaults, ifData.RestCycles);
                 optimizers[ifData.Season, cycle] = optimizer = new Optimizer.Optimizer(itemCache, cycle, startGroove, options);
             }
             (itemSets, progress) = optimizer.GenerateCombinations();
