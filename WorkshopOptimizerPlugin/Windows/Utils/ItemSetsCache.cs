@@ -40,6 +40,6 @@ internal class ItemSetsCache : IItemSetsCache, IUIDataSourceListener
         }
     }
 
-    private List<ItemSet>?[] cachedItemSets;
-    private List<WorkshopsItemSets>?[] cachedWorkshopsItemSets;
+    private readonly List<ItemSet>?[] cachedItemSets;
+    private readonly List<WorkshopsItemSets>?[] cachedWorkshopsItemSets;
 }

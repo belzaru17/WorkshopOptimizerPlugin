@@ -10,11 +10,11 @@ internal class ProducedItemsAdaptor
         this.data = data;
 
         itemsByCycle = new int[Constants.MaxCycles, Constants.MaxItems];
-        for (int c = 0; c < Constants.MaxCycles; c++)
+        for (var c = 0; c < Constants.MaxCycles; c++)
         {
-            for (int w = 0; w < Constants.MaxWorkshops; w++)
+            for (var w = 0; w < Constants.MaxWorkshops; w++)
             {
-                for (int s = 0; s < Constants.MaxSteps; s++)
+                for (var s = 0; s < Constants.MaxSteps; s++)
                 {
                     var id = this.data.ProducedItems[c][w][s];
                     if (id >= 0)
@@ -52,7 +52,7 @@ internal class ProducedItemsAdaptor
     public int ItemsProducedUntil(int cycle, uint itemId)
     {
         var sum = 0;
-        for (int c = 0; c < cycle; c++)
+        for (var c = 0; c < cycle; c++)
         {
             sum += itemsByCycle[c, itemId];
         }
@@ -62,11 +62,11 @@ internal class ProducedItemsAdaptor
     private void UpdateGrooveByCycle()
     {
         var groove = new Groove();
-        for (int c = 0; c < Constants.MaxCycles; c++)
+        for (var c = 0; c < Constants.MaxCycles; c++)
         {
-            for (int w = 0; w < Constants.MaxWorkshops; w++)
+            for (var w = 0; w < Constants.MaxWorkshops; w++)
             {
-                for (int s = 0; s < Constants.MaxSteps; s++)
+                for (var s = 0; s < Constants.MaxSteps; s++)
                 {
                     var id = this.data.ProducedItems[c][w][s];
                     if (id >= 0)
@@ -79,6 +79,6 @@ internal class ProducedItemsAdaptor
         }
     }
 
-    private PersistentSeasonData data;
-    private int[,] itemsByCycle;
+    private readonly PersistentSeasonData data;
+    private readonly int[,] itemsByCycle;
 }

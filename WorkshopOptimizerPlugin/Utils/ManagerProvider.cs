@@ -9,11 +9,11 @@ internal abstract class Manager
 {
     public Manager() { }
 
-    abstract public bool IsValid { get; }
+    public abstract bool IsValid { get; }
 
-    abstract public int CurrentPopularityIndex { get; }
+    public abstract int CurrentPopularityIndex { get; }
 
-    abstract public int NextPopularityIndex { get; }
+    public abstract int NextPopularityIndex { get; }
 
     public abstract Supply GetSupplyForCraftwork(uint i);
 
@@ -85,7 +85,7 @@ internal class MJIManagerAdaptor : Manager
 {
     public unsafe MJIManagerAdaptor()
     {
-        MJIManager* manager = MJIManager.Instance();
+        var manager = MJIManager.Instance();
         if (manager == null) { return; }
         for (uint i = 0; i < Constants.MaxItems; i++)
         {
@@ -113,7 +113,7 @@ internal class MJIManagerAdaptor : Manager
         return IsValid? DemandUtils.FromFFXIV(manager->GetDemandShiftForCraftwork(i)) : Demand.Unknown;
     }
 
-    private unsafe MJIManager* manager = null;
+    private readonly unsafe MJIManager* manager = null;
 }
 
 internal static class ManagerProvider

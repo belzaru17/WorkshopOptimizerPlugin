@@ -12,7 +12,7 @@ internal class DynamicDataAdaptor
         {
             itemData[i.Id] = i.Data;
         }
-        for (int i = 0; i < itemData.Length; i++)
+        for (var i = 0; i < itemData.Length; i++)
         {
             if (itemData[i] != null) continue;
 
@@ -34,5 +34,5 @@ internal class DynamicDataAdaptor
         }
     }
 
-    private ItemDynamicData[] itemData;
+    private readonly ItemDynamicData[] itemData;
 }

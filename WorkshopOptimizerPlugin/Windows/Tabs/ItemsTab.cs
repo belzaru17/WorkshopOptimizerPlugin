@@ -1,4 +1,3 @@
-using Dalamud.Plugin.Ipc.Exceptions;
 using ImGuiNET;
 using System;
 using WorkshopOptimizerPlugin.Data;
@@ -9,12 +8,12 @@ namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
 internal class ItemsTab : ITab
 {
-    private UIDataSource uiDataSource;
-    private CommonInterfaceElements ifData;
-    private Icons icons;
+    private readonly UIDataSource uiDataSource;
+    private readonly CommonInterfaceElements ifData;
+    private readonly Icons icons;
 
     private int mSetWhen;
-    private int[] mWhenOveerides;
+    private readonly int[] mWhenOveerides;
     public bool hasWhenOverrides;
 
     public ItemsTab(Icons icons, UIDataSource uiDataSource, CommonInterfaceElements ifData)
@@ -127,7 +126,7 @@ internal class ItemsTab : ITab
         ImGui.SetNextItemWidth(100);
         if (ImGui.BeginCombo("###SET_WHEN", ""))
         {
-            foreach (When w in new When[] { When.Never, When.Weak, When.Strong, When.Either, When.Always })
+            foreach (var w in new When[] { When.Never, When.Weak, When.Strong, When.Either, When.Always })
             {
                 if (ImGui.Selectable(w.ToString()))
                 {
@@ -136,7 +135,7 @@ internal class ItemsTab : ITab
                         var itemData = ItemStaticData.Get(i);
                         if (!itemData.IsValid()) continue;
 
-                        bool matches = true;
+                        var matches = true;
                         foreach (var materials in itemData.Materials)
                         {
                             matches &= checkMaterials[mSetWhen](materials.Material.Source);

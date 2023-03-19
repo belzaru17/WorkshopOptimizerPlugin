@@ -1,5 +1,4 @@
 using Dalamud.Interface.Windowing;
-using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
@@ -13,13 +12,13 @@ namespace WorkshopOptimizerPlugin.Windows;
 
 public class MainWindow : Window, IDisposable
 {
-    private Plugin plugin;
+    private readonly Plugin plugin;
 
     private readonly ItemSetsCache[] itemSetsCaches;
     private readonly UIDataSource uiDataSource;
-    private CommonInterfaceElements commonInterfaceElements;
+    private readonly CommonInterfaceElements commonInterfaceElements;
 
-    private List<Tuple<string, ITab>> tabs;
+    private readonly List<Tuple<string, ITab>> tabs;
 
     public MainWindow(Plugin plugin) : base(
         "Workshop Optimizer", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -34,7 +33,7 @@ public class MainWindow : Window, IDisposable
 
         itemSetsCaches = new ItemSetsCache[Constants.MaxSeasons] { new ItemSetsCache(), new ItemSetsCache() };
         uiDataSource = UIDataSource.Load();
-        for (int i = 0; i < Constants.MaxSeasons; i++)
+        for (var i = 0; i < Constants.MaxSeasons; i++)
         {
             uiDataSource.AddListener(itemSetsCaches[i]);
         }
@@ -85,7 +84,7 @@ public class MainWindow : Window, IDisposable
             }
         }
 
-        int cycle = SeasonUtils.GetCycle();
+        var cycle = SeasonUtils.GetCycle();
         ImGui.Text($"Season: {uiDataSource.DataSource.SeasonStart:yyyy-MM-dd} - {uiDataSource.DataSource.SeasonStart.AddDays(Constants.MaxCycles):yyyy-MM-dd}. Cycle={cycle + 1}.");
         ImGui.SameLine();
         PopulateDataIfPossible();
@@ -131,8 +130,8 @@ public class MainWindow : Window, IDisposable
 
     private void PopulateJsonData(Manager manager)
     {
-        int popIndex = manager.CurrentPopularityIndex;
-        int nextPopIndex = manager.NextPopularityIndex;
+        var popIndex = manager.CurrentPopularityIndex;
+        var nextPopIndex = manager.NextPopularityIndex;
         var cycle = SeasonUtils.GetCycle();
         for (uint i = 0; i < Constants.MaxItems; i++)
         {

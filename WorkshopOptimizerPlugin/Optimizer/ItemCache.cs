@@ -28,5 +28,5 @@ internal class ItemCache
     private readonly DynamicDataAdaptor dynamicData;
     private readonly ProducedItemsAdaptor producedItems;
     private readonly WhenOverrides whenOverrides;
-    private Item[] items;
+    private readonly Item[] items;
 }

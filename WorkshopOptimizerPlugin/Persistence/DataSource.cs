@@ -105,5 +105,5 @@ internal class DataSource
         PreviousProducedItems = new ProducedItemsAdaptor(data.PreviousSeason);
     }
 
-    private PersistentData data;
+    private readonly PersistentData data;
 }

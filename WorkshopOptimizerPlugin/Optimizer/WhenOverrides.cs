@@ -24,11 +24,11 @@ internal class WhenOverrides
 
     public void Reset()
     {
-        for (int i = 0; i < Constants.MaxItems; i++)
+        for (var i = 0; i < Constants.MaxItems; i++)
         {
             overrides[i] = ItemStaticData.Get(i).When;
         }
     }
 
-    private When[] overrides;
+    private readonly When[] overrides;
 }

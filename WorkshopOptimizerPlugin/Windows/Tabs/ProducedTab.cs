@@ -10,7 +10,7 @@ namespace WorkshopOptimizerPlugin.Windows.Tabs;
 internal class ProducedTab : ITab
 {
     private readonly UIDataSource uiDataSource;
-    private CommonInterfaceElements ifData;
+    private readonly CommonInterfaceElements ifData;
 
     public ProducedTab(UIDataSource uiDataSource, CommonInterfaceElements ifData)
     {
@@ -48,28 +48,23 @@ internal class ProducedTab : ITab
         var disabled = ifData.IsPreviousSeason() || ifData.RestCycles[cycle];
         var hours = new int[Constants.MaxWorkshops];
         var items = new List<Item>[Constants.MaxWorkshops];
-        for (int w = 0; w < Constants.MaxWorkshops; w++)
+        for (var w = 0; w < Constants.MaxWorkshops; w++)
         {
             items[w] = new List<Item>();
         }
-        for (int step = 0; step < Constants.MaxSteps; step++)
+        for (var step = 0; step < Constants.MaxSteps; step++)
         {
             ImGui.TableNextRow(ImGuiTableRowFlags.None, 27);
             ImGui.TableSetColumnIndex(0);
             ImGui.Text($"Step {step + 1}");
-            for (int w = 0; w < Constants.MaxWorkshops; w++)
+            for (var w = 0; w < Constants.MaxWorkshops; w++)
             {
-                var lastId = -1;
-                if (step > 0)
-                {
-                    lastId = producedItems[cycle, w, step - 1];
-                    if (lastId < 0) { continue; }
-                }
+                if ((step > 0) && (producedItems[cycle, w, step - 1] < 0)) { continue; }
 
                 if (hours[w] >= Constants.MaxHours) { continue; }
 
                 var thisId = producedItems[cycle, w, step];
-                Item? thisItem = (thisId >= 0) ? itemCache[ItemStaticData.Get(thisId)] : null;
+                var thisItem = (thisId >= 0) ? itemCache[ItemStaticData.Get(thisId)] : null;
 
                 ImGui.TableSetColumnIndex(w + 1);
                 ImGui.SetNextItemWidth(200);
@@ -80,7 +75,7 @@ internal class ProducedTab : ITab
                     if (ImGui.Selectable(""))
                     {
                         producedItems[cycle, w, step] = -1;
-                        for (int s = step + 1; s < Constants.MaxSteps; s++)
+                        for (var s = step + 1; s < Constants.MaxSteps; s++)
                         {
                             producedItems[cycle, w, s] = -1;
                         }
@@ -89,7 +84,7 @@ internal class ProducedTab : ITab
 
                     if (step == 0)
                     {
-                        for (uint i = 0; i < Constants.MaxItems; i++)
+                        for (var i = 0; i < Constants.MaxItems; i++)
                         {
                             var item = ItemStaticData.Get(i);
                             if (!item.IsValid()) { continue; }
@@ -97,7 +92,7 @@ internal class ProducedTab : ITab
                             if (ImGui.Selectable(item.Name))
                             {
                                 producedItems[cycle, w, step] = (int)item.Id;
-                                for (int s = step + 1; s < Constants.MaxSteps; s++)
+                                for (var s = step + 1; s < Constants.MaxSteps; s++)
                                 {
                                     producedItems[cycle, w, s] = -1;
                                 }
@@ -116,7 +111,7 @@ internal class ProducedTab : ITab
                             if (ImGui.Selectable(item.Name))
                             {
                                 producedItems[cycle, w, step] = (int)item.Id;
-                                for (int s = step + 1; s < Constants.MaxSteps; s++)
+                                for (var s = step + 1; s < Constants.MaxSteps; s++)
                                 {
                                     producedItems[cycle, w, s] = -1;
                                 }
@@ -148,7 +143,7 @@ internal class ProducedTab : ITab
         ImGui.TableSetColumnIndex(0);
         ImGui.SetNextItemWidth(200);
         ImGui.Text("Hours");
-        for (int w = 0; w < Constants.MaxWorkshops; w++)
+        for (var w = 0; w < Constants.MaxWorkshops; w++)
         {
             ImGui.TableSetColumnIndex(w + 1);
             ImGui.SetNextItemWidth(200);
@@ -156,7 +151,7 @@ internal class ProducedTab : ITab
         }
 
         var itemSets = new ItemSet[Constants.MaxWorkshops];
-        for (int w = 0; w < Constants.MaxWorkshops; w++)
+        for (var w = 0; w < Constants.MaxWorkshops; w++)
         {
             itemSets[w] = new ItemSet(items[w].ToArray());
         }
@@ -187,9 +182,9 @@ internal class ProducedTab : ITab
         var producedItems = ifData.IsCurrentSeason() ? uiDataSource.DataSource.CurrentProducedItems : uiDataSource.DataSource.PreviousProducedItems;
         var gatherableMaterials = new Dictionary<Material, int>();
         var rareMaterials = new Dictionary<Material, int>();
-        for (int step = 0; step < Constants.MaxSteps; step++)
+        for (var step = 0; step < Constants.MaxSteps; step++)
         {
-            for (int w = 0; w < Constants.MaxWorkshops; w++)
+            for (var w = 0; w < Constants.MaxWorkshops; w++)
             {
                 var id = producedItems[cycle, w, step];
                 if (id < 0) { continue; }
@@ -208,7 +203,7 @@ internal class ProducedTab : ITab
 
         var sortedGatherableMaterials = gatherableMaterials.OrderBy(x => x.Key.Name).ToArray();
         var sortedRareMaterials = rareMaterials .OrderBy(x => x.Key.Name).ToArray();
-        for (int i = 0; i < sortedGatherableMaterials.Length || i < sortedRareMaterials.Length; i++)
+        for (var i = 0; i < sortedGatherableMaterials.Length || i < sortedRareMaterials.Length; i++)
         {
             ImGui.TableNextRow();
             if (i < sortedGatherableMaterials.Length)

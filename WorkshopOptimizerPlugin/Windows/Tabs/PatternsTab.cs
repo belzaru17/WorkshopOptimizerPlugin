@@ -11,8 +11,8 @@ namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
 internal class PatternsTab : ITab
 {
-    private UIDataSource uiDataSource;
-    private CommonInterfaceElements ifData;
+    private readonly UIDataSource uiDataSource;
+    private readonly CommonInterfaceElements ifData;
 
     public PatternsTab(UIDataSource uiDataSource, CommonInterfaceElements ifData)
     {
@@ -41,7 +41,7 @@ internal class PatternsTab : ITab
 
             var itemCache = ifData.IsCurrentSeason()? uiDataSource.CurrentItemCache : uiDataSource.PreviousItemCache;
             var items = new List<Item>();
-            for (int i = 0; i < Constants.MaxItems; i++)
+            for (var i = 0; i < Constants.MaxItems; i++)
             {
                 var staticData = ItemStaticData.Get(i);
                 if (!staticData.IsValid()) { continue; }

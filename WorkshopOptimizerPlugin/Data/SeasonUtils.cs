@@ -6,29 +6,22 @@ internal static class SeasonUtils
 {
     public static int GetCycle()
     {
-        DateTime now = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
 
         var cycle_shift = 0;
         if (now.Hour < Constants.ResetUTCHour) { cycle_shift = -1; }
 
-        switch (now.DayOfWeek)
+        return now.DayOfWeek switch
         {
-            case DayOfWeek.Tuesday:
-                return (7 + cycle_shift) % 7;
-            case DayOfWeek.Wednesday:
-                return 1 + cycle_shift;
-            case DayOfWeek.Thursday:
-                return 2 + cycle_shift;
-            case DayOfWeek.Friday:
-                return 3 + cycle_shift;
-            case DayOfWeek.Saturday:
-                return 4 + cycle_shift;
-            case DayOfWeek.Sunday:
-                return 5 + cycle_shift;
-            case DayOfWeek.Monday:
-                return 6 + cycle_shift;
-        }
-        return -1;
+            DayOfWeek.Tuesday => (7 + cycle_shift) % 7,
+            DayOfWeek.Wednesday => 1 + cycle_shift,
+            DayOfWeek.Thursday => 2 + cycle_shift,
+            DayOfWeek.Friday => 3 + cycle_shift,
+            DayOfWeek.Saturday => 4 + cycle_shift,
+            DayOfWeek.Sunday => 5 + cycle_shift,
+            DayOfWeek.Monday => 6 + cycle_shift,
+            _ => -1,
+        };
     }
 
     public static bool IsSameSeason(DateTime seasonStart)
@@ -54,21 +47,15 @@ internal static class SeasonUtils
             cycleStart = new DateTime(cycleStart.Year, cycleStart.Month, cycleStart.Day - 1).AddHours(Constants.ResetUTCHour);
         }
 
-        switch (cycleStart.DayOfWeek)
+        return cycleStart.DayOfWeek switch
         {
-            case DayOfWeek.Wednesday:
-                return cycleStart.AddDays(-1);
-            case DayOfWeek.Thursday:
-                return cycleStart.AddDays(-2);
-            case DayOfWeek.Friday:
-                return cycleStart.AddDays(-3);
-            case DayOfWeek.Saturday:
-                return cycleStart.AddDays(-4);
-            case DayOfWeek.Sunday:
-                return cycleStart.AddDays(-5);
-            case DayOfWeek.Monday:
-                return cycleStart.AddDays(-6);
-        }
-        return cycleStart;
+            DayOfWeek.Wednesday => cycleStart.AddDays(-1),
+            DayOfWeek.Thursday => cycleStart.AddDays(-2),
+            DayOfWeek.Friday => cycleStart.AddDays(-3),
+            DayOfWeek.Saturday => cycleStart.AddDays(-4),
+            DayOfWeek.Sunday => cycleStart.AddDays(-5),
+            DayOfWeek.Monday => cycleStart.AddDays(-6),
+            _ => cycleStart,
+        };
     }
 }

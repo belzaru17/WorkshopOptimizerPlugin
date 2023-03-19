@@ -1,6 +1,3 @@
-using System.Numerics;
-using System.Runtime.CompilerServices;
-
 namespace WorkshopOptimizerPlugin.Data;
 
 internal class ItemStaticData
@@ -40,7 +37,7 @@ internal class ItemStaticData
     }
 
     private static readonly ItemStaticData[] ItemsData = new ItemStaticData[62]{
-        new ItemStaticData( 0, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
+        new ItemStaticData( 0, "UNKNOWN",             0,   0, When.Never,  System.Array.Empty<Categories>(),                                                   System.Array.Empty<Materials>()),
         new ItemStaticData( 1, "Potion",              4,  33, When.Always, new Categories[]{Data.Categories.Concoctions},                                      new Materials[]{Material.PalmLeaf[2], Material.Islewort[2]}),
         new ItemStaticData( 2, "Firesand",            4,  33, When.Always, new Categories[]{Data.Categories.Concoctions, Data.Categories.UnburiedTreasures},   new Materials[]{Material.Sand[2], Material.Limestone[1], Material.Islewort[1]}),
         new ItemStaticData( 3, "Wooden Chair",        6,  50, When.Always, new Categories[]{Data.Categories.Furnishings, Data.Categories.Woodworks},           new Materials[]{Material.Log[4], Material.Vine[2]}),
@@ -101,6 +98,6 @@ internal class ItemStaticData
         new ItemStaticData(58, "Isloaf",              4,  62, When.Either, new Categories[]{Data.Categories.Foodstuffs, Data.Categories.Concoctions},          new Materials[]{Material.Wheat[2], Material.Islefish[1], Material.RockSalt[1]}),
         new ItemStaticData(59, "Popoto Salad",        4,  62, When.Either, new Categories[]{Data.Categories.Foodstuffs},                                       new Materials[]{Material.Popoto[2], Material.Apple[1], Material.Islewort[1]}),
         new ItemStaticData(60, "Dressing",            4,  62, When.Either, new Categories[]{Data.Categories.Ingredients},                                      new Materials[]{Material.Onion[2], Material.Sap[1], Material.Laver[1]}),
-        new ItemStaticData(61, "UNKNOWN",             0,   0, When.Never,  new Categories[]{},                                                                 new Materials[]{}),
+        new ItemStaticData(61, "UNKNOWN",             0,   0, When.Never,  System.Array.Empty<Categories>(),                                                   System.Array.Empty<Materials>()),
     };
 }

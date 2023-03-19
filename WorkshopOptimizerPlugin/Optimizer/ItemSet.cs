@@ -2,7 +2,7 @@ using WorkshopOptimizerPlugin.Data;
 
 namespace WorkshopOptimizerPlugin.Optimizer;
 
-internal struct ItemSet
+internal readonly struct ItemSet
 {
     public readonly Item[] Items;
 
@@ -57,7 +57,7 @@ internal struct ItemSet
     }
 }
 
-internal struct WorkshopsItemSets
+internal readonly struct WorkshopsItemSets
 {
     public readonly ItemSet[] ItemSets;
     public readonly double EffectiveValue;
@@ -71,9 +71,9 @@ internal struct WorkshopsItemSets
         var producedItems = new int[Constants.MaxItems];
         var start = new int[Constants.MaxWorkshops];
         var steps = new int[Constants.MaxWorkshops];
-        for (int h = 0; h <= Constants.MaxHours; h++)
+        for (var h = 0; h <= Constants.MaxHours; h++)
         {
-            for (int w = 0; w < Constants.MaxWorkshops; w++)
+            for (var w = 0; w < Constants.MaxWorkshops; w++)
             {
                 if (steps[w] >= ItemSets[w].Items.Length) { continue; }
                 var item = ItemSets[w].Items[steps[w]];

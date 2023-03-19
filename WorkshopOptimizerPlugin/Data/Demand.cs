@@ -18,20 +18,15 @@ internal static class DemandUtils
 {
     public static Demand FromFFXIV(CraftworkDemandShift d)
     {
-        switch (d)
+        return d switch
         {
-            case CraftworkDemandShift.Skyrocketing:
-                return Demand.Skyrocketing;
-            case CraftworkDemandShift.Increasing:
-                return Demand.Increasing;
-            case CraftworkDemandShift.None:
-                return Demand.None;
-            case CraftworkDemandShift.Decreasing:
-                return Demand.Decreasing;
-            case CraftworkDemandShift.Plummeting:
-                return Demand.Plummeting;
-        }
-        return Demand.Unknown;
+            CraftworkDemandShift.Skyrocketing => Demand.Skyrocketing,
+            CraftworkDemandShift.Increasing => Demand.Increasing,
+            CraftworkDemandShift.None => Demand.None,
+            CraftworkDemandShift.Decreasing => Demand.Decreasing,
+            CraftworkDemandShift.Plummeting => Demand.Plummeting,
+            _ => Demand.Unknown,
+        };
     }
 
     public static Tuple<Demand, Demand> Adjust(Demand d, int produced)

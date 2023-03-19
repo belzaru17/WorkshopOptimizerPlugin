@@ -8,7 +8,7 @@ namespace WorkshopOptimizerPlugin.Windows;
 
 public class ConfigWindow : Window, IDisposable
 {
-    private Configuration configuration;
+    private readonly Configuration configuration;
 
     public ConfigWindow(Plugin plugin) : base(
         "Workshop Optimizer Configuration",
@@ -28,9 +28,9 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        bool saveConfig = false;
+        var saveConfig = false;
 
-        int defaultRestCycle1 = configuration.DefaultRestCycle1 + 1;
+        var defaultRestCycle1 = configuration.DefaultRestCycle1 + 1;
         ImGui.Text("Default Rest Cycle ");
         ImGui.SetNextItemWidth(100);
         if (ImGui.InputInt("1st", ref defaultRestCycle1))

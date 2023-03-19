@@ -10,7 +10,7 @@ internal class CommonInterfaceElements
     private int mCycle;
     private int mTop;
     private bool mStrictCycles = false;
-    private bool[] mRestCycles = new bool[Constants.MaxCycles];
+    private readonly bool[] mRestCycles = new bool[Constants.MaxCycles];
 
     public int Season => mSeason;
     public int Cycle => UIUtils.FixValue(ref mCycle, 1, 7) - 1;
@@ -74,8 +74,8 @@ internal class CommonInterfaceElements
 
     public void DrawRestCycleCheckbox(UIDataSource uiDataSource, int cycle)
     {
-        int rest_cycles = 0;
-        for (int i = 0; i < Constants.MaxCycles; i++)
+        var rest_cycles = 0;
+        for (var i = 0; i < Constants.MaxCycles; i++)
         {
             if (mRestCycles[i]) { rest_cycles++; }
         }
@@ -89,9 +89,9 @@ internal class CommonInterfaceElements
             if (mRestCycles[cycle])
             {
                 var producedItems = uiDataSource.DataSource.CurrentProducedItems;
-                for (int w = 0; w < Constants.MaxWorkshops; w++)
+                for (var w = 0; w < Constants.MaxWorkshops; w++)
                 {
-                    for (int s = 0; s < Constants.MaxSteps; s++)
+                    for (var s = 0; s < Constants.MaxSteps; s++)
                     {
                         producedItems[cycle, w, s] = -1;
                     }

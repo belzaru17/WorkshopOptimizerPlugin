@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Persistence;
@@ -42,9 +41,9 @@ internal class Item
             cycle = 4;
         }
 
-        List<SupplyDemandPattern> ret = new List<SupplyDemandPattern>();
+        var ret = new List<SupplyDemandPattern>();
 
-        foreach (SupplyDemandPattern pattern in SupplyDemandPattern.PatternsTable)
+        foreach (var pattern in SupplyDemandPattern.PatternsTable)
         {
             var mismatch = false;
             for (var i = 0; !mismatch && i < cycle; i++)
@@ -62,7 +61,7 @@ internal class Item
 
     public (SupplyDemandPattern?, bool) FindPattern(int cycle)
     {
-        List<SupplyDemandPattern> patterns = FindPatterns(cycle);
+        var patterns = FindPatterns(cycle);
         if (patterns.Count != 1 || patterns[0].Cycle != cycle)
         {
             return (null, patterns.Count > 0);
@@ -106,7 +105,7 @@ internal class Item
 
     public bool CheckCycles(int cycle, bool[] restCycles, Strictness strictness)
     {
-        Func<Strictness, Strictness, bool> IsSet = (a, b) => (a & b) != 0;
+        static bool IsSet(Strictness a, Strictness b) => (a & b) != 0;
 
         if (When == Data.When.Never) { return false; }
         if (When == Data.When.Always) { return true; }

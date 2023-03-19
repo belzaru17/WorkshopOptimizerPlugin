@@ -12,12 +12,12 @@ internal class Optimizer
     private readonly OptimizerOptions options;
 
     private int ci;
-    private List<ItemSet> cachedCombinations;
+    private readonly List<ItemSet> cachedCombinations;
     private double cachedCombinationsMinValue;
     private bool combinationsDone;
 
-    private int[] wci;
-    private List<WorkshopsItemSets> cachedWorkshopCombinations;
+    private readonly int[] wci;
+    private readonly List<WorkshopsItemSets> cachedWorkshopCombinations;
     private bool workshopCombinationsDone;
 
     public Optimizer(ItemCache itemCache, int cycle, Groove groove, OptimizerOptions options)
@@ -59,7 +59,7 @@ internal class Optimizer
         if (cachedCombinations.Count > Constants.MaxComputeItems)
         {
             cachedCombinations.RemoveRange(Constants.MaxComputeItems, cachedCombinations.Count - Constants.MaxComputeItems);
-            cachedCombinationsMinValue = cachedCombinations[cachedCombinations.Count - 1].EffectiveValue(cycle);
+            cachedCombinationsMinValue = cachedCombinations[^1].EffectiveValue(cycle);
         }
 
         if (ci < Constants.MaxItems)
@@ -87,11 +87,11 @@ internal class Optimizer
         var cutoff = options.ItemGenerationCutoff;
         if (cutoff > combinations.Count) { cutoff = combinations.Count; }
 
-        bool done = false;
-        for (int remain = Constants.MaxComputeItems; !done && remain > 0; remain--) {
-            ItemSet[] newItemSets = new ItemSet[Constants.MaxWorkshops] { combinations[wci[0]], combinations[wci[1]], combinations[wci[2]] };
+        var done = false;
+        for (var remain = Constants.MaxComputeItems; !done && remain > 0; remain--) {
+            var newItemSets = new ItemSet[Constants.MaxWorkshops] { combinations[wci[0]], combinations[wci[1]], combinations[wci[2]] };
             cachedWorkshopCombinations.Add(new WorkshopsItemSets(newItemSets, cycle, groove));
-            for (int i = wci.Length-1; i >= 0 && ++wci[i] >= cutoff; i--)
+            for (var i = wci.Length-1; i >= 0 && ++wci[i] >= cutoff; i--)
             {
                 wci[i] = 0;
                 if (i == 0)
@@ -107,7 +107,7 @@ internal class Optimizer
             workshopCombinationsDone = true;
             return (cachedWorkshopCombinations, 1.0);
         }
-        return (null, 0.5 + ((((wci[0] * cutoff + wci[1]) * cutoff) + wci[2]) / Math.Pow(cutoff, 3)) / 2);
+        return (null, 0.5 + (((((wci[0] * cutoff) + wci[1]) * cutoff) + wci[2]) / Math.Pow(cutoff, 3) / 2));
     }
 
     private List<ItemSet> generateCombinationsRecursive(List<Item> items, int hours)
@@ -118,19 +118,21 @@ internal class Optimizer
         }
 
         List<ItemSet> result = new();
-        var lastItem = items[items.Count - 1];
+        var lastItem = items[^1];
         foreach (var nextItem in CategoryMap.GetEfficientItems(lastItem.Categories))
         {
             if (lastItem.Id == nextItem.Id) { continue; }
 
-            int newHours = hours + nextItem.Hours;
+            var newHours = hours + nextItem.Hours;
             if (newHours > Constants.MaxHours) { continue; }
 
             var newItem = itemCache[nextItem];
             if (!checkItem(newItem)) { continue; }
 
-            List<Item> newItems = new(items);
-            newItems.Add(itemCache[nextItem]);
+            List<Item> newItems = new(items)
+            {
+                itemCache[nextItem]
+            };
             foreach (var itemset in generateCombinationsRecursive(newItems, newHours))
             {
                 result.Add(itemset);

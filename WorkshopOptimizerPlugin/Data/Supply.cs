@@ -21,25 +21,20 @@ internal static class SupplyUtils
             s = NextSupply[(int)s];
         }
         var ns = NextSupply[(int)s];
-        return (Multipliers[(int)s] * (SupplyAdjustmentBucket - produced) + Multipliers[(int)ns] * produced) / SupplyAdjustmentBucket;
+        return ((Multipliers[(int)s] * (SupplyAdjustmentBucket - produced)) + (Multipliers[(int)ns] * produced)) / SupplyAdjustmentBucket;
     }
 
     public static Supply FromFFXIV(CraftworkSupply s)
     {
-        switch (s)
+        return s switch
         {
-            case CraftworkSupply.Nonexistent:
-                return Supply.Nonexistent;
-            case CraftworkSupply.Insufficient:
-                return Supply.Insufficient;
-            case CraftworkSupply.Sufficient:
-                return Supply.Sufficient;
-            case CraftworkSupply.Surplus:
-                return Supply.Surplus;
-            case CraftworkSupply.Overflowing:
-                return Supply.Overflowing;
-        }
-        return Supply.Unknown;
+            CraftworkSupply.Nonexistent => Supply.Nonexistent,
+            CraftworkSupply.Insufficient => Supply.Insufficient,
+            CraftworkSupply.Sufficient => Supply.Sufficient,
+            CraftworkSupply.Surplus => Supply.Surplus,
+            CraftworkSupply.Overflowing => Supply.Overflowing,
+            _ => Supply.Unknown,
+        };
     }
 
     public static bool Within(Supply s, Supply min, Supply max)

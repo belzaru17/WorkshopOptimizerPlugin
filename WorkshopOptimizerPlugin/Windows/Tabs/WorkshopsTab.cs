@@ -11,9 +11,9 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
 {
     private readonly Configuration configuration;
     private readonly UIDataSource uiDataSource;
-    private CommonInterfaceElements ifData;
+    private readonly CommonInterfaceElements ifData;
     private readonly IItemSetsCache[] itemSetsCaches;
-    private Optimizer.Optimizer?[,] optimizers;
+    private readonly Optimizer.Optimizer?[,] optimizers;
 
     public WorkshopsTab(Configuration configuration, UIDataSource uiDataSource, CommonInterfaceElements ifData, IItemSetsCache[] itemSetsCaches)
     {
@@ -28,7 +28,7 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
 
     public void OnDataChange(int cycle)
     {
-        for (int i = cycle; i < Constants.MaxCycles; i++)
+        for (var i = cycle; i < Constants.MaxCycles; i++)
         {
             this.optimizers[Constants.CurrentSeason, i] = null;
         }
@@ -37,7 +37,7 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
     public void OnOptimizationParameterChange()
     {
         OnDataChange(0);
-        for (int i = 0; i < Constants.MaxCycles; i++)
+        for (var i = 0; i < Constants.MaxCycles; i++)
         {
             this.optimizers[Constants.PreviousSeason, i] = null;
         }
@@ -50,10 +50,11 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
         ifData.DrawBasicControls(uiDataSource);
         var cycle = ifData.Cycle;
         var startGroove = ifData.GetStartGroove(uiDataSource);
-        Func<Item, string> formatPattern = i => {
+        string formatPattern(Item i)
+        {
             var (pattern, some) = i.FindPattern(cycle);
             return some ? pattern?.Name ?? "*" : "?";
-        };
+        }
 
         ImGui.SameLine();
         ifData.DrawFilteringControls(uiDataSource);
@@ -97,17 +98,17 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                for (int w = 0; w < Constants.MaxWorkshops; w++)
+                for (var w = 0; w < Constants.MaxWorkshops; w++)
                 {
                     ImGui.Text(string.Join("/", workshopsItemSets.ItemSets[w].Items.Select(i => i.Name)));
                 }
                 ImGui.TableNextColumn();
-                for (int w = 0; w < Constants.MaxWorkshops; w++)
+                for (var w = 0; w < Constants.MaxWorkshops; w++)
                 {
                     ImGui.Text(string.Join("/", workshopsItemSets.ItemSets[w].Items.Select(i => formatPattern(i))));
                 }
                 ImGui.TableNextColumn();
-                for (int w = 0; w < Constants.MaxWorkshops; w++)
+                for (var w = 0; w < Constants.MaxWorkshops; w++)
                 {
                     ImGui.Text(string.Join("/", workshopsItemSets.ItemSets[w].Items.Select(i => i.Hours)));
                 }
@@ -122,10 +123,10 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
                 if (disabled) { ImGui.BeginDisabled(); }
                 if (ImGui.Button($"*###WC-*-{top}"))
                 {
-                    for (int w = 0; w < Constants.MaxWorkshops; w++)
+                    for (var w = 0; w < Constants.MaxWorkshops; w++)
                     {
                         var itemSet = workshopsItemSets.ItemSets[w];
-                        for (int s = 0; s < Constants.MaxSteps; s++)
+                        for (var s = 0; s < Constants.MaxSteps; s++)
                         {
                             producedItems[cycle, w, s] = (s < itemSet.Items.Length) ? (int)itemSet.Items[s].Id : -1;
                         }

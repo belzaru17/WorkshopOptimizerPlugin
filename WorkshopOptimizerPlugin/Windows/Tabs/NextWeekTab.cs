@@ -10,7 +10,7 @@ namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
 internal class NextWeekTab : ITab
 {
-    private UIDataSource data;
+    private readonly UIDataSource data;
 
     public NextWeekTab(UIDataSource uiDataSource)
     {

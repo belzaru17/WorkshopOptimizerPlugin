@@ -27,6 +27,6 @@ internal class Groove
 
     public double Multiplier()
     {
-        return 1.0 + (double)Value / 100.0;
+        return 1.0 + ((double)Value / 100.0);
     }
 }
