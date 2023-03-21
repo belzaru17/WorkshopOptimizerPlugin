@@ -84,7 +84,7 @@ internal class CombinationsTab : ITab, IUIDataSourceListener
             ImGui.Text($"Calculating, please wait... {adjProgress:F0}%%");
         } else if (ImGui.BeginTable("Combinations", 7, ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg))
         {
-            ImGui.TableSetupColumn("Items", ImGuiTableColumnFlags.WidthFixed, 400);
+            ImGui.TableSetupColumn("Items", ImGuiTableColumnFlags.WidthFixed, 600);
             ImGui.TableSetupColumn("Patterns", ImGuiTableColumnFlags.WidthFixed, 150);
             ImGui.TableSetupColumn("Hours", ImGuiTableColumnFlags.WidthFixed, 100);
             ImGui.TableSetupColumn("Value", ImGuiTableColumnFlags.WidthFixed, 200);

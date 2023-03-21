@@ -118,8 +118,9 @@ internal class Item
         foreach (var pattern in patterns)
         {
             if ((IsSet(strictness, Strictness.AllowSameCycle) && (pattern.Cycle == cycle)) ||
-                (IsSet(strictness, Strictness.AllowRestCycles) && restCycles[pattern.Cycle]) ||
-                (IsSet(strictness, Strictness.AllowEarlierCycles) && (pattern.Cycle < cycle))) 
+                ((patterns.Count == 1) &&
+                 ((IsSet(strictness, Strictness.AllowRestCycles) && restCycles[pattern.Cycle]) ||
+                  (IsSet(strictness, Strictness.AllowEarlierCycles) && (pattern.Cycle < cycle)))))
             {
                 if ((When & (pattern.Strong? Data.When.Strong : Data.When.Weak)) != 0) {
                     return true;
