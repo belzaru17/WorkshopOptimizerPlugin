@@ -114,7 +114,8 @@ public class MainWindow : Window, IDisposable
 
     private void PopulateDataIfPossible()
     {
-        if (uiDataSource.DataSource.DataCollectionTime[SeasonUtils.GetCycle()] == null)
+        var cycle = SeasonUtils.GetCycle();
+        if (uiDataSource.DataSource.DataCollectionTime[cycle] == null)
         {
             var manager = ManagerProvider.GetManager();
             if (!manager.IsValid)
@@ -124,6 +125,11 @@ public class MainWindow : Window, IDisposable
             }
 
             PopulateJsonData(manager);
+
+            if (commonInterfaceElements.Cycle == cycle)
+            {
+                commonInterfaceElements.NextCycle();
+            }
         }
         ImGui.Text("");
     }

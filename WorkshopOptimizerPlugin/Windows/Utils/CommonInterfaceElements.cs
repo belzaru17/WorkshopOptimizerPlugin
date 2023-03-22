@@ -144,4 +144,10 @@ internal class CommonInterfaceElements
             ImGui.EndDisabled();
         }
     }
+
+    public void NextCycle()
+    {
+        mCycle++;
+        UIUtils.FixValue(ref mCycle, 1, 7);
+    }
 }
