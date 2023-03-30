@@ -120,20 +120,27 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
                 ImGui.Text(string.Format("Groove: {0} -> {1}", startGroove, workshopsItemSets.EndGroove));
                 ImGui.TableNextColumn();
                 ImGui.Text("");
-                if (disabled) { ImGui.BeginDisabled(); }
-                if (ImGui.Button($"*###WC-*-{top}"))
+                if (ifData.RestCycles[cycle])
                 {
-                    for (var w = 0; w < Constants.MaxWorkshops; w++)
-                    {
-                        var itemSet = workshopsItemSets.ItemSets[w];
-                        for (var s = 0; s < Constants.MaxSteps; s++)
-                        {
-                            producedItems[cycle, w, s] = (s < itemSet.Items.Length) ? (int)itemSet.Items[s].Id : -1;
-                        }
-                    }
-                    uiDataSource.DataChanged(cycle + 1);
+                    ImGui.Text("Resting");
                 }
-                if (disabled) { ImGui.EndDisabled(); }
+                else
+                {
+                    if (disabled) { ImGui.BeginDisabled(); }
+                    if (ImGui.Button($"*###WC-*-{top}"))
+                    {
+                        for (var w = 0; w < Constants.MaxWorkshops; w++)
+                        {
+                            var itemSet = workshopsItemSets.ItemSets[w];
+                            for (var s = 0; s < Constants.MaxSteps; s++)
+                            {
+                                producedItems[cycle, w, s] = (s < itemSet.Items.Length) ? (int)itemSet.Items[s].Id : -1;
+                            }
+                        }
+                        uiDataSource.DataChanged(cycle + 1);
+                    }
+                    if (disabled) { ImGui.EndDisabled(); }
+                }
             }
             ImGui.EndTable();
         }

@@ -115,31 +115,38 @@ internal class CombinationsTab : ITab, IUIDataSourceListener
                 ImGui.TableNextColumn();
                 ImGui.Text(string.Format("{0:F2}", effValue * startGroove.Multiplier()));
                 ImGui.TableNextColumn();
-                if (disabled) { ImGui.BeginDisabled(); }
-                for (var w = 0; w < Constants.MaxWorkshops; w++)
+                if (ifData.RestCycles[cycle])
                 {
-                    if (ImGui.Button($"{w + 1}###C-{w}-{top}"))
+                    ImGui.Text("Resting");
+                }
+                else
+                {
+                    if (disabled) { ImGui.BeginDisabled(); }
+                    for (var w = 0; w < Constants.MaxWorkshops; w++)
                     {
-                        for (var s = 0; s < Constants.MaxSteps; s++)
+                        if (ImGui.Button($"{w + 1}###C-{w}-{top}"))
                         {
-                            producedItems[cycle, w, s] = (s < itemset.Items.Length) ? (int)itemset.Items[s].Id : -1;
+                            for (var s = 0; s < Constants.MaxSteps; s++)
+                            {
+                                producedItems[cycle, w, s] = (s < itemset.Items.Length) ? (int)itemset.Items[s].Id : -1;
+                            }
+                            uiDataSource.DataChanged(cycle);
+                        }
+                        ImGui.SameLine();
+                    }
+                    if (ImGui.Button($"*###C-*-{top}"))
+                    {
+                        for (var w = 0; w < Constants.MaxWorkshops; w++)
+                        {
+                            for (var s = 0; s < Constants.MaxSteps; s++)
+                            {
+                                producedItems[cycle, w, s] = (s < itemset.Items.Length) ? (int)itemset.Items[s].Id : -1;
+                            }
                         }
                         uiDataSource.DataChanged(cycle);
                     }
-                    ImGui.SameLine();
+                    if (disabled) { ImGui.EndDisabled(); }
                 }
-                if (ImGui.Button($"*###C-*-{top}"))
-                {
-                    for (var w = 0; w < Constants.MaxWorkshops; w++)
-                    {
-                        for (var s = 0; s < Constants.MaxSteps; s++)
-                        {
-                            producedItems[cycle, w, s] = (s < itemset.Items.Length) ? (int)itemset.Items[s].Id : -1;
-                        }
-                    }
-                    uiDataSource.DataChanged(cycle);
-                }
-                if (disabled) { ImGui.EndDisabled(); }
             }
             ImGui.EndTable();
         }
