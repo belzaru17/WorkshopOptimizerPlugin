@@ -1,4 +1,5 @@
 using ImGuiNET;
+using System.Numerics;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Optimizer;
 using WorkshopOptimizerPlugin.Utils;
@@ -11,13 +12,16 @@ internal class CommonInterfaceElements
     private int mSeason = 0;
     private int mCycle;
     private int mTop;
-    private int mNewStrictness;
     private Strictness mStrictness = Strictness.RelaxedDefaults;
+    private int mMultiCycleLimit = Constants.DefaultMultiCycleLimit;
+    private int mNewStrictness;
+    private int mNewMultiCycleLimit;
     private readonly bool[] mRestCycles = new bool[Constants.MaxCycles];
 
     public int Season => mSeason;
     public int Cycle => UIUtils.FixValue(ref mCycle, 1, 7) - 1;
     public Strictness Strictness => mStrictness;
+    public int MultiCycleLimit => mMultiCycleLimit;
     public int Top => UIUtils.FixValue(ref mTop, 1, Constants.MaxTopItems);
     public bool[] RestCycles => mRestCycles;
 
@@ -54,6 +58,11 @@ internal class CommonInterfaceElements
         return producedItems.GrooveAtEndOfCycle[Cycle];
     }
 
+    public OptimizerOptions CreateOptimizerOptions(Configuration configuration)
+    {
+        return new OptimizerOptions(configuration, Strictness, MultiCycleLimit, RestCycles);
+    }
+
     public void DrawBasicControls(UIDataSource uiDataSource)
     {
         ImGui.SetNextItemWidth(100);
@@ -72,12 +81,27 @@ internal class CommonInterfaceElements
         ImGui.SameLine();
         if (ImGui.BeginPopupModal("Optimizer Settings"))
         {
+            ImGui.SetWindowSize(new Vector2(350, 280));
             ImGui.CheckboxFlags("Allow items on any cycle", ref mNewStrictness, (int)Strictness.AllowAnyCycle);
+            var any_cycle = (mNewStrictness & (int)Strictness.AllowAnyCycle) != 0;
+            if (any_cycle) ImGui.BeginDisabled();
             ImGui.CheckboxFlags("Allow items that peak on this cycle", ref mNewStrictness, (int)Strictness.AllowSameCycle);
             ImGui.CheckboxFlags("Allow items that peak on rest cycles", ref mNewStrictness, (int)Strictness.AllowRestCycles);
             ImGui.CheckboxFlags("Allow items that peaked on earlier cycles", ref mNewStrictness, (int)Strictness.AllowEarlierCycles);
             ImGui.CheckboxFlags("Allow items that may peak on other cycles", ref mNewStrictness, (int)Strictness.AllowMultiCycle);
+            var multi_disabled = (mNewStrictness & (int)Strictness.AllowMultiCycle) == 0;
+            if (multi_disabled) ImGui.BeginDisabled();
+            ImGui.Spacing(); ImGui.SameLine();
+            ImGui.CheckboxFlags("Maximum value: ", ref mNewStrictness, (int)Strictness.UseMultiCycleLimit);
+            ImGui.SameLine();
+            var limit_disabled = (mNewStrictness & (int)Strictness.UseMultiCycleLimit) == 0;
+            if (limit_disabled) ImGui.BeginDisabled();
+            ImGui.SetNextItemWidth(100);
+            ImGui.InputInt("##Limit", ref mNewMultiCycleLimit);
+            if (limit_disabled) ImGui.EndDisabled();
+            if (multi_disabled) ImGui.EndDisabled();
             ImGui.CheckboxFlags("Allow items that we don't know their peak cycle", ref mNewStrictness, (int)Strictness.AllowUnknownCycle);
+            if (any_cycle) ImGui.EndDisabled();
             ImGui.Spacing();
             if (ImGui.Button("Cancel"))
             {
@@ -86,9 +110,10 @@ internal class CommonInterfaceElements
             ImGui.SameLine();
             if (ImGui.Button("Defaults"))
             {
-                if (mStrictness != Strictness.RelaxedDefaults)
+                if (mStrictness != Strictness.RelaxedDefaults || mMultiCycleLimit != Constants.DefaultMultiCycleLimit)
                 {
                     mStrictness = Strictness.RelaxedDefaults;
+                    mMultiCycleLimit = Constants.DefaultMultiCycleLimit;
                     uiDataSource.OptimizationParameterChanged();
                 }
                 ImGui.CloseCurrentPopup();
@@ -96,9 +121,10 @@ internal class CommonInterfaceElements
             ImGui.SameLine();
             if (ImGui.Button("Apply"))
             {
-                if (mStrictness != (Strictness)mNewStrictness)
+                if (mStrictness != (Strictness)mNewStrictness || mMultiCycleLimit != mNewMultiCycleLimit)
                 {
                     mStrictness = (Strictness)mNewStrictness;
+                    mMultiCycleLimit = mNewMultiCycleLimit;
                     uiDataSource.OptimizationParameterChanged();
                 }
                 ImGui.CloseCurrentPopup();
@@ -108,6 +134,7 @@ internal class CommonInterfaceElements
         if (UIUtils.ImageButton(icons.OptimizerSettings, "Optimizer Settings"))
         {
             mNewStrictness = (int)Strictness;
+            mNewMultiCycleLimit = MultiCycleLimit;
             ImGui.OpenPopup("Optimizer Settings");
         }
     }

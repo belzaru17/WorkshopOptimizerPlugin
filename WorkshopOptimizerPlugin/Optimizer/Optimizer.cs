@@ -143,6 +143,35 @@ internal class Optimizer
 
     private bool checkItem(Item item)
     {
-        return item.CheckCycles(cycle, options.RestCycles, options.Strictness);
+        static bool IsSet(Strictness a, Strictness b) => (a & b) != 0;
+
+        if (item.When == When.Never) { return false; }
+        if (item.When == When.Always) { return true; }
+        if (IsSet(options.Strictness, Strictness.AllowAnyCycle)) { return true; }
+
+        var patterns = item.FindPatterns(cycle);
+        if (patterns.Count == 0) { return IsSet(options.Strictness, Strictness.AllowUnknownCycle); }
+        if ((patterns.Count > 1) &&
+            (!IsSet(options.Strictness, Strictness.AllowMultiCycle) ||
+             (IsSet(options.Strictness, Strictness.UseMultiCycleLimit) &&
+              (item.Value > options.MultiCycleLimit)))) {
+            return false;
+        } 
+
+        foreach (var pattern in patterns)
+        {
+            if ((IsSet(options.Strictness, Strictness.AllowSameCycle) && (pattern.Cycle == cycle)) ||
+                ((patterns.Count == 1) &&
+                 ((IsSet(options.Strictness, Strictness.AllowRestCycles) && options.RestCycles[pattern.Cycle]) ||
+                  (IsSet(options.Strictness, Strictness.AllowEarlierCycles) && (pattern.Cycle < cycle)))))
+            {
+                if ((item.When & (pattern.Strong ? Data.When.Strong : Data.When.Weak)) != 0)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

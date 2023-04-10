@@ -66,7 +66,7 @@ internal class WorkshopsTab : ITab, IUIDataSourceListener
         var optimizer = optimizers[ifData.Season, cycle];
         if (optimizer == null)
         {
-            var options = new OptimizerOptions(configuration, ifData.Strictness, ifData.RestCycles);
+            var options = ifData.CreateOptimizerOptions(configuration);
             optimizers[ifData.Season, cycle] = optimizer = new Optimizer.Optimizer(itemCache, cycle, startGroove, options);
 
         }

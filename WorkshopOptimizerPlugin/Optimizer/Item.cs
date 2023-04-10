@@ -103,34 +103,6 @@ internal class Item
         return ((double)Value) * PopularityUtils.Multiplier(Popularity) * (sup_mult / n);
     }
 
-    public bool CheckCycles(int cycle, bool[] restCycles, Strictness strictness)
-    {
-        static bool IsSet(Strictness a, Strictness b) => (a & b) != 0;
-
-        if (When == Data.When.Never) { return false; }
-        if (When == Data.When.Always) { return true; }
-        if (IsSet(strictness, Strictness.AllowAnyCycle)) { return true; }
-
-        var patterns = FindPatterns(cycle);
-        if (patterns.Count == 0) { return IsSet(strictness, Strictness.AllowUnknownCycle); }
-        if (patterns.Count > 1 && !IsSet(strictness, Strictness.AllowMultiCycle)) { return false; }
-
-        foreach (var pattern in patterns)
-        {
-            if ((IsSet(strictness, Strictness.AllowSameCycle) && (pattern.Cycle == cycle)) ||
-                ((patterns.Count == 1) &&
-                 ((IsSet(strictness, Strictness.AllowRestCycles) && restCycles[pattern.Cycle]) ||
-                  (IsSet(strictness, Strictness.AllowEarlierCycles) && (pattern.Cycle < cycle)))))
-            {
-                if ((When & (pattern.Strong? Data.When.Strong : Data.When.Weak)) != 0) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     private readonly ItemStaticData staticData;
     private readonly ItemDynamicData dynamicData;
     private readonly ProducedItemsAdaptor producedItems;
