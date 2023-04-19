@@ -8,12 +8,13 @@ namespace WorkshopOptimizerPlugin.Windows.Utils;
 
 internal class CommonInterfaceElements
 {
+    private readonly Configuration configuration;
     private readonly Icons icons;
     private int mSeason = 0;
     private int mCycle;
     private int mTop;
     private Strictness mStrictness = Strictness.RelaxedDefaults;
-    private int mMultiCycleLimit = Constants.DefaultMultiCycleLimit;
+    private int mMultiCycleLimit;
     private int mNewStrictness;
     private int mNewMultiCycleLimit;
     private readonly bool[] mRestCycles = new bool[Constants.MaxCycles];
@@ -27,8 +28,10 @@ internal class CommonInterfaceElements
 
     public CommonInterfaceElements(Icons icons, Configuration configuration)
     {
+        this.configuration = configuration;
         this.icons = icons;
         mTop = configuration.DefaultTopValues;
+        mMultiCycleLimit = configuration.DefaultMultiCycleLimit;
         mCycle = SeasonUtils.GetCycle() + 1;
         mRestCycles[configuration.DefaultRestCycle1] = true;
         mRestCycles[configuration.DefaultRestCycle2] = true;
@@ -110,10 +113,10 @@ internal class CommonInterfaceElements
             ImGui.SameLine();
             if (ImGui.Button("Defaults"))
             {
-                if (mStrictness != Strictness.RelaxedDefaults || mMultiCycleLimit != Constants.DefaultMultiCycleLimit)
+                if (mStrictness != Strictness.RelaxedDefaults || mMultiCycleLimit != configuration.DefaultMultiCycleLimit)
                 {
                     mStrictness = Strictness.RelaxedDefaults;
-                    mMultiCycleLimit = Constants.DefaultMultiCycleLimit;
+                    mMultiCycleLimit = configuration.DefaultMultiCycleLimit;
                     uiDataSource.OptimizationParameterChanged();
                 }
                 ImGui.CloseCurrentPopup();

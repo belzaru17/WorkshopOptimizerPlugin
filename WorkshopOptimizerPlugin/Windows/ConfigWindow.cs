@@ -64,6 +64,15 @@ public class ConfigWindow : Window, IDisposable
             saveConfig = true;
         }
 
+        ImGui.Spacing();
+        var defaultMultiCycleLimit = configuration.DefaultMultiCycleLimit;
+        ImGui.SetNextItemWidth(100);
+        if (ImGui.InputInt("Default Multi-Cycle Limit", ref defaultMultiCycleLimit))
+        {
+            configuration.DefaultMultiCycleLimit = UIUtils.FixValue(ref defaultMultiCycleLimit, 0, 999);
+            saveConfig = true;
+        }
+
         if (saveConfig)
         {
             configuration.Save();
