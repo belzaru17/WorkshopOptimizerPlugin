@@ -21,5 +21,5 @@ internal static class Constants
     public const int CurrentSeason = 0;
     public const int PreviousSeason = 1;
 
-    public const int DefaultMultiCycleLimit = 75;
+    public const int DefaultMultiCycleLimit = 90;
 }
