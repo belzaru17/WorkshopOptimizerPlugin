@@ -155,6 +155,29 @@ internal class ProducedTab : ITab
         {
             itemSets[w] = new ItemSet(items[w].ToArray());
         }
+
+        ImGui.TableNextRow(ImGuiTableRowFlags.Headers, 27);
+        ImGui.TableSetColumnIndex(0);
+        ImGui.SetNextItemWidth(200);
+        ImGui.Text("Base Value");
+        for (var w = 0; w < Constants.MaxWorkshops; w++)
+        {
+            ImGui.TableSetColumnIndex(w + 1);
+            ImGui.SetNextItemWidth(200);
+            ImGui.Text($"{itemSets[w].Value}");
+        }
+
+        ImGui.TableNextRow(ImGuiTableRowFlags.Headers, 27);
+        ImGui.TableSetColumnIndex(0);
+        ImGui.SetNextItemWidth(200);
+        ImGui.Text("Value");
+        for (var w = 0; w < Constants.MaxWorkshops; w++)
+        {
+            ImGui.TableSetColumnIndex(w + 1);
+            ImGui.SetNextItemWidth(200);
+            ImGui.Text($"{itemSets[w].EffectiveValue(cycle) * startGroove.Multiplier():F2}");
+        }
+
         var workshopItemSets = new WorkshopsItemSets(itemSets, cycle, startGroove);
         ImGui.TableNextRow(ImGuiTableRowFlags.Headers, 27);
         ImGui.TableSetColumnIndex(0);
