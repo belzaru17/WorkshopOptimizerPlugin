@@ -15,12 +15,22 @@ internal class PersistentSeasonData
 
     public int[][][] ProducedItems { get; set; }
 
+    public bool[] RestCycles { get; set; }
+
 
     public PersistentSeasonData() : this(SeasonUtils.SeasonStart()) { }
 
-    public PersistentSeasonData(int season_offset) : this(SeasonUtils.SeasonStart().AddDays(season_offset * Constants.MaxCycles)) { }
+    public PersistentSeasonData(int season_offset)
+        : this(SeasonUtils.SeasonStart().AddDays(season_offset * Constants.MaxCycles)) { }
 
-    public PersistentSeasonData(DateTime seasonStart)
+    public void InitializeDefaults(Configuration configuration)
+    {
+        RestCycles[configuration.DefaultRestCycle1] = true;
+        RestCycles[configuration.DefaultRestCycle2] = true;
+    }
+
+
+    private PersistentSeasonData(DateTime seasonStart)
     {
         SeasonStart = seasonStart;
         DataCollectionTime = new DateTime?[Constants.MaxCycles];
@@ -37,5 +47,6 @@ internal class PersistentSeasonData
                 }
             }
         }
+        RestCycles = new bool[Constants.MaxCycles];
     }
 }

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace WorkshopOptimizerPlugin.Optimizer;
 
 public enum Strictness
@@ -18,10 +20,10 @@ internal class OptimizerOptions
 {
     public readonly Strictness Strictness;
     public readonly int MultiCycleLimit;
-    public readonly bool[] RestCycles;
+    public readonly IReadOnlyList<bool> RestCycles;
     public readonly int ItemGenerationCutoff;
 
-    public OptimizerOptions(Configuration configuration, Strictness strictness, int multiCycleLmit, bool[] restCycles)
+    public OptimizerOptions(Configuration configuration, Strictness strictness, int multiCycleLmit, IReadOnlyList<bool> restCycles)
     {
         Strictness = strictness;
         MultiCycleLimit = multiCycleLmit;

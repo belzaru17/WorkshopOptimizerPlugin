@@ -20,15 +20,10 @@ internal class UIDataSource
     public ItemCache PreviousItemCache => previousItemCache;
     public bool Dirty { get; private set; } = false;
 
-    public UIDataSource()
-    {
-        Reset();
-    }
-
-    public static UIDataSource Load()
+    public static UIDataSource Load(Configuration configuration)
     {
         var path = Environment.ExpandEnvironmentVariables(JsonFileName);
-        return new UIDataSource(DataSource.Load(path));
+        return new UIDataSource(DataSource.Load(configuration, path));
     }
 
     public void OptimizationParameterChanged()
@@ -54,21 +49,15 @@ internal class UIDataSource
     }
 
     [MemberNotNull(nameof(dataSource), nameof(whenOverrides), nameof(currentItemCache), nameof(previousItemCache))]
-    public void Reset()
+    public void Reset(Configuration configuration)
     {
-        reset(new DataSource());
+        Reset(new DataSource(configuration));
     }
 
     public void NextWeek()
     {
         dataSource.NextWeek();
-        reset(dataSource);
-    }
-
-    public void Reload()
-    {
-        var path = Environment.ExpandEnvironmentVariables(JsonFileName);
-        reset(DataSource.Load(path));
+        Reset(dataSource);
     }
 
     public bool Save()
@@ -80,11 +69,11 @@ internal class UIDataSource
 
     private UIDataSource(DataSource dataSource)
     {
-        reset(dataSource);
+        Reset(dataSource);
     }
 
     [MemberNotNull(nameof(dataSource), nameof(whenOverrides), nameof(currentItemCache), nameof(previousItemCache))]
-    private void reset(DataSource dataSource)
+    private void Reset(DataSource dataSource)
     {
         this.dataSource = dataSource;
         whenOverrides = new WhenOverrides();

@@ -22,11 +22,11 @@ internal class ProducedTab : ITab
 
     public void Draw()
     {
-        ifData.DrawBasicControls(uiDataSource);
+        ifData.DrawBasicControls();
         var cycle = ifData.Cycle;
-        var startGroove = ifData.GetStartGroove(uiDataSource);
+        var startGroove = ifData.GetStartGroove();
         ImGui.SameLine();
-        ifData.DrawRestCycleCheckbox(uiDataSource, cycle);
+        ifData.DrawRestCycleCheckbox(cycle);
         ImGui.Spacing();
         DrawProducedTable(cycle, startGroove);
         ImGui.Spacing();

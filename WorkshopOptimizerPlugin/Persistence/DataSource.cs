@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
@@ -9,7 +10,8 @@ namespace WorkshopOptimizerPlugin.Persistence;
 
 internal class DataSource
 {
-    public DataSource() : this(new PersistentData()) { }
+    public DataSource(Configuration configuration)
+        : this(configuration, new PersistentData(configuration)) { }
 
     public uint Version => data.Version;
 
@@ -25,10 +27,16 @@ internal class DataSource
 
     public ProducedItemsAdaptor PreviousProducedItems { get; private set; }
 
+    public bool[] CurrentRestCycles => data.CurrentSeason.RestCycles;
+
+    public IReadOnlyList<bool> PreviousRestCycles => Array.AsReadOnly(data.PreviousSeason.RestCycles);
+
+
     public void NextWeek()
     {
         data.PreviousSeason = data.CurrentSeason;
         data.CurrentSeason = new();
+        data.CurrentSeason.InitializeDefaults(configuration);
         Reset();
     }
 
@@ -70,7 +78,7 @@ internal class DataSource
         return true;
     }
 
-    public static DataSource Load(string filename)
+    public static DataSource Load(Configuration configuration, string filename)
     {
         try
         {
@@ -82,16 +90,17 @@ internal class DataSource
                 },
             });
 
-            return new DataSource(data ?? new PersistentData());
+            return new DataSource(configuration, data ?? new PersistentData(configuration));
         }
         catch
         {
-            return new DataSource();
+            return new DataSource(configuration);
         }
     }
 
-    private DataSource(PersistentData data)
+    private DataSource(Configuration configuration, PersistentData data)
     {
+        this.configuration = configuration;
         this.data = data;
         Reset();
     }
@@ -105,5 +114,6 @@ internal class DataSource
         PreviousProducedItems = new ProducedItemsAdaptor(data.PreviousSeason);
     }
 
+    private readonly Configuration configuration;
     private readonly PersistentData data;
 }

@@ -46,9 +46,9 @@ internal class CombinationsTab : ITab, IUIDataSourceListener
 
     public void Draw()
     {
-        ifData.DrawBasicControls(uiDataSource);
+        ifData.DrawBasicControls();
         var cycle = ifData.Cycle;
-        var startGroove = ifData.GetStartGroove(uiDataSource);
+        var startGroove = ifData.GetStartGroove();
         string formatPattern(Item i)
         {
             var (pattern, some) = i.FindPattern(cycle);
@@ -56,7 +56,7 @@ internal class CombinationsTab : ITab, IUIDataSourceListener
         }
 
         ImGui.SameLine();
-        ifData.DrawFilteringControls(uiDataSource);
+        ifData.DrawFilteringControls();
         ImGui.Spacing();
 
         var itemCache = ifData.IsCurrentSeason() ? uiDataSource.CurrentItemCache : uiDataSource.PreviousItemCache;
@@ -67,7 +67,7 @@ internal class CombinationsTab : ITab, IUIDataSourceListener
             var optimizer = optimizers[ifData.Season, cycle];
             if (optimizer == null)
             {
-                var options = ifData.CreateOptimizerOptions(configuration);
+                var options = ifData.CreateOptimizerOptions();
                 optimizers[ifData.Season, cycle] = optimizer = new Optimizer.Optimizer(itemCache, cycle, startGroove, options);
             }
             (itemSets, progress) = optimizer.GenerateCombinations();

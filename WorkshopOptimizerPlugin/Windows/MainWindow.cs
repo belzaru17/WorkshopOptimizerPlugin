@@ -32,12 +32,12 @@ public class MainWindow : Window, IDisposable
         this.plugin = plugin;
 
         itemSetsCaches = new ItemSetsCache[Constants.MaxSeasons] { new ItemSetsCache(), new ItemSetsCache() };
-        uiDataSource = UIDataSource.Load();
+        uiDataSource = UIDataSource.Load(plugin.Configuration);
         for (var i = 0; i < Constants.MaxSeasons; i++)
         {
             uiDataSource.AddListener(itemSetsCaches[i]);
         }
-        commonInterfaceElements = new CommonInterfaceElements(plugin.Icons, plugin.Configuration);
+        commonInterfaceElements = new CommonInterfaceElements(plugin.Icons, plugin.Configuration, uiDataSource);
 
         tabs = new()
         {
@@ -80,7 +80,7 @@ public class MainWindow : Window, IDisposable
             }
             else
             {
-                uiDataSource.Reset();
+                uiDataSource.Reset(plugin.Configuration);
             }
         }
 

@@ -34,7 +34,7 @@ internal class ItemsTab : ITab
 
     public void Draw()
     {
-        ifData.DrawBasicControls(uiDataSource);
+        ifData.DrawBasicControls();
         var cycle = ifData.Cycle;
         ImGui.SameLine();
         DrawActionsBar();

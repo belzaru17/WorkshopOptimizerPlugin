@@ -24,9 +24,9 @@ internal class PatternsTab : ITab
 
     public void Draw()
     {
-        ifData.DrawBasicControls(uiDataSource);
+        ifData.DrawBasicControls();
         var cycle = ifData.Cycle;
-        var startGroove = ifData.GetStartGroove(uiDataSource);
+        var startGroove = ifData.GetStartGroove();
         ImGui.Spacing();
 
         if (ImGui.BeginTable("Patterns", 6, ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg))

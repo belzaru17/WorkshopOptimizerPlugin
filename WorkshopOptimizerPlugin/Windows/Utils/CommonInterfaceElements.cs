@@ -1,4 +1,6 @@
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets;
+using System.Collections.Generic;
 using System.Numerics;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Optimizer;
@@ -9,6 +11,7 @@ namespace WorkshopOptimizerPlugin.Windows.Utils;
 internal class CommonInterfaceElements
 {
     private readonly Configuration configuration;
+    private readonly UIDataSource uiDataSource;
     private readonly Icons icons;
     private int mSeason = 0;
     private int mCycle;
@@ -17,24 +20,22 @@ internal class CommonInterfaceElements
     private int mMultiCycleLimit;
     private int mNewStrictness;
     private int mNewMultiCycleLimit;
-    private readonly bool[] mRestCycles = new bool[Constants.MaxCycles];
 
     public int Season => mSeason;
     public int Cycle => UIUtils.FixValue(ref mCycle, 1, 7) - 1;
     public Strictness Strictness => mStrictness;
     public int MultiCycleLimit => mMultiCycleLimit;
     public int Top => UIUtils.FixValue(ref mTop, 1, Constants.MaxTopItems);
-    public bool[] RestCycles => mRestCycles;
+    public IReadOnlyList<bool> RestCycles => IsCurrentSeason() ? uiDataSource.DataSource.CurrentRestCycles : uiDataSource.DataSource.PreviousRestCycles;
 
-    public CommonInterfaceElements(Icons icons, Configuration configuration)
+    public CommonInterfaceElements(Icons icons, Configuration configuration, UIDataSource uiDataSource)
     {
         this.configuration = configuration;
+        this.uiDataSource = uiDataSource;
         this.icons = icons;
         mTop = configuration.DefaultTopValues;
         mMultiCycleLimit = configuration.DefaultMultiCycleLimit;
         mCycle = SeasonUtils.GetCycle() + 1;
-        mRestCycles[configuration.DefaultRestCycle1] = true;
-        mRestCycles[configuration.DefaultRestCycle2] = true;
     }
 
     public bool IsCurrentSeason()
@@ -47,7 +48,7 @@ internal class CommonInterfaceElements
         return Season == Constants.PreviousSeason;
     }
 
-    public Groove GetStartGroove(UIDataSource uiDataSource)
+    public Groove GetStartGroove()
     {
         if (Cycle == 0) return new Groove();
 
@@ -55,18 +56,18 @@ internal class CommonInterfaceElements
         return producedItems.GrooveAtEndOfCycle[Cycle - 1];
     }
 
-    public Groove GetEndGroove(UIDataSource uiDataSource)
+    public Groove GetEndGroove()
     {
         var producedItems = IsCurrentSeason() ? uiDataSource.DataSource.CurrentProducedItems : uiDataSource.DataSource.PreviousProducedItems;
         return producedItems.GrooveAtEndOfCycle[Cycle];
     }
 
-    public OptimizerOptions CreateOptimizerOptions(Configuration configuration)
+    public OptimizerOptions CreateOptimizerOptions()
     {
         return new OptimizerOptions(configuration, Strictness, MultiCycleLimit, RestCycles);
     }
 
-    public void DrawBasicControls(UIDataSource uiDataSource)
+    public void DrawBasicControls()
     {
         ImGui.SetNextItemWidth(100);
         ImGui.Combo("Season", ref mSeason, new string[] { "Current", "Previous" }, 2);
@@ -74,10 +75,10 @@ internal class CommonInterfaceElements
         ImGui.SetNextItemWidth(100);
         ImGui.InputInt("Cycle", ref mCycle);
         ImGui.SameLine();
-        ImGui.Text(string.Format("Groove: {0} -> {1}", GetStartGroove(uiDataSource), GetEndGroove(uiDataSource))); ;
+        ImGui.Text(string.Format("Groove: {0} -> {1}", GetStartGroove(), GetEndGroove())); ;
     }
 
-    public void DrawFilteringControls(UIDataSource uiDataSource)
+    public void DrawFilteringControls()
     {
         ImGui.SetNextItemWidth(100);
         ImGui.InputInt("Top-N", ref mTop, 5);
@@ -142,21 +143,22 @@ internal class CommonInterfaceElements
         }
     }
 
-    public void DrawRestCycleCheckbox(UIDataSource uiDataSource, int cycle)
+    public void DrawRestCycleCheckbox(int cycle)
     {
         var rest_cycles = 0;
         for (var i = 0; i < Constants.MaxCycles; i++)
         {
-            if (mRestCycles[i]) { rest_cycles++; }
+            if (uiDataSource.DataSource.CurrentRestCycles[i]) { rest_cycles++; }
         }
-        var disabled = !IsCurrentSeason() || (rest_cycles >= 2 && !mRestCycles[cycle]);
+        var disabled = !IsCurrentSeason() || (rest_cycles >= 2 && !uiDataSource.DataSource.CurrentRestCycles[cycle]);
         if(disabled)
         {
             ImGui.BeginDisabled();
         }
-        if (ImGui.Checkbox("Rest Cycle", ref mRestCycles[cycle]))
+        var mRestCycle = RestCycles[cycle];
+        if (ImGui.Checkbox("Rest Cycle", ref mRestCycle))
         {
-            if (mRestCycles[cycle])
+            if (uiDataSource.DataSource.CurrentRestCycles[cycle])
             {
                 var producedItems = uiDataSource.DataSource.CurrentProducedItems;
                 for (var w = 0; w < Constants.MaxWorkshops; w++)
@@ -166,8 +168,9 @@ internal class CommonInterfaceElements
                         producedItems[cycle, w, s] = -1;
                     }
                 }
-                uiDataSource.DataChanged(cycle);
             }
+            uiDataSource.DataSource.CurrentRestCycles[cycle] = mRestCycle;
+            uiDataSource.DataChanged();
         }
         if (disabled)
         {
