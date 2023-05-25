@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using WorkshopOptimizerPlugin.Data;
 
 namespace WorkshopOptimizerPlugin.Optimizer;
@@ -73,6 +74,9 @@ internal readonly struct WorkshopsItemSets
         var steps = new int[Constants.MaxWorkshops];
         for (var h = 0; h <= Constants.MaxHours; h++)
         {
+            var hourGroove = groove;
+            var hourProducedItems = new int[Constants.MaxItems];
+            producedItems.CopyTo(hourProducedItems, 0);
             for (var w = 0; w < Constants.MaxWorkshops; w++)
             {
                 if (steps[w] >= ItemSets[w].Items.Length) { continue; }
@@ -81,7 +85,7 @@ internal readonly struct WorkshopsItemSets
                 if (h < start[w] + item.Hours) { continue; }
 
                 var q = ItemSet.ItemsPerStep(steps[w]);
-                EffectiveValue += item.EffectiveValue(cycle, producedItems[item.Id]) * q * groove.Multiplier();
+                EffectiveValue += item.EffectiveValue(cycle, hourProducedItems[item.Id]) * q * hourGroove.Multiplier();
 
                 producedItems[item.Id] += q;
                 groove = groove.Inc(steps[w]);
