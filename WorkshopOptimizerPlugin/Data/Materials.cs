@@ -1,3 +1,5 @@
+using Lumina.Excel.GeneratedSheets;
+
 namespace WorkshopOptimizerPlugin.Data;
 
 internal enum MaterialSource
@@ -62,6 +64,13 @@ internal class Material
     public static readonly Material Coconut = new("Coconut", MaterialSource.Gatherable);
     public static readonly Material BeehiveChip = new("Beenhive Chip", MaterialSource.Gatherable);
     public static readonly Material WoodOpal = new("Wood Opal", MaterialSource.Gatherable);
+    public static readonly Material Coal = new("Coal", MaterialSource.Gatherable);
+    public static readonly Material Glimshroom = new("Glimshroom", MaterialSource.Gatherable);
+    public static readonly Material Shale = new("Shale", MaterialSource.Gatherable);
+    public static readonly Material Marble = new("Marble", MaterialSource.Gatherable);
+    public static readonly Material MythrilOre = new("Mythril Ore", MaterialSource.Gatherable);
+    public static readonly Material Spectrine = new("Spectrine", MaterialSource.Gatherable);
+    public static readonly Material EffervescentWater = new("Effervescent Water", MaterialSource.Gatherable);
 
     // Granary
     public static readonly Material Alyssum = new("Alyssum", MaterialSource.Granary);
@@ -69,6 +78,7 @@ internal class Material
     public static readonly Material SpruceLog = new("Spruce Log", MaterialSource.Granary);
     public static readonly Material Hammerhead = new("Hammerhead", MaterialSource.Granary);
     public static readonly Material SilverOre = new("Silver Ore", MaterialSource.Granary);
+    public static readonly Material CaveShrimp = new("CaveShrimp", MaterialSource.Granary);
 
     // Crop
     public static readonly Material Popoto = new("Popoto", MaterialSource.Crop);
@@ -84,6 +94,10 @@ internal class Material
     public static readonly Material Radish = new("Radish", MaterialSource.RareCrop);
     public static readonly Material Paprika = new("Paprika", MaterialSource.RareCrop);
     public static readonly Material Leek = new("Leek", MaterialSource.RareCrop);
+    public static readonly Material RunnerBeans = new("Runner Beans", MaterialSource.RareCrop);
+    public static readonly Material Beet = new("Beet", MaterialSource.RareCrop);
+    public static readonly Material Eggplant = new("Eggplant", MaterialSource.RareCrop);
+    public static readonly Material Zucchini = new("Zucchini", MaterialSource.RareCrop);
 
     // Dropping
     public static readonly Material Fleece = new("Fleece", MaterialSource.Dropping);

@@ -13,6 +13,7 @@ internal class GranaryItemData
         new GranaryItemData(22 /* Spruce Round Shield */, "Spruce Log", "Wild Woods"),
         new GranaryItemData(23 /* Shark Oil */, "Hammerhead", "Bending Beaches"),
         new GranaryItemData(24 /* Silver Ear Cuffs */, "Silver Ore", "Mossy Mountains"),
+        new GranaryItemData(64 /* Bouillabaisse */, "Cave Shrimp", "Crumbling Caverns"),
     };
 
     private GranaryItemData(uint id, string component, string mission)

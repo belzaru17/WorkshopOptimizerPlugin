@@ -50,7 +50,10 @@ public class MainWindow : Window, IDisposable
         };
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+    }
 
     public override void OnOpen()
     {
@@ -88,6 +91,13 @@ public class MainWindow : Window, IDisposable
         ImGui.Text($"Season: {uiDataSource.DataSource.SeasonStart:yyyy-MM-dd} - {uiDataSource.DataSource.SeasonStart.AddDays(Constants.MaxCycles):yyyy-MM-dd}. Cycle={cycle + 1}.");
         ImGui.SameLine();
         PopulateDataIfPossible();
+#if DEBUG
+        ImGui.SameLine();
+        if (ImGui.Button("Reset"))
+        {
+            uiDataSource.Reset(plugin.Configuration);
+        }
+#endif
         ImGui.SameLine();
         var indent = ImGui.GetWindowWidth() - 45;
         ImGui.Indent(indent);

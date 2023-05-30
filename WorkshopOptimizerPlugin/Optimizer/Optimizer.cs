@@ -89,7 +89,7 @@ internal class Optimizer
 
         var done = false;
         for (var remain = Constants.MaxComputeItems; !done && remain > 0; remain--) {
-            var newItemSets = new ItemSet[Constants.MaxWorkshops] { combinations[wci[0]], combinations[wci[1]], combinations[wci[2]] };
+            var newItemSets = new ItemSet[Constants.MaxWorkshops] { combinations[wci[0]], combinations[wci[1]], combinations[wci[2]], combinations[wci[3]] };
             cachedWorkshopCombinations.Add(new WorkshopsItemSets(newItemSets, cycle, groove));
             for (var i = wci.Length-1; i >= 0 && ++wci[i] >= cutoff; i--)
             {

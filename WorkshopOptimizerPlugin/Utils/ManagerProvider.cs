@@ -35,23 +35,32 @@ internal class DirectReaderManager : Manager
             var instance = readerInstance();
             if (instance == IntPtr.Zero) return false;
 
+            var any_valid = false;
             for (uint i = 0; i < Constants.MaxItems; i++)
             {
-                if (GetSupplyForCraftwork(i) != Supply.Nonexistent || GetDemandShiftForCraftwork(i) != Demand.Skyrocketing)
+                if (GetSupplyForCraftwork(i) == Supply.Unknown || GetDemandShiftForCraftwork(i) == Demand.Unknown)
                 {
-                    return true;
+                    return false;
+                }
+                if (GetSupplyForCraftwork(i) != Supply.Nonexistent|| GetDemandShiftForCraftwork(i) != Demand.Skyrocketing)
+                {
+                    any_valid = true;
                 }
             }
 
-            return false;
+            return any_valid;
         }
     }
+
+    private const int OFFSET_CURRENT_POPULARITY_INDEX = 0x2b8;
+    private const int OFFSET_NEXT_POPULARITY_INDEX = 0x2b9;
+    private const int OFFSET_ITEMS = 0x2ba;
 
     public override unsafe int CurrentPopularityIndex {
         get {
             var instance = readerInstance();
             if (instance == IntPtr.Zero) return 0;
-            return *(byte*)(instance + 0x270);
+            return *(byte*)(instance + OFFSET_CURRENT_POPULARITY_INDEX);
         }
     }
 
@@ -61,7 +70,7 @@ internal class DirectReaderManager : Manager
         {
             var instance = readerInstance();
             if (instance == IntPtr.Zero) return 0;
-            return *(byte*)(instance + 0x271);
+            return *(byte*)(instance + OFFSET_NEXT_POPULARITY_INDEX);
         }
     }
 
@@ -69,14 +78,14 @@ internal class DirectReaderManager : Manager
     {
         var instance = readerInstance();
         if (instance == IntPtr.Zero) return Supply.Unknown;
-        return SupplyUtils.FromFFXIV((CraftworkSupply)((*(byte*)(instance + 0x272 + i) & 0xF0) >> 4));
+        return SupplyUtils.FromFFXIV((CraftworkSupply)((*(byte*)(instance + OFFSET_ITEMS + i) & 0xF0) >> 4));
     }
 
     public override unsafe Demand GetDemandShiftForCraftwork(uint i)
     {
         var instance = readerInstance();
         if (instance == IntPtr.Zero) return Demand.Unknown;
-        return DemandUtils.FromFFXIV((CraftworkDemandShift)(*(byte*)(instance + 0x272 + i) & 0x0F));
+        return DemandUtils.FromFFXIV((CraftworkDemandShift)(*(byte*)(instance + OFFSET_ITEMS + i) & 0x0F));
     }
 }
 

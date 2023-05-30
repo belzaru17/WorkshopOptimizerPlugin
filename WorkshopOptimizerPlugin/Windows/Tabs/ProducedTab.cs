@@ -35,12 +35,13 @@ internal class ProducedTab : ITab
 
     private void DrawProducedTable(int cycle, Groove startGroove)
     {
-        if (!ImGui.BeginTable("Produced", 4)) { return; }
+        if (!ImGui.BeginTable("Produced", 1 + Constants.MaxWorkshops)) { return; }
 
         ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthFixed, 200);
-        ImGui.TableSetupColumn("Workshop 1", ImGuiTableColumnFlags.WidthFixed, 280);
-        ImGui.TableSetupColumn("Workshop 2", ImGuiTableColumnFlags.WidthFixed, 280);
-        ImGui.TableSetupColumn("Workshop 3", ImGuiTableColumnFlags.WidthFixed, 280);
+        for (var i = 0; i < Constants.MaxWorkshops; i++)
+        {
+            ImGui.TableSetupColumn($"Workshop {i+1}", ImGuiTableColumnFlags.WidthFixed, 280);
+        }
         ImGui.TableHeadersRow();
 
         var itemCache = ifData.IsCurrentSeason() ? uiDataSource.CurrentItemCache : uiDataSource.PreviousItemCache;
