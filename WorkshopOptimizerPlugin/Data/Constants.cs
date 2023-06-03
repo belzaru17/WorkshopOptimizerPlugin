@@ -6,7 +6,7 @@ internal static class Constants
 
     public const int MaxHours = 24;
 
-    public const int MaxGroove = 35;
+    public const int MaxGroove = 45;
 
     public const int MaxSeasons = 2;
     public const int MaxCycles = 7;
