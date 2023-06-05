@@ -93,11 +93,13 @@ internal class Optimizer
             cachedWorkshopCombinations.Add(new WorkshopsItemSets(newItemSets, cycle, groove));
             for (var i = wci.Length-1; i >= 0 && ++wci[i] >= cutoff; i--)
             {
-                wci[i] = 0;
                 if (i == 0)
                 {
+                    wci[i] = 0;
                     done = true;
-                    break;
+                } else
+                {
+                    wci[i] = wci[i-1] + 1;
                 }
             }
         }
