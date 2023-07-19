@@ -85,11 +85,8 @@ internal class ProducedTab : ITab
 
                     if (step == 0)
                     {
-                        for (var i = 0; i < Constants.MaxItems; i++)
+                        foreach (var item in ItemStaticData.GetAllItems().Where(i => i.IsValid()).OrderBy(i => i.Name))
                         {
-                            var item = ItemStaticData.Get(i);
-                            if (!item.IsValid()) { continue; }
-
                             if (ImGui.Selectable(item.Name))
                             {
                                 producedItems[cycle, w, step] = (int)item.Id;
@@ -103,7 +100,7 @@ internal class ProducedTab : ITab
                     }
                     else
                     {
-                        foreach (var item in CategoryMap.GetEfficientItems(ItemStaticData.Get((uint)producedItems[cycle, w, step - 1]).Categories))
+                        foreach (var item in CategoryMap.GetEfficientItems(ItemStaticData.Get((uint)producedItems[cycle, w, step - 1]).Categories).OrderBy(x => x.Name))
                         {
                             if ((hours[w] + item.Hours) > Constants.MaxHours)
                             {

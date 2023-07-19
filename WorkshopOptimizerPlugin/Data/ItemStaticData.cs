@@ -1,4 +1,6 @@
+using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
 
 namespace WorkshopOptimizerPlugin.Data;
 
@@ -26,6 +28,11 @@ internal class ItemStaticData
     public static ItemStaticData Get(int item_index)
     {
         return ItemsData[item_index];
+    }
+
+    public static ImmutableArray<ItemStaticData> GetAllItems()
+    {
+        return ItemsData.ToImmutableArray();
     }
 
     private ItemStaticData(uint id, string name, int minLevel, int hours, int base_value, When when, Categories[] categories, Materials[] materials)
