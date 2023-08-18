@@ -44,7 +44,7 @@ internal static class SeasonUtils
         }
         else
         {
-            cycleStart = new DateTime(cycleStart.Year, cycleStart.Month, cycleStart.Day - 1).AddHours(Constants.ResetUTCHour);
+            cycleStart = new DateTime(cycleStart.Year, cycleStart.Month, cycleStart.Day).AddDays(-1).AddHours(Constants.ResetUTCHour);
         }
 
         return cycleStart.DayOfWeek switch
