@@ -1,3 +1,4 @@
+using Dalamud.Interface.Internal;
 using ImGuiNET;
 using ImGuiScene;
 using System.Numerics;
@@ -12,7 +13,7 @@ internal static class UIUtils
         return value;
     }
 
-    public static bool ImageButton(TextureWrap icon, string tooltip, bool enabled = true, int size = 17)
+    public static bool ImageButton(IDalamudTextureWrap icon, string tooltip, bool enabled = true, int size = 17)
     {
         if (!enabled)
         {

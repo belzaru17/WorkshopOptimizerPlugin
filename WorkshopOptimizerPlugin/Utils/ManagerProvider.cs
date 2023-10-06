@@ -1,3 +1,4 @@
+using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game.MJI;
 using System;
@@ -27,7 +28,7 @@ internal class DirectReaderManager : Manager
 
     public DirectReaderManager()
     {
-        SignatureHelper.Initialise(this);
+        Plugin.GameInteropProvider.InitializeFromAttributes(this);
     }
 
     public override unsafe bool IsValid {

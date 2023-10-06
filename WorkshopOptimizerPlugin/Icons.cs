@@ -1,3 +1,4 @@
+using Dalamud.Interface.Internal;
 using Dalamud.Plugin;
 using ImGuiScene;
 using System.IO;
@@ -6,14 +7,14 @@ namespace WorkshopOptimizerPlugin;
 
 public class Icons
 {
-    public readonly TextureWrap Settings;
-    public readonly TextureWrap ResetToDefaults;
-    public readonly TextureWrap ExportData;
-    public readonly TextureWrap OptimizerSettings;
+    public readonly IDalamudTextureWrap Settings;
+    public readonly IDalamudTextureWrap ResetToDefaults;
+    public readonly IDalamudTextureWrap ExportData;
+    public readonly IDalamudTextureWrap OptimizerSettings;
 
     public Icons(DalamudPluginInterface pluginInterface)
     {
-        TextureWrap LoadIcon(string basename)
+        IDalamudTextureWrap LoadIcon(string basename)
         {
             return pluginInterface.UiBuilder.LoadImage(Path.Join(pluginInterface.AssemblyLocation.DirectoryName, "Resources\\Icons", basename));
         }

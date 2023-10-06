@@ -4,35 +4,38 @@ using Dalamud.Plugin;
 using Dalamud.Interface.Windowing;
 using WorkshopOptimizerPlugin.Windows;
 using Dalamud.Game.Gui;
+using Dalamud.Plugin.Services;
 
 namespace WorkshopOptimizerPlugin;
 
 public sealed class Plugin : IDalamudPlugin
 {
-    public string Name => "Workshop Optimizer Plugin";
+    public static string Name => "Workshop Optimizer Plugin";
 
-    public ChatGui ChatGui { get; init; }
     public Configuration Configuration { get; init; }
     public WindowSystem WindowSystem = new("WorkshopOptimizerPlugin");
+
     public readonly Icons Icons;
 
-    private const string CommandName = "/wso";
+    [PluginService]
+    public static IChatGui ChatGui { get; private set; } = null!;
 
-    private DalamudPluginInterface PluginInterface { get; init; }
-    private CommandManager CommandManager { get; init; }
+    [PluginService]
+    public static IGameInteropProvider GameInteropProvider { get; private set; } = null!;
+
+    [PluginService]
+    public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
+
+    [PluginService]
+    public static ICommandManager CommandManager { get; private set; } = null!;
+
+
+    private const string CommandName = "/wso";
 
     private ConfigWindow ConfigWindow { get; init; }
     private MainWindow MainWindow { get; init; }
 
-    public Plugin(
-        [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
-        [RequiredVersion("1.0")] CommandManager commandManager,
-        [RequiredVersion("1.0")] ChatGui chatGui)
-    {
-        PluginInterface = pluginInterface;
-        CommandManager = commandManager;
-        ChatGui = chatGui;
-
+    public Plugin() {
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Configuration.Initialize(PluginInterface);
 
