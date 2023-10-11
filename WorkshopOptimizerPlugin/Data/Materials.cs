@@ -71,6 +71,11 @@ internal class Material
     public static readonly Material MythrilOre = new("Mythril Ore", MaterialSource.Gatherable);
     public static readonly Material Spectrine = new("Spectrine", MaterialSource.Gatherable);
     public static readonly Material EffervescentWater = new("Effervescent Water", MaterialSource.Gatherable);
+    public static readonly Material DuriumSand = new("Durium Sand", MaterialSource.Gatherable);
+    public static readonly Material YellowCopperOre = new("Yellow Copper Ore", MaterialSource.Gatherable);
+    public static readonly Material GoldOre = new("Gold Ore", MaterialSource.Gatherable);
+    public static readonly Material HawksEyeSand = new("Hawk's Eye Sand", MaterialSource.Gatherable);
+    public static readonly Material CrystalFormation = new("Crystal Formation", MaterialSource.Gatherable);
 
     // Granary
     public static readonly Material Alyssum = new("Alyssum", MaterialSource.Granary);
@@ -98,6 +103,10 @@ internal class Material
     public static readonly Material Beet = new("Beet", MaterialSource.RareCrop);
     public static readonly Material Eggplant = new("Eggplant", MaterialSource.RareCrop);
     public static readonly Material Zucchini = new("Zucchini", MaterialSource.RareCrop);
+    public static readonly Material Watermelon = new("Watermelon", MaterialSource.RareCrop);
+    public static readonly Material SweetPopoto = new("Sweet Popoto", MaterialSource.RareCrop);
+    public static readonly Material Broccoli = new("Broccoli", MaterialSource.RareCrop);
+    public static readonly Material BuffaloBeans = new("Buffalo Beans", MaterialSource.RareCrop);
 
     // Dropping
     public static readonly Material Fleece = new("Fleece", MaterialSource.Dropping);

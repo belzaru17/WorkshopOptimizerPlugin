@@ -2,7 +2,7 @@ namespace WorkshopOptimizerPlugin.Data;
 
 internal static class Constants
 {
-    public const uint MaxItems = 72;
+    public const uint MaxItems = 82;
 
     public const int MaxHours = 24;
 
@@ -12,7 +12,7 @@ internal static class Constants
     public const int MaxCycles = 7;
     public const int MaxWorkshops = 4;
     public const int MaxSteps = 6;
-    public const double WorkshopLevelMultiplier = 1.3;
+    public const double WorkshopLevelMultiplier = 1.4;
 
     public const int ResetUTCHour = 8;
 

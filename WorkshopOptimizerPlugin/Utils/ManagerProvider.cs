@@ -1,4 +1,3 @@
-using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game.MJI;
 using System;
@@ -53,9 +52,9 @@ internal class DirectReaderManager : Manager
         }
     }
 
-    private const int OFFSET_CURRENT_POPULARITY_INDEX = 0x2b8;
-    private const int OFFSET_NEXT_POPULARITY_INDEX = 0x2b9;
-    private const int OFFSET_ITEMS = 0x2ba;
+    private const int OFFSET_ITEMS = 0x2f2;
+    private const int OFFSET_CURRENT_POPULARITY_INDEX = OFFSET_ITEMS - 2;
+    private const int OFFSET_NEXT_POPULARITY_INDEX = OFFSET_ITEMS - 1;
 
     public override unsafe int CurrentPopularityIndex {
         get {

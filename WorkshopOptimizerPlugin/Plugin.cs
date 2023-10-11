@@ -29,6 +29,9 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService]
     public static ICommandManager CommandManager { get; private set; } = null!;
 
+    [PluginService]
+    public static IPluginLog PluginLog { get; private set; } = null!;
+
 
     private const string CommandName = "/wso";
 
