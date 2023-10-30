@@ -17,6 +17,7 @@ internal class CommonInterfaceElements
     private int mCycle;
     private int mTop;
     private Strictness mStrictness = Strictness.RelaxedDefaults;
+    private Strictness mDefaultStrictness;
     private int mMultiCycleLimit;
     private int mNewStrictness;
     private int mNewMultiCycleLimit;
@@ -36,6 +37,11 @@ internal class CommonInterfaceElements
         mTop = configuration.DefaultTopValues;
         mMultiCycleLimit = configuration.DefaultMultiCycleLimit;
         mCycle = SeasonUtils.GetCycle() + 1;
+        if (configuration.DefaultAllowMissingCommonMaterials)
+        {
+            mStrictness |= Strictness.AllowMissingCommonMaterials;
+        }
+        mDefaultStrictness = mStrictness;
     }
 
     public bool IsCurrentSeason()
@@ -85,7 +91,7 @@ internal class CommonInterfaceElements
         ImGui.SameLine();
         if (ImGui.BeginPopupModal("Optimizer Settings"))
         {
-            ImGui.SetWindowSize(new Vector2(350, 280));
+            ImGui.SetWindowSize(new Vector2(350, 380));
             ImGui.CheckboxFlags("Allow items on any cycle", ref mNewStrictness, (int)Strictness.AllowAnyCycle);
             var any_cycle = (mNewStrictness & (int)Strictness.AllowAnyCycle) != 0;
             if (any_cycle) ImGui.BeginDisabled();
@@ -106,6 +112,8 @@ internal class CommonInterfaceElements
             if (multi_disabled) ImGui.EndDisabled();
             ImGui.CheckboxFlags("Allow items that we don't know their peak cycle", ref mNewStrictness, (int)Strictness.AllowUnknownCycle);
             if (any_cycle) ImGui.EndDisabled();
+            ImGui.CheckboxFlags("Allow missing common materials", ref mNewStrictness, (int)Strictness.AllowMissingCommonMaterials);
+            ImGui.CheckboxFlags("Allow missing rare materials", ref mNewStrictness, (int)Strictness.AllowMissingRareMaterials);
             ImGui.Spacing();
             if (ImGui.Button("Cancel"))
             {
@@ -114,7 +122,7 @@ internal class CommonInterfaceElements
             ImGui.SameLine();
             if (ImGui.Button("Defaults"))
             {
-                if (mStrictness != Strictness.RelaxedDefaults || mMultiCycleLimit != configuration.DefaultMultiCycleLimit)
+                if (mStrictness != mDefaultStrictness || mMultiCycleLimit != configuration.DefaultMultiCycleLimit)
                 {
                     mStrictness = Strictness.RelaxedDefaults;
                     mMultiCycleLimit = configuration.DefaultMultiCycleLimit;

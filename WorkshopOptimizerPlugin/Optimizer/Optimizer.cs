@@ -2,6 +2,7 @@ using Dalamud.Plugin.Internal;
 using System;
 using System.Collections.Generic;
 using WorkshopOptimizerPlugin.Data;
+using WorkshopOptimizerPlugin.Utils;
 
 namespace WorkshopOptimizerPlugin.Optimizer;
 
@@ -33,7 +34,7 @@ internal class Optimizer
         wci = new int[Constants.MaxWorkshops];
         cachedWorkshopCombinations = new();
 
-        for(uint i = 0; i < Constants.MaxItems; i++)
+        for (uint i = 0; i < Constants.MaxItems; i++)
         {
             if (this.itemCache[ItemStaticData.Get(i)].When == When.Required)
             {
@@ -155,6 +156,7 @@ internal class Optimizer
         static bool IsSet(Strictness a, Strictness b) => (a & b) != 0;
 
         if (item.When == When.Never) { return false; }
+        if (!checkMaterials(item)) { return false; }
         if (item.When is When.Always or When.Required) { return true; }
         if (IsSet(options.Strictness, Strictness.AllowAnyCycle)) { return true; }
 
@@ -165,7 +167,7 @@ internal class Optimizer
              (IsSet(options.Strictness, Strictness.UseMultiCycleLimit) &&
               (item.Value > options.MultiCycleLimit)))) {
             return false;
-        } 
+        }
 
         foreach (var pattern in patterns)
         {
@@ -182,5 +184,20 @@ internal class Optimizer
         }
 
         return false;
+    }
+
+    private bool checkMaterials(Item item)
+    {
+        if ((options.Strictness & (Strictness.AllowMissingCommonMaterials | Strictness.AllowMissingRareMaterials)) == (Strictness.AllowMissingCommonMaterials | Strictness.AllowMissingRareMaterials)) return true;
+
+        foreach(var material in item.Materials)
+        {
+            var option = (material.Material.Source == MaterialSource.Gatherable)? Strictness.AllowMissingCommonMaterials : Strictness.AllowMissingRareMaterials;
+            if ((options.Strictness & option) == 0 && InventoryProvider.GetItemCount(material.Material) <= 0)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

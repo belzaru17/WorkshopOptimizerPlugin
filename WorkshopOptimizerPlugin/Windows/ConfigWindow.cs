@@ -73,6 +73,14 @@ public class ConfigWindow : Window, IDisposable
             saveConfig = true;
         }
 
+        ImGui.Spacing();
+        var defaultAllowMissingCommonMaterials = configuration.DefaultAllowMissingCommonMaterials;
+        if (ImGui.Checkbox("Default Allow Missing Common Materials", ref defaultAllowMissingCommonMaterials))
+        {
+            configuration.DefaultAllowMissingCommonMaterials = defaultAllowMissingCommonMaterials;
+            saveConfig = true;
+        }
+
         if (saveConfig)
         {
             configuration.Save();

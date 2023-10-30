@@ -1,4 +1,8 @@
 using Lumina.Excel.GeneratedSheets;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace WorkshopOptimizerPlugin.Data;
 
@@ -26,103 +30,128 @@ internal class Materials
 
 internal class Material
 {
+    private static readonly IDictionary<int, Material> MaterialList = new Dictionary<int, Material>();
+    private static readonly IDictionary<uint, Material> UniqueMaterialIds = new Dictionary<uint, Material>();
+
+    public static Material? GetMaterialByIndex(int index)
+    {
+        return MaterialList.TryGetValue(index, out var value)? value : null;
+    }
+
+    public static int MaxMaterials => MaterialList.Count;
+
+    public static Material? GetMaterialById(uint id)
+    {
+        return UniqueMaterialIds.TryGetValue(id, out var value)? value : null;
+    }
+
+
+    public readonly uint Id;
     public readonly string Name;
     public readonly MaterialSource Source;
 
     public Materials this[int count] { get { return new Materials(this, count); } } 
 
+
     // Gatherable
-    public static readonly Material PalmLeaf = new("Palm Leaf", MaterialSource.Gatherable);
-    public static readonly Material Apple = new("Apple", MaterialSource.Gatherable);
-    public static readonly Material Branch = new("Branch", MaterialSource.Gatherable);
-    public static readonly Material Stone = new("Stone", MaterialSource.Gatherable);
-    public static readonly Material Clam = new("Clam", MaterialSource.Gatherable);
-    public static readonly Material Laver = new("Laver", MaterialSource.Gatherable);
-    public static readonly Material Coral = new("Coral", MaterialSource.Gatherable);
-    public static readonly Material Islewort = new("Islewort", MaterialSource.Gatherable);
-    public static readonly Material Sand = new("Sand", MaterialSource.Gatherable);
-    public static readonly Material Log = new("Log", MaterialSource.Gatherable);
-    public static readonly Material PalmLog = new("Palm Log", MaterialSource.Gatherable);
-    public static readonly Material Vine = new("Vine", MaterialSource.Gatherable);
-    public static readonly Material Sap = new("Sap", MaterialSource.Gatherable);
-    public static readonly Material CopperOre = new("Copper Ore", MaterialSource.Gatherable);
-    public static readonly Material Limestone = new("Limestone", MaterialSource.Gatherable);
-    public static readonly Material RockSalt = new("Rock Salt", MaterialSource.Gatherable);
-    public static readonly Material Sugarcane = new("Sugarcane", MaterialSource.Gatherable);
-    public static readonly Material CottonBoll = new("Cotton Boll", MaterialSource.Gatherable);
-    public static readonly Material Hemp = new("Hemp", MaterialSource.Gatherable);
-    public static readonly Material Clay = new("Clay", MaterialSource.Gatherable);
-    public static readonly Material Tinsand = new("Tinsand", MaterialSource.Gatherable);
-    public static readonly Material IronOre = new("Iron Ore", MaterialSource.Gatherable);
-    public static readonly Material Quartz = new("Quartz", MaterialSource.Gatherable);
-    public static readonly Material Leucogranite = new("Leucogranite", MaterialSource.Gatherable);
-    public static readonly Material Islefish = new("Islefish", MaterialSource.Gatherable);
-    public static readonly Material Squid = new("Squid", MaterialSource.Gatherable);
-    public static readonly Material Jellyfish = new("Jellyfish", MaterialSource.Gatherable);
-    public static readonly Material MulticoloredIslebloooms = new("Multicolored Isleblooms", MaterialSource.Gatherable);
-    public static readonly Material Resin = new("Resin", MaterialSource.Gatherable);
-    public static readonly Material Coconut = new("Coconut", MaterialSource.Gatherable);
-    public static readonly Material BeehiveChip = new("Beenhive Chip", MaterialSource.Gatherable);
-    public static readonly Material WoodOpal = new("Wood Opal", MaterialSource.Gatherable);
-    public static readonly Material Coal = new("Coal", MaterialSource.Gatherable);
-    public static readonly Material Glimshroom = new("Glimshroom", MaterialSource.Gatherable);
-    public static readonly Material Shale = new("Shale", MaterialSource.Gatherable);
-    public static readonly Material Marble = new("Marble", MaterialSource.Gatherable);
-    public static readonly Material MythrilOre = new("Mythril Ore", MaterialSource.Gatherable);
-    public static readonly Material Spectrine = new("Spectrine", MaterialSource.Gatherable);
-    public static readonly Material EffervescentWater = new("Effervescent Water", MaterialSource.Gatherable);
-    public static readonly Material DuriumSand = new("Durium Sand", MaterialSource.Gatherable);
-    public static readonly Material YellowCopperOre = new("Yellow Copper Ore", MaterialSource.Gatherable);
-    public static readonly Material GoldOre = new("Gold Ore", MaterialSource.Gatherable);
-    public static readonly Material HawksEyeSand = new("Hawk's Eye Sand", MaterialSource.Gatherable);
-    public static readonly Material CrystalFormation = new("Crystal Formation", MaterialSource.Gatherable);
+    public static readonly Material PalmLeaf = new(37551, "Palm Leaf", MaterialSource.Gatherable);
+    public static readonly Material Branch = new(37553, "Branch", MaterialSource.Gatherable);
+    public static readonly Material Stone = new(37554, "Stone", MaterialSource.Gatherable);
+    public static readonly Material Clam = new(37555, "Clam", MaterialSource.Gatherable);
+    public static readonly Material Laver = new(37556, "Laver", MaterialSource.Gatherable);
+    public static readonly Material Coral = new(37557, "Coral", MaterialSource.Gatherable);
+    public static readonly Material Islewort = new(37558, "Islewort", MaterialSource.Gatherable);
+    public static readonly Material Sand = new(37559, "Sand", MaterialSource.Gatherable);
+    public static readonly Material Vine = new(37562, "Vine", MaterialSource.Gatherable);
+    public static readonly Material Sap = new(37563, "Sap", MaterialSource.Gatherable);
+    public static readonly Material Apple = new(37552, "Apple", MaterialSource.Gatherable);
+    public static readonly Material Log = new(37560, "Log", MaterialSource.Gatherable);
+    public static readonly Material PalmLog = new(37561, "Palm Log", MaterialSource.Gatherable);
+    public static readonly Material CopperOre = new(37564, "Copper Ore", MaterialSource.Gatherable);
+    public static readonly Material Limestone = new(37565, "Limestone", MaterialSource.Gatherable);
+    public static readonly Material RockSalt = new(37566, "Rock Salt", MaterialSource.Gatherable);
+    public static readonly Material Clay = new(37570, "Clay", MaterialSource.Gatherable);
+    public static readonly Material Tinsand = new(37571, "Tinsand", MaterialSource.Gatherable);
+    public static readonly Material Sugarcane = new(37567, "Sugarcane", MaterialSource.Gatherable);
+    public static readonly Material CottonBoll = new(37568, "Cotton Boll", MaterialSource.Gatherable);
+    public static readonly Material Hemp = new(37569, "Hemp", MaterialSource.Gatherable);
+    public static readonly Material Islefish = new(37575, "Islefish", MaterialSource.Gatherable);
+    public static readonly Material Squid = new(37576, "Squid", MaterialSource.Gatherable);
+    public static readonly Material Jellyfish = new(37577, "Jellyfish", MaterialSource.Gatherable);
+    public static readonly Material IronOre = new(37572, "Iron Ore", MaterialSource.Gatherable);
+    public static readonly Material Quartz = new(37573, "Quartz", MaterialSource.Gatherable);
+    public static readonly Material Leucogranite = new(37574, "Leucogranite", MaterialSource.Gatherable);
+    public static readonly Material MulticoloredIslebloooms = new(39228, "Multicolored Isleblooms", MaterialSource.Gatherable);
+    public static readonly Material Resin = new(39224, "Resin", MaterialSource.Gatherable);
+    public static readonly Material Coconut = new(39225, "Coconut", MaterialSource.Gatherable);
+    public static readonly Material BeehiveChip = new(39226, "Beehive Chip", MaterialSource.Gatherable);
+    public static readonly Material WoodOpal = new(39227, "Wood Opal", MaterialSource.Gatherable);
+    public static readonly Material Coal = new(39887, "Coal", MaterialSource.Gatherable);
+    public static readonly Material Glimshroom = new(39889, "Glimshroom", MaterialSource.Gatherable);
+    public static readonly Material EffervescentWater = new(39892, "Effervescent Water", MaterialSource.Gatherable);
+    public static readonly Material Shale = new(39888, "Shale", MaterialSource.Gatherable);
+    public static readonly Material Marble = new(39890, "Marble", MaterialSource.Gatherable);
+    public static readonly Material MythrilOre = new(39891, "Mythril Ore", MaterialSource.Gatherable);
+    public static readonly Material Spectrine = new(39893, "Spectrine", MaterialSource.Gatherable);
+    public static readonly Material DuriumSand = new(41630, "Durium Sand", MaterialSource.Gatherable);
+    public static readonly Material YellowCopperOre = new(41631, "Yellow Copper Ore", MaterialSource.Gatherable);
+    public static readonly Material GoldOre = new(41632, "Gold Ore", MaterialSource.Gatherable);
+    public static readonly Material HawksEyeSand = new(41633, "Hawk's Eye Sand", MaterialSource.Gatherable);
+    public static readonly Material CrystalFormation = new(41634, "Crystal Formation", MaterialSource.Gatherable);
 
     // Granary
-    public static readonly Material Alyssum = new("Alyssum", MaterialSource.Granary);
-    public static readonly Material RawGarnet = new("Raw Garnet", MaterialSource.Granary);
-    public static readonly Material SpruceLog = new("Spruce Log", MaterialSource.Granary);
-    public static readonly Material Hammerhead = new("Hammerhead", MaterialSource.Granary);
-    public static readonly Material SilverOre = new("Silver Ore", MaterialSource.Granary);
-    public static readonly Material CaveShrimp = new("CaveShrimp", MaterialSource.Granary);
+    public static readonly Material Alyssum = new(37578, "Alyssum", MaterialSource.Granary);
+    public static readonly Material RawGarnet = new(37579, "Raw Garnet", MaterialSource.Granary);
+    public static readonly Material SpruceLog = new(37580, "Spruce Log", MaterialSource.Granary);
+    public static readonly Material Hammerhead = new(37581, "Hammerhead", MaterialSource.Granary);
+    public static readonly Material SilverOre = new(37582, "Silver Ore", MaterialSource.Granary);
+    public static readonly Material CaveShrimp = new(39894, "Cave Shrimp", MaterialSource.Granary);
 
-    // Crop
-    public static readonly Material Popoto = new("Popoto", MaterialSource.Crop);
-    public static readonly Material Cabbage = new("Cabbage", MaterialSource.Crop);
-    public static readonly Material Pumpkin = new("Pumpkin", MaterialSource.Crop);
-    public static readonly Material Parsnip = new("Parsnip", MaterialSource.Crop);
+    // Crops
+    public static readonly Material Popoto = new(37593, "Popoto", MaterialSource.Crop);
+    public static readonly Material Cabbage = new(37594, "Cabbage", MaterialSource.Crop);
+    public static readonly Material Isleberry = new(37595, "Isleberry", MaterialSource.RareCrop);
+    public static readonly Material Pumpkin = new(37596, "Pumpkin", MaterialSource.Crop);
+    public static readonly Material Onion = new(37597, "Onion", MaterialSource.RareCrop);
+    public static readonly Material Tomato = new(37598, "Tomato", MaterialSource.RareCrop);
+    public static readonly Material Wheat = new(37599, "Wheat", MaterialSource.RareCrop);
+    public static readonly Material Corn = new(37600, "Corn", MaterialSource.RareCrop);
+    public static readonly Material Parsnip = new(37601, "Parsnip", MaterialSource.Crop);
+    public static readonly Material Radish = new(37602, "Radish", MaterialSource.RareCrop);
+
+
     // Rare Crop
-    public static readonly Material Isleberry = new("Isleberry", MaterialSource.RareCrop);
-    public static readonly Material Onion = new("Onion", MaterialSource.RareCrop);
-    public static readonly Material Tomato = new("Tomato", MaterialSource.RareCrop);
-    public static readonly Material Wheat = new("Wheat", MaterialSource.RareCrop);
-    public static readonly Material Corn = new("Corn", MaterialSource.RareCrop);
-    public static readonly Material Radish = new("Radish", MaterialSource.RareCrop);
-    public static readonly Material Paprika = new("Paprika", MaterialSource.RareCrop);
-    public static readonly Material Leek = new("Leek", MaterialSource.RareCrop);
-    public static readonly Material RunnerBeans = new("Runner Beans", MaterialSource.RareCrop);
-    public static readonly Material Beet = new("Beet", MaterialSource.RareCrop);
-    public static readonly Material Eggplant = new("Eggplant", MaterialSource.RareCrop);
-    public static readonly Material Zucchini = new("Zucchini", MaterialSource.RareCrop);
-    public static readonly Material Watermelon = new("Watermelon", MaterialSource.RareCrop);
-    public static readonly Material SweetPopoto = new("Sweet Popoto", MaterialSource.RareCrop);
-    public static readonly Material Broccoli = new("Broccoli", MaterialSource.RareCrop);
-    public static readonly Material BuffaloBeans = new("Buffalo Beans", MaterialSource.RareCrop);
+    public static readonly Material Paprika = new(39231, "Paprika", MaterialSource.RareCrop);
+    public static readonly Material Leek = new(39232, "Leek", MaterialSource.RareCrop);
+    public static readonly Material RunnerBeans = new(39899, "Runner Beans", MaterialSource.RareCrop);
+    public static readonly Material Beet = new(39900, "Beet", MaterialSource.RareCrop);
+    public static readonly Material Eggplant = new(39901, "Eggplant", MaterialSource.RareCrop);
+    public static readonly Material Zucchini = new(39902, "Zucchini", MaterialSource.RareCrop);
+    public static readonly Material Watermelon = new(41635, "Watermelon", MaterialSource.RareCrop);
+    public static readonly Material SweetPopoto = new(41636, "Sweet Popoto", MaterialSource.RareCrop);
+    public static readonly Material Broccoli = new(41637, "Broccoli", MaterialSource.RareCrop);
+    public static readonly Material BuffaloBeans = new(41638, "Buffalo Beans", MaterialSource.RareCrop);
 
     // Dropping
-    public static readonly Material Fleece = new("Fleece", MaterialSource.Dropping);
-    public static readonly Material Claw = new("Claw", MaterialSource.Dropping);
-    public static readonly Material Fur = new("Fur", MaterialSource.Dropping);
-    public static readonly Material Feather = new("Feathery", MaterialSource.Dropping);
-    public static readonly Material Egg = new("Egg", MaterialSource.Dropping);
-    // Rare Dropping
-    public static readonly Material Carapace = new("Carapace", MaterialSource.RareDropping);
-    public static readonly Material Fang = new("Fang", MaterialSource.RareDropping);
-    public static readonly Material Horn = new("Horn", MaterialSource.RareDropping);
-    public static readonly Material Milk = new("Milk", MaterialSource.RareDropping);
+    public static readonly Material Fleece = new(37603, "Fleece", MaterialSource.Dropping);
+    public static readonly Material Claw = new(37604, "Claw", MaterialSource.Dropping);
+    public static readonly Material Fur = new(37605, "Fur", MaterialSource.Dropping);
+    public static readonly Material Feather = new(37606, "Feather", MaterialSource.Dropping);
+    public static readonly Material Egg = new(37607, "Egg", MaterialSource.Dropping);
 
-    private Material(string name, MaterialSource source)
+    // Rare Dropping
+    public static readonly Material Carapace = new(37608, "Carapace", MaterialSource.RareDropping);
+    public static readonly Material Fang = new(37609, "Fang", MaterialSource.RareDropping);
+    public static readonly Material Horn = new(37610, "Horn", MaterialSource.RareDropping);
+    public static readonly Material Milk = new(37611, "Milk", MaterialSource.RareDropping);
+
+    private Material(uint id, string name, MaterialSource source)
     {
+        Id = id;
         Name = name;
         Source = source;
+
+        MaterialList[MaterialList.Count] = this;
+        Debug.Assert(UniqueMaterialIds.TryAdd(id, this), $"Duplicate id {id}");
     }
 }

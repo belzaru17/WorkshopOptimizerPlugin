@@ -48,6 +48,9 @@ public class MainWindow : Window, IDisposable
             new Tuple<string, ITab>("Patterns", new PatternsTab(uiDataSource, commonInterfaceElements)),
             new Tuple<string, ITab>("Combinations", new CombinationsTab(plugin.Configuration, uiDataSource, commonInterfaceElements, itemSetsCaches)),
             new Tuple<string, ITab>("Felicitous Favors", new FavorsTab(uiDataSource)),
+#if DEBUG
+            new Tuple<string, ITab>("Materials", new MaterialsTab()),
+#endif
         };
     }
 
