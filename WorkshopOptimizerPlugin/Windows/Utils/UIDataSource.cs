@@ -43,6 +43,11 @@ internal class UIDataSource
         }
     }
 
+    public void NeedsSave()
+    {
+        Dirty = true;
+    }
+
     public void AddListener(IUIDataSourceListener listener)
     {
         listeners.Add(listener);

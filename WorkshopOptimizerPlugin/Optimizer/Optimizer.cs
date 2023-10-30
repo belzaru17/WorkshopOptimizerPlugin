@@ -1,3 +1,4 @@
+using Dalamud.Plugin.Internal;
 using System;
 using System.Collections.Generic;
 using WorkshopOptimizerPlugin.Data;
@@ -10,6 +11,7 @@ internal class Optimizer
     private readonly int cycle;
     private readonly Groove groove;
     private readonly OptimizerOptions options;
+    private readonly int requiredItems;
 
     private int ci;
     private readonly List<ItemSet> cachedCombinations;
@@ -30,6 +32,14 @@ internal class Optimizer
         cachedCombinations = new();
         wci = new int[Constants.MaxWorkshops];
         cachedWorkshopCombinations = new();
+
+        for(uint i = 0; i < Constants.MaxItems; i++)
+        {
+            if (this.itemCache[ItemStaticData.Get(i)].When == When.Required)
+            {
+                requiredItems++;
+            }
+        }
     }
 
     public (List<ItemSet>?, double) GenerateCombinations()
@@ -47,7 +57,7 @@ internal class Optimizer
             {
                 foreach (var itemset in generateCombinationsRecursive(new List<Item> { item }, item.Hours))
                 {
-                    if (itemset.EffectiveValue(cycle) > cachedCombinationsMinValue)
+                    if (itemset.EffectiveValue(cycle) > cachedCombinationsMinValue && itemset.RequiredItems >= requiredItems)
                     {
                         cachedCombinations.Add(itemset);
                     }
@@ -81,35 +91,32 @@ internal class Optimizer
         var (combinations, progress) = GenerateCombinations();
         if (combinations == null)
         {
-            return (null, progress/2);
+            return (null, progress);
         }
 
         var cutoff = options.ItemGenerationCutoff;
         if (cutoff > combinations.Count) { cutoff = combinations.Count; }
 
-        var done = false;
-        for (var remain = Constants.MaxComputeItems; !done && remain > 0; remain--) {
+        generateAllWorkshopsRecursive(combinations, 0, 0, cutoff - 1);
+        cachedWorkshopCombinations.Sort((x, y) => y.EffectiveValue.CompareTo(x.EffectiveValue));
+        workshopCombinationsDone = true;
+        return (cachedWorkshopCombinations, 1.0);
+    }
+
+    private void generateAllWorkshopsRecursive(List<ItemSet> combinations, int workshop, int start, int end)
+    {
+        if (workshop == Constants.MaxWorkshops)
+        {
             var newItemSets = new ItemSet[Constants.MaxWorkshops] { combinations[wci[0]], combinations[wci[1]], combinations[wci[2]], combinations[wci[3]] };
             cachedWorkshopCombinations.Add(new WorkshopsItemSets(newItemSets, cycle, groove));
-            for (var i = wci.Length-1; i >= 0 && ++wci[i] >= cutoff; i--)
-            {
-                if (i == 0)
-                {
-                    wci[i] = 0;
-                    done = true;
-                } else
-                {
-                    wci[i] = wci[i-1] + 1;
-                }
-            }
+            return;
         }
-        if (done)
+
+        for (var i = start; i <= end; i++)
         {
-            cachedWorkshopCombinations.Sort((x, y) => y.EffectiveValue.CompareTo(x.EffectiveValue));
-            workshopCombinationsDone = true;
-            return (cachedWorkshopCombinations, 1.0);
+            wci[workshop] = i;
+            generateAllWorkshopsRecursive(combinations, workshop + 1, i, end);
         }
-        return (null, 0.5 + (((((wci[0] * cutoff) + wci[1]) * cutoff) + wci[2]) / Math.Pow(cutoff, 3) / 2));
     }
 
     private List<ItemSet> generateCombinationsRecursive(List<Item> items, int hours)
@@ -133,7 +140,7 @@ internal class Optimizer
 
             List<Item> newItems = new(items)
             {
-                itemCache[nextItem]
+                newItem
             };
             foreach (var itemset in generateCombinationsRecursive(newItems, newHours))
             {
@@ -148,7 +155,7 @@ internal class Optimizer
         static bool IsSet(Strictness a, Strictness b) => (a & b) != 0;
 
         if (item.When == When.Never) { return false; }
-        if (item.When == When.Always) { return true; }
+        if (item.When is When.Always or When.Required) { return true; }
         if (IsSet(options.Strictness, Strictness.AllowAnyCycle)) { return true; }
 
         var patterns = item.FindPatterns(cycle);

@@ -30,7 +30,8 @@ internal class DirectReaderManager : Manager
         Plugin.GameInteropProvider.InitializeFromAttributes(this);
     }
 
-    public override unsafe bool IsValid {
+    public override unsafe bool IsValid
+    {
         get {
             var instance = readerInstance();
             if (instance == IntPtr.Zero) return false;

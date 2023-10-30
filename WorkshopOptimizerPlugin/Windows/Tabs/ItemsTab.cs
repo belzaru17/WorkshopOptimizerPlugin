@@ -126,7 +126,7 @@ internal class ItemsTab : ITab
         ImGui.SetNextItemWidth(100);
         if (ImGui.BeginCombo("###SET_WHEN", ""))
         {
-            foreach (var w in new When[] { When.Never, When.Weak, When.Strong, When.Either, When.Always })
+            foreach (var w in new When[] { When.Never, When.Weak, When.Strong, When.Either, When.Always, When.Required })
             {
                 if (ImGui.Selectable(w.ToString()))
                 {

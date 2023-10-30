@@ -23,4 +23,6 @@ internal static class Constants
     public const int PreviousSeason = 1;
 
     public const int DefaultMultiCycleLimit = 90;
+
+    public const int MaxFelicitousFavors = 3;
 }

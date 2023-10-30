@@ -1,4 +1,5 @@
-using System.Net.Http.Headers;
+using System.Collections.Generic;
+using System.Linq;
 using WorkshopOptimizerPlugin.Data;
 
 namespace WorkshopOptimizerPlugin.Optimizer;
@@ -6,10 +7,22 @@ namespace WorkshopOptimizerPlugin.Optimizer;
 internal readonly struct ItemSet
 {
     public readonly Item[] Items;
+    public readonly int RequiredItems;
 
     public ItemSet(Item[] items)
     {
         Items = items;
+        var requiredUniqueItems = new Dictionary<uint, int>();
+        for (var i = 0; i < Items.Length; i++)
+        {
+            var item = Items[i];
+            if (item.When == When.Required)
+            {
+                requiredUniqueItems.TryAdd(item.Id, 0);
+                requiredUniqueItems[item.Id] += ItemsPerStep(i);
+            }
+        }
+        RequiredItems = requiredUniqueItems.Count(kv => kv.Value >= 2);
     }
 
     public int Hours

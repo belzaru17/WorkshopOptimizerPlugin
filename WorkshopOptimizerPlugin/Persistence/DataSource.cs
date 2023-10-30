@@ -31,6 +31,9 @@ internal class DataSource
 
     public IReadOnlyList<bool> PreviousRestCycles => Array.AsReadOnly(data.PreviousSeason.RestCycles);
 
+    public uint?[] CurrentFelicitousFavors => data.CurrentSeason.FelicitousFavorsItems;
+
+    public IReadOnlyList<uint?> PreviousFelicitousFavors => Array.AsReadOnly(data.PreviousSeason.FelicitousFavorsItems);
 
     public void NextWeek()
     {

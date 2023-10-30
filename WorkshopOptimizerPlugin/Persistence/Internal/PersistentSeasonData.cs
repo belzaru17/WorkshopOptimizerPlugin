@@ -17,6 +17,8 @@ internal class PersistentSeasonData
 
     public bool[] RestCycles { get; set; }
 
+    public uint?[] FelicitousFavorsItems { get; set; }
+
 
     public PersistentSeasonData() : this(SeasonUtils.SeasonStart()) { }
 
@@ -48,5 +50,6 @@ internal class PersistentSeasonData
             }
         }
         RestCycles = new bool[Constants.MaxCycles];
+        FelicitousFavorsItems = new uint?[Constants.MaxFelicitousFavors];
     }
 }

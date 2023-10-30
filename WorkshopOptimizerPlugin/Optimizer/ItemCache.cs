@@ -13,6 +13,11 @@ internal class ItemCache
         this.items = new Item[Constants.MaxItems];
     }
 
+    public Item? Get(ItemStaticData? staticData)
+    {
+        return (staticData == null)? null : this[staticData];
+    }
+
     public Item this[ItemStaticData staticData]
     {
         get
