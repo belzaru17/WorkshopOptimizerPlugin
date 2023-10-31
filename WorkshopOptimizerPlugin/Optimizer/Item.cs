@@ -14,6 +14,7 @@ internal class Item
     public When When => whenOverrides[staticData.Id];
     public Categories[] Categories => staticData.Categories;
     public Materials[] Materials => staticData.Materials;
+    public int MinLevel => staticData.MinLevel;
 
     // Dynamic Data
     public Popularity Popularity => dynamicData.Popularity;
@@ -66,7 +67,7 @@ internal class Item
         {
             return (null, patterns.Count > 0);
         }
-        
+
         return (patterns[0], true);
     }
 

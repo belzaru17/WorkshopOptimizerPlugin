@@ -143,10 +143,7 @@ internal class Optimizer
             {
                 newItem
             };
-            foreach (var itemset in generateCombinationsRecursive(newItems, newHours))
-            {
-                result.Add(itemset);
-            }
+            result.AddRange(generateCombinationsRecursive(newItems, newHours));
         }
         return result;
     }
@@ -155,6 +152,7 @@ internal class Optimizer
     {
         static bool IsSet(Strictness a, Strictness b) => (a & b) != 0;
 
+        if (item.MinLevel > IslandProvider.GetIslandRank()) { return false; }
         if (item.When == When.Never) { return false; }
         if (!checkMaterials(item)) { return false; }
         if (item.When is When.Always or When.Required) { return true; }
@@ -165,7 +163,8 @@ internal class Optimizer
         if ((patterns.Count > 1) &&
             (!IsSet(options.Strictness, Strictness.AllowMultiCycle) ||
              (IsSet(options.Strictness, Strictness.UseMultiCycleLimit) &&
-              (item.Value > options.MultiCycleLimit)))) {
+              (item.Value > options.MultiCycleLimit))))
+        {
             return false;
         }
 
@@ -190,10 +189,10 @@ internal class Optimizer
     {
         if ((options.Strictness & (Strictness.AllowMissingCommonMaterials | Strictness.AllowMissingRareMaterials)) == (Strictness.AllowMissingCommonMaterials | Strictness.AllowMissingRareMaterials)) return true;
 
-        foreach(var material in item.Materials)
+        foreach (var material in item.Materials)
         {
-            var option = (material.Material.Source == MaterialSource.Gatherable)? Strictness.AllowMissingCommonMaterials : Strictness.AllowMissingRareMaterials;
-            if ((options.Strictness & option) == 0 && InventoryProvider.GetItemCount(material.Material) <= 0)
+            var option = (material.Material.Source == MaterialSource.Gatherable) ? Strictness.AllowMissingCommonMaterials : Strictness.AllowMissingRareMaterials;
+            if ((options.Strictness & option) == 0 && InventoryProvider.GetItemCount(material.Material) < material.Count)
             {
                 return false;
             }
