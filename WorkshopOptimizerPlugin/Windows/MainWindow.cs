@@ -92,7 +92,9 @@ public class MainWindow : Window, IDisposable
         }
 
         var cycle = SeasonUtils.GetCycle();
-        ImGui.Text($"Season: {uiDataSource.DataSource.SeasonStart:yyyy-MM-dd} - {uiDataSource.DataSource.SeasonStart.AddDays(Constants.MaxCycles):yyyy-MM-dd}. Cycle={cycle + 1}.");
+        var rank = IslandProvider.GetIslandRank();
+        var str_rank = rank > 0 ? rank.ToString() : "unknown";
+        ImGui.Text($"Season: {uiDataSource.DataSource.SeasonStart:yyyy-MM-dd} - {uiDataSource.DataSource.SeasonStart.AddDays(Constants.MaxCycles):yyyy-MM-dd}. Cycle={cycle + 1}. Island Rank={str_rank}.");
         ImGui.SameLine();
         PopulateDataIfPossible();
 #if DEBUG
@@ -111,6 +113,12 @@ public class MainWindow : Window, IDisposable
         }
         ImGui.Unindent(indent);
         ImGui.Spacing();
+
+        if (rank == 0)
+        {
+            ImGui.TextColored(new Vector4(0.75f, 0, 0, 1), "Need to visit your island!");
+            return;
+        }
 
         if (ImGui.BeginTabBar("Tabs"))
         {

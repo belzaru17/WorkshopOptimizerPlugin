@@ -1,5 +1,3 @@
-using Dalamud.Plugin.Internal;
-using System;
 using System.Collections.Generic;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Utils;
@@ -18,6 +16,7 @@ internal class Optimizer
     private readonly List<ItemSet> cachedCombinations;
     private double cachedCombinationsMinValue;
     private bool combinationsDone;
+    private readonly bool?[] cachedCheckItems = new bool?[Constants.MaxItems];
 
     private readonly int[] wci;
     private readonly List<WorkshopsItemSets> cachedWorkshopCombinations;
@@ -149,6 +148,15 @@ internal class Optimizer
     }
 
     private bool checkItem(Item item)
+    {
+        if (!cachedCheckItems[item.Id].HasValue)
+        {
+            cachedCheckItems[item.Id] = doCheckItem(item);
+        }
+        return cachedCheckItems[item.Id]!.Value;
+    }
+
+    private bool doCheckItem(Item item)
     {
         static bool IsSet(Strictness a, Strictness b) => (a & b) != 0;
 
