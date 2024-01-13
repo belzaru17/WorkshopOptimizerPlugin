@@ -75,10 +75,10 @@ internal class CommonInterfaceElements
     public void DrawBasicControls()
     {
         ImGui.SetNextItemWidth(100);
-        ImGui.Combo("Season", ref mSeason, new string[] { "Current", "Previous" }, 2);
+        ImGui.Combo(UIUtils.LeftAlignedLabel("Season:"), ref mSeason, new string[] { "Current", "Previous" }, 2);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(100);
-        ImGui.InputInt("Cycle", ref mCycle);
+        ImGui.InputInt(UIUtils.LeftAlignedLabel("Cycle:"), ref mCycle);
         ImGui.SameLine();
         ImGui.Text(string.Format("Groove: {0} -> {1}", GetStartGroove(), GetEndGroove())); ;
     }
@@ -86,7 +86,7 @@ internal class CommonInterfaceElements
     public void DrawFilteringControls()
     {
         ImGui.SetNextItemWidth(100);
-        ImGui.InputInt("Top-N", ref mTop, 5);
+        ImGui.InputInt(UIUtils.LeftAlignedLabel("Top-N:"), ref mTop, 5);
         ImGui.SameLine();
         if (ImGui.BeginPopupModal("Optimizer Settings"))
         {

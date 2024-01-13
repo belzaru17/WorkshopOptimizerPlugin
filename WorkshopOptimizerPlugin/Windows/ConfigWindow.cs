@@ -34,14 +34,14 @@ public class ConfigWindow : Window, IDisposable
         var saveConfig = false;
 
         var defaultRestCycle1 = configuration.DefaultRestCycle1 + 1;
-        ImGui.Text("Default Rest Cycle ");
+        ImGui.Text("Default Rest Cycles");
+        ImGui.Indent(20);
         ImGui.SetNextItemWidth(100);
         if (ImGui.InputInt("1st", ref defaultRestCycle1))
         {
             configuration.DefaultRestCycle1 = UIUtils.FixValue(ref defaultRestCycle1, 1, 7) - 1;
             saveConfig = true;
         }
-        ImGui.SameLine();
         var defaultRestCycle2 = configuration.DefaultRestCycle2 + 1;
         ImGui.SetNextItemWidth(100);
         if (ImGui.InputInt("2nd", ref defaultRestCycle2, 100))
@@ -49,6 +49,7 @@ public class ConfigWindow : Window, IDisposable
             configuration.DefaultRestCycle2 = UIUtils.FixValue(ref defaultRestCycle2, 1, 7) - 1;
             saveConfig = true;
         }
+        ImGui.Unindent(20);
 
         ImGui.Spacing();
         var defaultTopValues = configuration.DefaultTopValues;

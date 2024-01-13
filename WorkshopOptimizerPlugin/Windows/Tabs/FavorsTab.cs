@@ -44,7 +44,7 @@ internal class FavorsTab(UIDataSource uiDataSource) : ITab
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                if (ImGui.BeginCombo($"Item##Item_{i}", selectedItem?.Name ?? ""))
+                if (ImGui.BeginCombo($"##Item_{i}", selectedItem?.Name ?? ""))
                 {
                     if (ImGui.Selectable(""))
                     {
