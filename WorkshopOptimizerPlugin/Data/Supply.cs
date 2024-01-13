@@ -43,13 +43,13 @@ internal static class SupplyUtils
     }
 
     private const int SupplyAdjustmentBucket = 8;
-    private static readonly double[] Multipliers = { 0, 1.6, 1.3, 1, 0.8, 0.6 };
-    private static readonly Supply[] NextSupply = {
+    private static readonly double[] Multipliers = [0, 1.6, 1.3, 1, 0.8, 0.6];
+    private static readonly Supply[] NextSupply = [
         Supply.Unknown,
         Supply.Insufficient,
         Supply.Sufficient,
         Supply.Surplus,
         Supply.Overflowing,
         Supply.Overflowing,
-    };
+    ];
 }

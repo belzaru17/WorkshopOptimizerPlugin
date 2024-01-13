@@ -4,21 +4,14 @@ using System.Linq;
 using System.Numerics;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Optimizer;
-using WorkshopOptimizerPlugin.Utils;
 using WorkshopOptimizerPlugin.Windows.Utils;
 
 namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
-internal class PatternsTab : ITab
+internal class PatternsTab(UIDataSource uiDataSource, CommonInterfaceElements ifData) : ITab
 {
-    private readonly UIDataSource uiDataSource;
-    private readonly CommonInterfaceElements ifData;
-
-    public PatternsTab(UIDataSource uiDataSource, CommonInterfaceElements ifData)
-    {
-        this.uiDataSource = uiDataSource;
-        this.ifData = ifData;
-    }
+    private readonly UIDataSource uiDataSource = uiDataSource;
+    private readonly CommonInterfaceElements ifData = ifData;
 
     public void OnOpen() { }
 

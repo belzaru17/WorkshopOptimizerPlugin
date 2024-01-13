@@ -11,7 +11,7 @@ internal class PersistentSeasonData
 
     public DateTime?[] DataCollectionTime { get; set; }
 
-    public List<PersistentItemData> ItemData { get; set; } = new();
+    public List<PersistentItemData> ItemData { get; set; } = [];
 
     public int[][][] ProducedItems { get; set; }
 

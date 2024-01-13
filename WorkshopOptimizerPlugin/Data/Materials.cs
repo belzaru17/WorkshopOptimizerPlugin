@@ -1,8 +1,5 @@
-using Lumina.Excel.GeneratedSheets;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace WorkshopOptimizerPlugin.Data;
 
@@ -16,16 +13,10 @@ internal enum MaterialSource
     RareDropping,
 }
 
-internal class Materials
+internal class Materials(Material material, int count)
 {
-    public readonly Material Material;
-    public readonly int Count;
-
-    public Materials(Material material, int count)
-    {
-        this.Material = material;
-        Count = count;
-    }
+    public readonly Material Material = material;
+    public readonly int Count = count;
 }
 
 internal class Material

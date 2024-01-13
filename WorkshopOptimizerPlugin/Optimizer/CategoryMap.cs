@@ -7,7 +7,7 @@ internal static class CategoryMap
 {
     static CategoryMap()
     {
-        CategoryToItems = new();
+        CategoryToItems = [];
 
         for (uint i = 0; i < Constants.MaxItems; i++)
         {
@@ -16,18 +16,20 @@ internal static class CategoryMap
 
             foreach (var category in item.Categories)
             {
-                if (!CategoryToItems.ContainsKey(category))
+                if (!CategoryToItems.TryGetValue(category, out var value))
                 {
-                    CategoryToItems.Add(category, new List<ItemStaticData>());
+                    value = ([]);
+                    CategoryToItems.Add(category, value);
                 }
-                CategoryToItems[category].Add(item);
+
+                value.Add(item);
             }
         }
     }
 
     public static List<ItemStaticData> GetEfficientItems(Categories[] categories)
     {
-        List<ItemStaticData> items = new();
+        List<ItemStaticData> items = [];
         foreach (var category in categories)
         {
             items.AddRange(CategoryToItems[category]);

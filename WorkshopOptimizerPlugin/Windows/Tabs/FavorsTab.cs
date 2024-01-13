@@ -5,16 +5,9 @@ using WorkshopOptimizerPlugin.Windows.Utils;
 
 namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
-internal class FavorsTab : ITab
+internal class FavorsTab(UIDataSource uiDataSource) : ITab
 {
-    private readonly UIDataSource uiDataSource;
-    //private readonly ItemStaticData?[] favorsItems = new ItemStaticData?[3];
-
-
-    public FavorsTab(UIDataSource uiDataSource)
-    {
-        this.uiDataSource = uiDataSource;
-    }
+    private readonly UIDataSource uiDataSource = uiDataSource;
 
     public void OnOpen() { }
 

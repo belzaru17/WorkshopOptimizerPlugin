@@ -95,5 +95,5 @@ internal class UIDataSource
     private WhenOverrides whenOverrides;
     private ItemCache currentItemCache;
     private ItemCache previousItemCache;
-    private readonly List<IUIDataSourceListener> listeners = new();
+    private readonly List<IUIDataSourceListener> listeners = [];
 }

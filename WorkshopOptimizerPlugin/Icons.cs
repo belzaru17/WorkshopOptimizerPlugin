@@ -1,6 +1,5 @@
 using Dalamud.Interface.Internal;
 using Dalamud.Plugin;
-using ImGuiScene;
 using System.IO;
 
 namespace WorkshopOptimizerPlugin;

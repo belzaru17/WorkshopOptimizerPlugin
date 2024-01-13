@@ -1,6 +1,5 @@
 using Dalamud.Interface.Internal;
 using ImGuiNET;
-using ImGuiScene;
 using System.Numerics;
 
 namespace WorkshopOptimizerPlugin.Utils;
@@ -31,5 +30,23 @@ internal static class UIUtils
             ImGui.EndDisabled();
         }
         return pressed;
+    }
+
+    public static string LeftAlignedLabel(string text)
+    {
+        var idx = text.IndexOf("##");
+        var label = "##" + text;
+        if (idx >= 0)
+        {
+            label = text[idx..];
+            text = text[..idx];
+        }
+
+        var width = ImGui.CalcItemWidth();
+        ImGui.Text(text);
+        ImGui.SameLine();
+        ImGui.SetNextItemWidth(width);
+
+        return label;
     }
 }

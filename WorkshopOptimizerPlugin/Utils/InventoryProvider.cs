@@ -1,5 +1,4 @@
 using FFXIVClientStructs.FFXIV.Client.Game;
-using System.Collections.Generic;
 using WorkshopOptimizerPlugin.Data;
 
 namespace WorkshopOptimizerPlugin.Utils;

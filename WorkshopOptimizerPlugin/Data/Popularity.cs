@@ -18,7 +18,7 @@ internal class PopularityUtils
         return Multipliers[(int)p];
     }
 
-    private static readonly double[] Multipliers = { 0.0, 1.4, 1.2, 1.0, 0.8 };
+    private static readonly double[] Multipliers = [0.0, 1.4, 1.2, 1.0, 0.8];
 }
 
 internal static class PopularityTable

@@ -1,7 +1,7 @@
 using Dalamud.Configuration;
 using Dalamud.Plugin;
-using WorkshopOptimizerPlugin.Data;
 using System;
+using WorkshopOptimizerPlugin.Data;
 
 namespace WorkshopOptimizerPlugin;
 

@@ -1,5 +1,4 @@
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
 using System.Collections.Generic;
 using System.Numerics;
 using WorkshopOptimizerPlugin.Data;
@@ -17,7 +16,7 @@ internal class CommonInterfaceElements
     private int mCycle;
     private int mTop;
     private Strictness mStrictness = Strictness.RelaxedDefaults;
-    private Strictness mDefaultStrictness;
+    private readonly Strictness mDefaultStrictness;
     private int mMultiCycleLimit;
     private int mNewStrictness;
     private int mNewMultiCycleLimit;

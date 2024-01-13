@@ -1,12 +1,4 @@
-using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Common.Math;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorkshopOptimizerPlugin.Data;
 using WorkshopOptimizerPlugin.Utils;
 

@@ -31,7 +31,7 @@ public class MainWindow : Window, IDisposable
 
         this.plugin = plugin;
 
-        itemSetsCaches = new ItemSetsCache[Constants.MaxSeasons] { new ItemSetsCache(), new ItemSetsCache() };
+        itemSetsCaches = [new(), new ItemSetsCache()];
         uiDataSource = UIDataSource.Load(plugin.Configuration);
         for (var i = 0; i < Constants.MaxSeasons; i++)
         {
@@ -39,19 +39,19 @@ public class MainWindow : Window, IDisposable
         }
         commonInterfaceElements = new CommonInterfaceElements(plugin.Icons, plugin.Configuration, uiDataSource);
 
-        tabs = new()
-        {
-            new Tuple<string, ITab>("Workshops", new WorkshopsTab(plugin.Configuration, uiDataSource, commonInterfaceElements, itemSetsCaches)),
+        tabs =
+        [
+            new Tuple<string, ITab>("Workshops", new WorkshopsTab(uiDataSource, commonInterfaceElements, itemSetsCaches)),
             new Tuple<string, ITab>("Produced", new ProducedTab(uiDataSource, commonInterfaceElements)),
             new Tuple<string, ITab>("Next Week", new NextWeekTab(uiDataSource)),
             new Tuple<string, ITab>("Items", new ItemsTab(plugin.Icons, uiDataSource, commonInterfaceElements)),
             new Tuple<string, ITab>("Patterns", new PatternsTab(uiDataSource, commonInterfaceElements)),
-            new Tuple<string, ITab>("Combinations", new CombinationsTab(plugin.Configuration, uiDataSource, commonInterfaceElements, itemSetsCaches)),
+            new Tuple<string, ITab>("Combinations", new CombinationsTab(uiDataSource, commonInterfaceElements, itemSetsCaches)),
             new Tuple<string, ITab>("Felicitous Favors", new FavorsTab(uiDataSource)),
 #if DEBUG
             new Tuple<string, ITab>("Materials", new MaterialsTab()),
 #endif
-        };
+        ];
     }
 
     public void Dispose()

@@ -8,14 +8,9 @@ using WorkshopOptimizerPlugin.Windows.Utils;
 
 namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
-internal class NextWeekTab : ITab
+internal class NextWeekTab(UIDataSource uiDataSource) : ITab
 {
-    private readonly UIDataSource data;
-
-    public NextWeekTab(UIDataSource uiDataSource)
-    {
-        this.data = uiDataSource;
-    }
+    private readonly UIDataSource data = uiDataSource;
 
     public void OnOpen() { }
 

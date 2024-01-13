@@ -8,15 +8,13 @@ namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
 internal class CombinationsTab : ITab, IUIDataSourceListener
 {
-    private readonly Configuration configuration;
     private readonly UIDataSource uiDataSource;
     private readonly CommonInterfaceElements ifData;
     private readonly IItemSetsCache[] itemSetsCaches;
     private readonly Optimizer.Optimizer?[,] optimizers;
 
-    public CombinationsTab(Configuration configuration, UIDataSource uiDataSource, CommonInterfaceElements ifData, IItemSetsCache[] itemSetsCaches)
+    public CombinationsTab(UIDataSource uiDataSource, CommonInterfaceElements ifData, IItemSetsCache[] itemSetsCaches)
     {
-        this.configuration = configuration;
         this.uiDataSource = uiDataSource;
         this.ifData = ifData;
         this.itemSetsCaches = itemSetsCaches;

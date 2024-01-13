@@ -57,7 +57,7 @@ internal static class DemandUtils
 
     private const int DemandAdjustmentBucket = 6;
     private static readonly Demand[] NextDemand =
-    {
+    [
         Demand.Unknown,
         Demand.Increasing,
         Demand.None,
@@ -65,5 +65,5 @@ internal static class DemandUtils
         Demand.Plummeting,
         Demand.Plummeting,
         Demand.Any,
-    };
+    ];
 }

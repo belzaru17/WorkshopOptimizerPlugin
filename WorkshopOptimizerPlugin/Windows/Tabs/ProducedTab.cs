@@ -7,16 +7,10 @@ using WorkshopOptimizerPlugin.Windows.Utils;
 
 namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
-internal class ProducedTab : ITab
+internal class ProducedTab(UIDataSource uiDataSource, CommonInterfaceElements ifData) : ITab
 {
-    private readonly UIDataSource uiDataSource;
-    private readonly CommonInterfaceElements ifData;
-
-    public ProducedTab(UIDataSource uiDataSource, CommonInterfaceElements ifData)
-    {
-        this.uiDataSource = uiDataSource;
-        this.ifData = ifData;
-    }
+    private readonly UIDataSource uiDataSource = uiDataSource;
+    private readonly CommonInterfaceElements ifData = ifData;
 
     public void OnOpen() { }
 
@@ -51,7 +45,7 @@ internal class ProducedTab : ITab
         var items = new List<Item>[Constants.MaxWorkshops];
         for (var w = 0; w < Constants.MaxWorkshops; w++)
         {
-            items[w] = new List<Item>();
+            items[w] = [];
         }
         for (var step = 0; step < Constants.MaxSteps; step++)
         {
@@ -151,7 +145,7 @@ internal class ProducedTab : ITab
         var itemSets = new ItemSet[Constants.MaxWorkshops];
         for (var w = 0; w < Constants.MaxWorkshops; w++)
         {
-            itemSets[w] = new ItemSet(items[w].ToArray());
+            itemSets[w] = new ItemSet([.. items[w]]);
         }
 
         ImGui.TableNextRow(ImGuiTableRowFlags.Headers, 27);
