@@ -13,10 +13,16 @@ internal enum MaterialSource
     RareDropping,
 }
 
-internal class Materials(Material material, int count)
+internal class Materials
 {
-    public readonly Material Material = material;
-    public readonly int Count = count;
+    public readonly Material Material;
+    public readonly int Count;
+
+    public Materials(Material material, int count)
+    {
+        this.Material = material;
+        Count = count;
+    }
 }
 
 internal class Material

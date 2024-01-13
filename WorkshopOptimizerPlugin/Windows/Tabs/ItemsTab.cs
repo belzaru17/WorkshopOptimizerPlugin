@@ -115,11 +115,11 @@ internal class ItemsTab : ITab
         ImGui.SameLine();
         ImGui.SetNextItemWidth(100);
         ImGui.Combo("###SET_TYPE", ref mSetWhen, new string[]{"All", "Common", "Gatherables"}, 3);
-        Func<MaterialSource, bool>[] checkMaterials = [
+        Func<MaterialSource, bool>[] checkMaterials = {
             s => true,
             s => s == MaterialSource.Gatherable || s == MaterialSource.Crop || s == MaterialSource.Dropping,
             s => s == MaterialSource.Gatherable,
-        ];
+        };
         ImGui.SameLine();
         ImGui.Text(" to ");
         ImGui.SameLine();

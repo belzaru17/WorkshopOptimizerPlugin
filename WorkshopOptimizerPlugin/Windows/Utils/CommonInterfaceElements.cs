@@ -12,6 +12,7 @@ internal class CommonInterfaceElements
     private readonly Configuration configuration;
     private readonly UIDataSource uiDataSource;
     private readonly Icons icons;
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "Modified in ImGUI")]
     private int mSeason = 0;
     private int mCycle;
     private int mTop;

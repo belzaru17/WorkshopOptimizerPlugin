@@ -4,7 +4,7 @@ using WorkshopOptimizerPlugin.Persistence;
 
 namespace WorkshopOptimizerPlugin.Optimizer;
 
-internal class Item(ItemStaticData staticData, ItemDynamicData dynamicData, ProducedItemsAdaptor producedItems, WhenOverrides whenOverrides)
+internal class Item
 {
     // Static Data
     public uint Id => staticData.Id;
@@ -21,6 +21,14 @@ internal class Item(ItemStaticData staticData, ItemDynamicData dynamicData, Prod
     public Popularity NextPopularity => dynamicData.NextPopularity;
     public Supply[] Supply => dynamicData.Supply;
     public Demand[] Demand => dynamicData.Demand;
+
+    public Item(ItemStaticData staticData, ItemDynamicData dynamicData, ProducedItemsAdaptor producedItems, WhenOverrides whenOverrides)
+    {
+        this.staticData = staticData;
+        this.dynamicData = dynamicData;
+        this.producedItems = producedItems;
+        this.whenOverrides = whenOverrides;
+    }
 
     public int AccumulatedProduced(int cycle)
     {
@@ -96,8 +104,8 @@ internal class Item(ItemStaticData staticData, ItemDynamicData dynamicData, Prod
         return ((double)Value) * PopularityUtils.Multiplier(Popularity) * (sup_mult / n);
     }
 
-    private readonly ItemStaticData staticData = staticData;
-    private readonly ItemDynamicData dynamicData = dynamicData;
-    private readonly ProducedItemsAdaptor producedItems = producedItems;
-    private readonly WhenOverrides whenOverrides = whenOverrides;
+    private readonly ItemStaticData staticData;
+    private readonly ItemDynamicData dynamicData;
+    private readonly ProducedItemsAdaptor producedItems;
+    private readonly WhenOverrides whenOverrides;
 }

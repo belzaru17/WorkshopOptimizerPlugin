@@ -29,9 +29,9 @@ internal class Optimizer
         this.groove = groove;
         this.options = options;
 
-        cachedCombinations = [];
+        cachedCombinations = new();
         wci = new int[Constants.MaxWorkshops];
-        cachedWorkshopCombinations = [];
+        cachedWorkshopCombinations = new();
 
         for (uint i = 0; i < Constants.MaxItems; i++)
         {
@@ -55,7 +55,7 @@ internal class Optimizer
             var item = itemCache[staticItem];
             if (checkItem(item))
             {
-                foreach (var itemset in generateCombinationsRecursive([item], item.Hours))
+                foreach (var itemset in generateCombinationsRecursive(new List<Item> { item }, item.Hours))
                 {
                     if (itemset.EffectiveValue(cycle) > cachedCombinationsMinValue && itemset.RequiredItems >= requiredItems)
                     {
@@ -123,10 +123,10 @@ internal class Optimizer
     {
         if (hours == Constants.MaxHours)
         {
-            return [new ItemSet([.. items])];
+            return new() { new ItemSet(items.ToArray()) };
         }
 
-        List<ItemSet> result = [];
+        List<ItemSet> result = new();
         var lastItem = items[^1];
         foreach (var nextItem in CategoryMap.GetEfficientItems(lastItem.Categories))
         {

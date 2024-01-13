@@ -17,10 +17,18 @@ public enum Strictness
     RelaxedDefaults = AllowSameCycle | AllowRestCycles | AllowEarlierCycles | AllowMultiCycle | UseMultiCycleLimit | AllowUnknownCycle,
 }
 
-internal class OptimizerOptions(Configuration configuration, Strictness strictness, int multiCycleLmit, IReadOnlyList<bool> restCycles)
+internal class OptimizerOptions
 {
-    public readonly Strictness Strictness = strictness;
-    public readonly int MultiCycleLimit = multiCycleLmit;
-    public readonly IReadOnlyList<bool> RestCycles = restCycles;
-    public readonly int ItemGenerationCutoff = configuration.ItemGenerationCutoff;
+    public readonly Strictness Strictness;
+    public readonly int MultiCycleLimit;
+    public readonly IReadOnlyList<bool> RestCycles;
+    public readonly int ItemGenerationCutoff;
+
+    public OptimizerOptions(Configuration configuration, Strictness strictness, int multiCycleLmit, IReadOnlyList<bool> restCycles)
+    {
+        Strictness = strictness;
+        MultiCycleLimit = multiCycleLmit;
+        RestCycles = restCycles;
+        ItemGenerationCutoff = configuration.ItemGenerationCutoff;
+    }
 }

@@ -5,9 +5,15 @@ using WorkshopOptimizerPlugin.Windows.Utils;
 
 namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
-internal class FavorsTab(UIDataSource uiDataSource) : ITab
+internal class FavorsTab : ITab
 {
-    private readonly UIDataSource uiDataSource = uiDataSource;
+    private readonly UIDataSource uiDataSource;
+
+
+    public FavorsTab(UIDataSource uiDataSource)
+    {
+        this.uiDataSource = uiDataSource;
+    }
 
     public void OnOpen() { }
 

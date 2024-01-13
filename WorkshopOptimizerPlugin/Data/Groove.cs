@@ -1,10 +1,15 @@
 namespace WorkshopOptimizerPlugin.Data;
 
-internal class Groove(int value)
+internal class Groove
 {
-    public int Value { get; init; } = value > Constants.MaxGroove ? Constants.MaxGroove : value;
+    public int Value { get; init; }
 
     public Groove() : this(0) { }
+
+    public Groove(int value)
+    {
+        Value = value > Constants.MaxGroove ? Constants.MaxGroove : value;
+    }
 
     public override string ToString() => Value.ToString();
 

@@ -8,10 +8,16 @@ using WorkshopOptimizerPlugin.Windows.Utils;
 
 namespace WorkshopOptimizerPlugin.Windows.Tabs;
 
-internal class PatternsTab(UIDataSource uiDataSource, CommonInterfaceElements ifData) : ITab
+internal class PatternsTab : ITab
 {
-    private readonly UIDataSource uiDataSource = uiDataSource;
-    private readonly CommonInterfaceElements ifData = ifData;
+    private readonly UIDataSource uiDataSource;
+    private readonly CommonInterfaceElements ifData;
+
+    public PatternsTab(UIDataSource uiDataSource, CommonInterfaceElements ifData)
+    {
+        this.uiDataSource = uiDataSource;
+        this.ifData = ifData;
+    }
 
     public void OnOpen() { }
 

@@ -1,6 +1,8 @@
 using Dalamud.Interface.Internal;
 using ImGuiNET;
+using ImGuiScene;
 using System.Numerics;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WorkshopOptimizerPlugin.Utils;
 

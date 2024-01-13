@@ -31,7 +31,7 @@ public class MainWindow : Window, IDisposable
 
         this.plugin = plugin;
 
-        itemSetsCaches = [new(), new ItemSetsCache()];
+        itemSetsCaches = new ItemSetsCache[Constants.MaxSeasons] { new ItemSetsCache(), new ItemSetsCache() };
         uiDataSource = UIDataSource.Load(plugin.Configuration);
         for (var i = 0; i < Constants.MaxSeasons; i++)
         {
@@ -39,8 +39,8 @@ public class MainWindow : Window, IDisposable
         }
         commonInterfaceElements = new CommonInterfaceElements(plugin.Icons, plugin.Configuration, uiDataSource);
 
-        tabs =
-        [
+        tabs = new()
+        {
             new Tuple<string, ITab>("Workshops", new WorkshopsTab(uiDataSource, commonInterfaceElements, itemSetsCaches)),
             new Tuple<string, ITab>("Produced", new ProducedTab(uiDataSource, commonInterfaceElements)),
             new Tuple<string, ITab>("Next Week", new NextWeekTab(uiDataSource)),
@@ -51,7 +51,7 @@ public class MainWindow : Window, IDisposable
 #if DEBUG
             new Tuple<string, ITab>("Materials", new MaterialsTab()),
 #endif
-        ];
+        };
     }
 
     public void Dispose()

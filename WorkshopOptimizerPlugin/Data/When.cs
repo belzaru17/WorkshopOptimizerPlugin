@@ -13,9 +13,9 @@ internal enum When
 
 internal static class WhenUtils
 {
-    public static readonly string[] WhenAsStrings =
-    [
+    public static readonly string[] WhenAsStrings = new string[]
+    {
         When.Never.ToString(), When.Weak.ToString(), When.Strong.ToString(),
         When.Either.ToString(), When.Always.ToString(), When.Required.ToString(),
-    ];
+    };
 }
