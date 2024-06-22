@@ -3,7 +3,7 @@
     <PropertyGroup>
         <Authors>HappySprite</Authors>
         <Company></Company>
-        <Version>0.2.8.3</Version>
+        <Version>0.2.8.4</Version>
         <Description>FFXIV Island Sanctuary Workshop Optimizer Plugin.</Description>
         <Copyright>Copyright © HappySprite 2022-2023</Copyright>
         <PackageProjectUrl>https://github.com/belzaru17/WorkshopOptimizerPlugin</PackageProjectUrl>
@@ -11,10 +11,9 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <TargetFramework>net7.0-windows</TargetFramework>
+        <TargetFramework>net8.0-windows</TargetFramework>
         <Platforms>x64</Platforms>
         <Nullable>enable</Nullable>
-        <LangVersion>11</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
