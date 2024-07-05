@@ -3,7 +3,7 @@
     <PropertyGroup>
         <Authors>HappySprite</Authors>
         <Company></Company>
-        <Version>0.2.8.4</Version>
+        <Version>0.2.10.0</Version>
         <Description>FFXIV Island Sanctuary Workshop Optimizer Plugin.</Description>
         <Copyright>Copyright © HappySprite 2022-2023</Copyright>
         <PackageProjectUrl>https://github.com/belzaru17/WorkshopOptimizerPlugin</PackageProjectUrl>
@@ -18,7 +18,6 @@
         <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-        <NoWarn>IDE0090</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -34,7 +33,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DalamudPackager" Version="2.1.12" />
+        <PackageReference Include="DalamudPackager" Version="2.1.13" />
         <Reference Include="FFXIVClientStructs">
             <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
             <Private>false</Private>

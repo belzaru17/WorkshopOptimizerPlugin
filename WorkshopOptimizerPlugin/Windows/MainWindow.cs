@@ -109,7 +109,7 @@ public class MainWindow : Window, IDisposable
         ImGui.Indent(indent);
         if (UIUtils.ImageButton(plugin.Icons.Settings, "Settings"))
         {
-            plugin.DrawConfigUI();
+            plugin.OpenConfigUI();
         }
         ImGui.Unindent(indent);
         ImGui.Spacing();

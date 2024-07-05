@@ -1,4 +1,5 @@
 using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures;
 using ImGuiNET;
 using ImGuiScene;
 using System.Numerics;
@@ -14,13 +15,13 @@ internal static class UIUtils
         return value;
     }
 
-    public static bool ImageButton(IDalamudTextureWrap icon, string tooltip, bool enabled = true, int size = 17)
+    public static bool ImageButton(ISharedImmediateTexture icon, string tooltip, bool enabled = true, int size = 17)
     {
         if (!enabled)
         {
             ImGui.BeginDisabled();
         }
-        var pressed = ImGui.ImageButton(icon.ImGuiHandle, new Vector2(size, size));
+        var pressed = ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, new Vector2(size, size));
         if (!pressed && ImGui.IsItemHovered())
         {
             ImGui.BeginTooltip();

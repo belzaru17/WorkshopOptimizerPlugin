@@ -23,7 +23,7 @@ public sealed class Plugin : IDalamudPlugin
     public static IGameInteropProvider GameInteropProvider { get; private set; } = null!;
 
     [PluginService]
-    public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
+    public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
 
     [PluginService]
     public static ICommandManager CommandManager { get; private set; } = null!;
@@ -33,6 +33,9 @@ public sealed class Plugin : IDalamudPlugin
 
     [PluginService]
     public static IDataManager DataManager { get; private set; } = null!;
+
+    [PluginService]
+    public static ITextureProvider TextureProvider { get; private set; } = null!;
 
 
     private const string CommandName = "/wso";
@@ -44,7 +47,7 @@ public sealed class Plugin : IDalamudPlugin
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Configuration.Initialize(PluginInterface);
 
-        Icons = new Icons(PluginInterface);
+        Icons = new Icons(PluginInterface, TextureProvider);
 
         this.ConfigWindow = new ConfigWindow(this);
         this.MainWindow = new MainWindow(this);
@@ -58,7 +61,8 @@ public sealed class Plugin : IDalamudPlugin
         });
 
         PluginInterface.UiBuilder.Draw += DrawUI;
-        PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+        PluginInterface.UiBuilder.OpenMainUi += OpenMainUI;
+        PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUI;
     }
 
     public void Dispose()
@@ -77,10 +81,15 @@ public sealed class Plugin : IDalamudPlugin
 
     private void DrawUI()
     {
-        this.WindowSystem.Draw();
+        WindowSystem.Draw();
     }
 
-    public void DrawConfigUI()
+    public void OpenMainUI()
+    {
+        MainWindow.IsOpen = true;
+    }
+
+    public void OpenConfigUI()
     {
         ConfigWindow.IsOpen = true;
     }

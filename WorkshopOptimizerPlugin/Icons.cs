@@ -1,21 +1,23 @@
 using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
 using System.IO;
 
 namespace WorkshopOptimizerPlugin;
 
 public class Icons
 {
-    public readonly IDalamudTextureWrap Settings;
-    public readonly IDalamudTextureWrap ResetToDefaults;
-    public readonly IDalamudTextureWrap ExportData;
-    public readonly IDalamudTextureWrap OptimizerSettings;
+    public readonly ISharedImmediateTexture Settings;
+    public readonly ISharedImmediateTexture ResetToDefaults;
+    public readonly ISharedImmediateTexture ExportData;
+    public readonly ISharedImmediateTexture OptimizerSettings;
 
-    public Icons(DalamudPluginInterface pluginInterface)
+    public Icons(IDalamudPluginInterface pluginInterface, ITextureProvider textureProvider)
     {
-        IDalamudTextureWrap LoadIcon(string basename)
+        ISharedImmediateTexture LoadIcon(string basename)
         {
-            return pluginInterface.UiBuilder.LoadImage(Path.Join(pluginInterface.AssemblyLocation.DirectoryName, "Resources\\Icons", basename));
+            return textureProvider.GetFromFile(Path.Join(pluginInterface.AssemblyLocation.DirectoryName, "Resources\\Icons", basename));
         }
 
         Settings = LoadIcon("settings_FILL1_wght400_GRAD0_opsz48.png");
@@ -26,9 +28,5 @@ public class Icons
 
     public void Dispose()
     {
-        Settings.Dispose();
-        ResetToDefaults.Dispose();
-        ExportData.Dispose();
-        OptimizerSettings.Dispose();
     }
 }
