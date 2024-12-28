@@ -130,6 +130,6 @@ internal static class ManagerProvider
 {
     public static Manager GetManager()
     {
-        return new DirectReaderManager();
+        return new MJIManagerAdaptor();
     }
 }
