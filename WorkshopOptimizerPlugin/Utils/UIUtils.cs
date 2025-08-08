@@ -1,9 +1,6 @@
-using Dalamud.Interface.Internal;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Textures;
-using ImGuiNET;
-using ImGuiScene;
 using System.Numerics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WorkshopOptimizerPlugin.Utils;
 
@@ -21,7 +18,7 @@ internal static class UIUtils
         {
             ImGui.BeginDisabled();
         }
-        var pressed = ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, new Vector2(size, size));
+        var pressed = ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, new Vector2(size, size));
         if (!pressed && ImGui.IsItemHovered())
         {
             ImGui.BeginTooltip();
