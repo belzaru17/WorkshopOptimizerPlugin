@@ -79,7 +79,7 @@ internal class CommonInterfaceElements
         ImGui.Combo(UIUtils.LeftAlignedLabel("Season:"), ref mSeason, new string[] { "Current", "Previous" }, 2);
         ImGui.SameLine();
         ImGui.SetNextItemWidth(100);
-        ImGui.InputInt(UIUtils.LeftAlignedLabel("Cycle:"), ref mCycle);
+        ImGui.InputInt(UIUtils.LeftAlignedLabel("Cycle:"), ref mCycle, 1);
         ImGui.SameLine();
         ImGui.Text(string.Format("Groove: {0} -> {1}", GetStartGroove(), GetEndGroove())); ;
     }
@@ -107,7 +107,7 @@ internal class CommonInterfaceElements
             var limit_disabled = (mNewStrictness & (int)Strictness.UseMultiCycleLimit) == 0;
             if (limit_disabled) ImGui.BeginDisabled();
             ImGui.SetNextItemWidth(100);
-            ImGui.InputInt("##Limit", ref mNewMultiCycleLimit);
+            ImGui.InputInt("##Limit", ref mNewMultiCycleLimit, 1, 10);
             if (limit_disabled) ImGui.EndDisabled();
             if (multi_disabled) ImGui.EndDisabled();
             ImGui.CheckboxFlags("Allow items that we don't know their peak cycle", ref mNewStrictness, (int)Strictness.AllowUnknownCycle);

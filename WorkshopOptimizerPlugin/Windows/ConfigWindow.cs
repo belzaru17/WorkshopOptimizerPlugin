@@ -37,14 +37,14 @@ public class ConfigWindow : Window, IDisposable
         ImGui.Text("Default Rest Cycles");
         ImGui.Indent(20);
         ImGui.SetNextItemWidth(100);
-        if (ImGui.InputInt("1st", ref defaultRestCycle1))
+        if (ImGui.InputInt("1st", ref defaultRestCycle1, 1))
         {
             configuration.DefaultRestCycle1 = UIUtils.FixValue(ref defaultRestCycle1, 1, 7) - 1;
             saveConfig = true;
         }
         var defaultRestCycle2 = configuration.DefaultRestCycle2 + 1;
         ImGui.SetNextItemWidth(100);
-        if (ImGui.InputInt("2nd", ref defaultRestCycle2, 100))
+        if (ImGui.InputInt("2nd", ref defaultRestCycle2, 1))
         {
             configuration.DefaultRestCycle2 = UIUtils.FixValue(ref defaultRestCycle2, 1, 7) - 1;
             saveConfig = true;
@@ -64,14 +64,14 @@ public class ConfigWindow : Window, IDisposable
         ImGui.SetNextItemWidth(100);
         if (ImGui.InputInt("Item Generation Cutoff", ref itemGenerationCutoff, 5))
         {
-            configuration.ItemGenerationCutoff = UIUtils.FixValue(ref itemGenerationCutoff, 1, 100);
+            configuration.ItemGenerationCutoff = UIUtils.FixValue(ref itemGenerationCutoff, 1, 10);
             saveConfig = true;
         }
 
         ImGui.Spacing();
         var defaultMultiCycleLimit = configuration.DefaultMultiCycleLimit;
         ImGui.SetNextItemWidth(100);
-        if (ImGui.InputInt("Default Multi-Cycle Limit", ref defaultMultiCycleLimit))
+        if (ImGui.InputInt("Default Multi-Cycle Limit", ref defaultMultiCycleLimit, 1, 10))
         {
             configuration.DefaultMultiCycleLimit = UIUtils.FixValue(ref defaultMultiCycleLimit, 0, 999);
             saveConfig = true;
